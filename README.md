@@ -19,5 +19,5 @@
 
 ### License ###
 
-* Copyright (c) 2014 - Theodoros Chatzigiannakis
-* All original source code files in this repository are distributed under the GNU GPLv3 (unless otherwise stated).
+* Copyright (C) 2014  Theodoros Chatzigiannakis
+* Distributed under the GNU GPLv3. For more information, see LICENSE.md
