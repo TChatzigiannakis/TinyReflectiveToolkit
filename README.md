@@ -11,7 +11,7 @@
 
 ### Contribution guidelines ###
 
-* None yet.
+* This repository is intended to contain only contributions from the project's author. Even though you are welcome to fork it, any pull requests will be ignored.
 
 ### Who do I talk to? ###
 
