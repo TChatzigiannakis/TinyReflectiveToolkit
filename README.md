@@ -21,3 +21,4 @@
 
 * Copyright (C) 2014  Theodoros Chatzigiannakis
 * Distributed under the GNU GPLv3. For more information, see LICENSE.md
+* If you would like to receive this software under a different license, feel free to contact me.
