@@ -3,6 +3,7 @@
 ### What is this repository for? ###
 
 * Tiny Reflective Toolkit - a small library containing utilities related to reflection under the CLR.
+* This is an extremely early version.
 
 ### How do I get set up? ###
 
@@ -20,5 +21,5 @@
 ### License ###
 
 * Copyright (C) 2014  Theodoros Chatzigiannakis
-* Distributed under the GNU GPLv3. For more information, see LICENSE.md
+* Distributed under the GNU GPLv3. For more information, see LICENSE
 * If you would like to receive this software under a different license, feel free to contact me.
