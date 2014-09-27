@@ -92,21 +92,21 @@ namespace TinyReflectiveToolkit
         public void LoadAllDependencies<T>(Func<AssemblyName, T> logic)
             where T : IComparable<T>
         {
-            loaded = new List<AssemblyName>();
-            assemblies = new List<Assembly>();
+            _loaded = new List<AssemblyName>();
+            _assemblies = new List<Assembly>();
 
             _LoadAssembliesRecursively(Root.GetName(), logic);
 
             if (AllAssembliesLoaded != null)
-                AllAssembliesLoaded(assemblies);
+                AllAssembliesLoaded(_assemblies);
         }
 
-        private List<AssemblyName> loaded = new List<AssemblyName>();
-        private List<Assembly> assemblies = new List<Assembly>();
+        private List<AssemblyName> _loaded = new List<AssemblyName>();
+        private List<Assembly> _assemblies = new List<Assembly>();
 
         private bool _hasLoaded(AssemblyName name)
         {
-            return loaded.Any(x => x.ToString() == name.ToString());
+            return _loaded.Any(x => x.ToString() == name.ToString());
         }
 
         private void _LoadAssembliesRecursively<T>(AssemblyName current, Func<AssemblyName, T> logic)
@@ -118,8 +118,8 @@ namespace TinyReflectiveToolkit
                 AssemblyLoading(current);
 
             var asm = Assembly.Load(current);
-            loaded.Add(current);
-            assemblies.Add(asm);
+            _loaded.Add(current);
+            _assemblies.Add(asm);
 
             if (AssemblyLoaded != null)
                 AssemblyLoaded(asm);
@@ -135,4 +135,4 @@ namespace TinyReflectiveToolkit
         }
     }
 }
-
+  
