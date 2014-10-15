@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>TinyReflectiveToolkit</id>
         <version>0.2</version>
@@ -7,7 +7,7 @@
         <authors>Theodoros Chatzigiannakis</authors>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>A small library containing utilities related to reflection under the CLR.</description>
-        <copyright />
+        <copyright>(c) 2014 - Theodoros Chatzigiannakis</copyright>
         <tags>C# Reflection</tags>
     </metadata>
 	<files>
