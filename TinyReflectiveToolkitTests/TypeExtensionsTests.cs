@@ -9,15 +9,29 @@ using TinyReflectiveToolkit;
 
 namespace TinyReflectiveToolkitTests
 {
-    [TestFixture(Description="Type Extensions Tests")]
+    [AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = true)]
+    internal sealed class MyAttribute : Attribute
+    {
+        public string Description { get; private set; }
+
+        public MyAttribute(string description = "")
+        {
+            Description = description;
+        }
+    }
+
+    [My("Type Extensions Tests")]
+    [TestFixture]
     public class TypeExtensionsTests
     {
+        public int One { get { return 1; } }
+
         [Test]
         public void TypesWithAttribute()
         {
             var classes = Assembly.GetExecutingAssembly()
                 .GetTypes()
-                .WithAttribute<TestFixtureAttribute>()
+                .WithAttribute<MyAttribute>()
                 .ToList();
 
             Assert.AreNotEqual(0, classes.Count);
@@ -29,7 +43,7 @@ namespace TinyReflectiveToolkitTests
             var attributes =
                 Assembly.GetExecutingAssembly()
                     .GetTypes()
-                    .WithAttribute<TestFixtureAttribute>(x => x.Description == "Type Extensions Tests")
+                    .WithAttribute<MyAttribute>(x => x.Description == "Type Extensions Tests")
                     .ToList();
 
             Assert.AreEqual(1, attributes.Count);
@@ -41,33 +55,49 @@ namespace TinyReflectiveToolkitTests
             var attributes =
                 Assembly.GetExecutingAssembly()
                     .GetTypes()
-                    .WithAttribute<TestFixtureAttribute>()
+                    .WithAttribute<MyAttribute>()
                     .First()
-                    .SelectAttribute<TestFixtureAttribute>()
+                    .SelectAttribute<MyAttribute>()
                     .ToList();
 
             Assert.AreEqual(1, attributes.Count);
         }
 
+        [My]
         [Test]
         public void MethodsWithAttribute()
         {
             var methods = Assembly.GetExecutingAssembly()
                 .GetTypes()
                 .GetMethods()
-                .WithAttribute<TestAttribute>()
+                .WithAttribute<MyAttribute>()
                 .ToList();
 
-            Assert.IsTrue(methods.Count >= 4);
+            Assert.IsTrue(methods.Count >= 3);
         }
 
-        [Test(Description = "This specific test")]
+        [My]
+        [Test]
+        public void MethodsWithTwoAttributes()
+        {
+            var methods = Assembly.GetExecutingAssembly()
+                .GetTypes()
+                .GetMethods()
+                .WithAttribute<TestAttribute>()
+                .WithAttribute<MyAttribute>()
+                .ToList();
+
+            Assert.IsTrue(methods.Count >= 3);
+        }
+
+        [My("This specific test")]
+        [Test]
         public void MethodsWithAttributePredicate()
         {
             var methods = Assembly.GetExecutingAssembly()
                 .GetTypes()
                 .GetMethods()
-                .WithAttribute<TestAttribute>(x => x.Description == "This specific test")
+                .WithAttribute<MyAttribute>(x => x.Description == "This specific test")
                 .ToList();
 
             Assert.AreEqual(1, methods.Count);
