@@ -1,5 +1,7 @@
 # README #
 
+[![Build status](https://ci.appveyor.com/api/projects/status/b6eydara8rqxt1ed/branch/master?svg=true)](https://ci.appveyor.com/project/TChatzigiannakis/tinyreflectivetoolkit/branch/master)
+
 ### What is this repository for? ###
 
 * Tiny Reflective Toolkit - a small library containing utilities related to reflection under the CLR.
