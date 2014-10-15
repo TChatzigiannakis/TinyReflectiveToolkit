@@ -19,12 +19,54 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace TinyReflectiveToolkit
 {
     public static partial class TypeExtensions
     {
+        /// <summary>
+        /// Returns all elements that are decorated with a specified attribute.
+        /// </summary>
+        /// <typeparam name="TAttribute"></typeparam>
+        /// <typeparam name="TMemberInfo"></typeparam>
+        /// <param name="sequence"></param>
+        /// <returns></returns>
+        public static IEnumerable<TMemberInfo> WithAttribute<TAttribute, TMemberInfo>(this IEnumerable<TMemberInfo> sequence)
+            where TAttribute : Attribute
+            where TMemberInfo : MemberInfo
+        {
+            if (sequence == null) throw new ArgumentNullException("sequence");
+            return sequence.WithAttributeImpl<TAttribute, TMemberInfo>(false);
+        }
+
+        /// <summary>
+        /// Returns all elements that are decorated with a specified attribute and that attribute satisfies a specified condition.
+        /// </summary>
+        /// <typeparam name="TAttribute"></typeparam>
+        /// <typeparam name="TMemberInfo"></typeparam>
+        /// <param name="sequence"></param>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public static IEnumerable<TMemberInfo> WithAttribute<TAttribute, TMemberInfo>(this IEnumerable<TMemberInfo> sequence, 
+            Func<TAttribute, bool> predicate)
+            where TAttribute : Attribute
+            where TMemberInfo : MemberInfo
+        {
+            if (sequence == null) throw new ArgumentNullException("sequence");
+            if (predicate == null) throw new ArgumentNullException("predicate");
+
+            return sequence.WithAttribute<TAttribute, TMemberInfo>().Where(x => x.SelectAttribute<TAttribute>().Any(predicate));
+        }
+
+        private static IEnumerable<TMemberInfo> WithAttributeImpl<TAttribute, TMemberInfo>(this IEnumerable<TMemberInfo> sequence, bool inherited)
+            where TAttribute : Attribute
+            where TMemberInfo : MemberInfo
+        {
+            return sequence.Where(x => x.GetCustomAttributes(typeof (TAttribute), inherited).Any());
+        }
+
         /// <summary>
         /// Returns all types that are decorated with a specified attribute.
         /// </summary>
@@ -34,8 +76,7 @@ namespace TinyReflectiveToolkit
         public static IEnumerable<Type> WithAttribute<TAttribute>(this IEnumerable<Type> sequence)
             where TAttribute : Attribute
         {
-            if (sequence == null) throw new ArgumentNullException("sequence");
-            return sequence.WithAttribute<TAttribute>(false);
+            return sequence.WithAttribute<TAttribute, Type>();
         }
 
         /// <summary>
@@ -49,30 +90,33 @@ namespace TinyReflectiveToolkit
             Func<TAttribute, bool> predicate)
             where TAttribute : Attribute
         {
-            if (sequence == null) throw new ArgumentNullException("sequence");
-            if (predicate == null) throw new ArgumentNullException("predicate");
-
-            return sequence.WithAttribute<TAttribute>().Where(x => x.SelectAttribute<TAttribute>().Any(predicate));
-        }
-
-        private static IEnumerable<Type> WithAttribute<TAttribute>(this IEnumerable<Type> sequence, bool inherited)
-            where TAttribute : Attribute
-        {
-            return sequence.Where(x => x.GetCustomAttributes(typeof (TAttribute), inherited).Any());
+            return sequence.WithAttribute<TAttribute, Type>(predicate);
         }
 
         /// <summary>
-        /// Returns all types that are decorated with a specified attribute, including those that have inherited the attribute.
+        /// Returns all methods that are decorated with a specified attribute.
         /// </summary>
         /// <typeparam name="TAttribute"></typeparam>
         /// <param name="sequence"></param>
-        /// <param name="inherited"></param>
         /// <returns></returns>
-        public static IEnumerable<Type> WithInheritedAttribute<TAttribute>(this IEnumerable<Type> sequence)
+        public static IEnumerable<MethodInfo> WithAttribute<TAttribute>(this IEnumerable<MethodInfo> sequence)
             where TAttribute : Attribute
         {
-            if (sequence == null) throw new ArgumentNullException("sequence");
-            return sequence.WithAttribute<TAttribute>(true);
+            return sequence.WithAttribute<TAttribute, MethodInfo>();
+        }
+
+        /// <summary>
+        /// Returns all methods that are decorated with a specified attribute and that attribute satisfies a specified condition.
+        /// </summary>
+        /// <typeparam name="TAttribute"></typeparam>
+        /// <param name="sequence"></param>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public static IEnumerable<MethodInfo> WithAttribute<TAttribute>(this IEnumerable<MethodInfo> sequence,
+            Func<TAttribute, bool> predicate)
+            where TAttribute : Attribute
+        {
+            return sequence.WithAttribute<TAttribute, MethodInfo>(predicate);
         }
     }
 }

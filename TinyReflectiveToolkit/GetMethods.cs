@@ -27,15 +27,15 @@ namespace TinyReflectiveToolkit
     public static partial class TypeExtensions
     {
         /// <summary>
-        /// Returns all instances of the selected attribute in the given element.
+        /// Returns all methods from a given sequence of types. 
         /// </summary>
-        /// <typeparam name="TAttribute"></typeparam>
-        /// <param name="info"></param>
+        /// <param name="sequence"></param>
         /// <returns></returns>
-        public static IEnumerable<TAttribute> SelectAttribute<TAttribute>(this MemberInfo info)
-            where TAttribute : Attribute
+        public static IEnumerable<MethodInfo> GetMethods(this IEnumerable<Type> sequence)
         {
-            return info.GetCustomAttributes(typeof(TAttribute), false).Cast<TAttribute>();
+            if (sequence == null) throw new ArgumentNullException("sequence");
+
+            return sequence.Select(x => x.GetMethods()).SelectMany(x => x);
         }
     }
 }
