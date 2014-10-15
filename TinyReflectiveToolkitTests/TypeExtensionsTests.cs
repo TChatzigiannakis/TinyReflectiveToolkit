@@ -24,7 +24,10 @@ namespace TinyReflectiveToolkitTests
     [TestFixture]
     public class TypeExtensionsTests
     {
+        [My("1")]
         public int One { get { return 1; } }
+        [My("2")]
+        public int Two { get { return 2; } }
 
         [Test]
         public void TypesWithAttribute()
@@ -38,7 +41,7 @@ namespace TinyReflectiveToolkitTests
         }
 
         [Test]
-        public void TypesWithAttributePredicate()
+        public void TypesWithAttributeAndPredicate()
         {
             var attributes =
                 Assembly.GetExecutingAssembly()
@@ -92,7 +95,7 @@ namespace TinyReflectiveToolkitTests
 
         [My("This specific test")]
         [Test]
-        public void MethodsWithAttributePredicate()
+        public void MethodsWithAttributeAndPredicate()
         {
             var methods = Assembly.GetExecutingAssembly()
                 .GetTypes()
@@ -101,6 +104,30 @@ namespace TinyReflectiveToolkitTests
                 .ToList();
 
             Assert.AreEqual(1, methods.Count);
+        }
+
+        [Test]
+        public void PropertiesWithAttribute()
+        {
+            var properties = Assembly.GetExecutingAssembly()
+                .GetTypes()
+                .GetProperties()
+                .WithAttribute<MyAttribute>()
+                .ToList();
+
+            Assert.AreEqual(2, properties.Count);
+        }
+
+        [Test]
+        public void PropertiesWithAttributeAndPredicate()
+        {
+            var properties = Assembly.GetExecutingAssembly()
+                .GetTypes()
+                .GetProperties()
+                .WithAttribute<MyAttribute>(x => x.Description == "1")
+                .ToList();
+
+            Assert.AreEqual(1, properties.Count);
         }
     }
 }
