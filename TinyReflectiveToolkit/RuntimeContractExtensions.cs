@@ -59,7 +59,7 @@ namespace TinyReflectiveToolkit
             return CreateContractProxyFromObject<TContract>(obj);
         }
 
-        internal static TContract CreateContractProxyFromObject<TContract>(object mimicObject)
+        private static TContract CreateContractProxyFromObject<TContract>(object mimicObject)
             where TContract : class
         {
             var baseType = typeof(TContract);
