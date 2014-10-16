@@ -36,7 +36,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ContractAttribute.cs" />
+    <Compile Include="RuntimeContractExtensions.cs" />
     <Compile Include="GetMethods.cs" />
     <Compile Include="GetProperties.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

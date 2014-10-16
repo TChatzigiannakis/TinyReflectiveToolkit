@@ -31,7 +31,7 @@ namespace TinyReflectiveToolkit
     /// <summary>
     /// Extension methods enabling post-build interface implementation.
     /// </summary>
-    public static class RuntimeContractsExtensions
+    public static class RuntimeContractExtensions
     {
         private static readonly AssemblyBuilder DynamicAssembly =
             Thread.GetDomain()
