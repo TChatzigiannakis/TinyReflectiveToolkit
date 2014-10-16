@@ -37,5 +37,17 @@ namespace TinyReflectiveToolkit
 
             return sequence.Select(x => x.GetMethods()).SelectMany(x => x);
         }
+
+        /// <summary>
+        /// Returns all abstract methods of a given type.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static IEnumerable<MethodInfo> GetAbstractMethods(this Type type)
+        {
+            if (type == null) throw new ArgumentNullException("type");
+
+            return type.GetMethods().Where(x => x.IsAbstract);
+        }
     }
 }

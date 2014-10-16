@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TinyReflectiveToolkit", "Ti
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TinyReflectiveToolkitTests", "TinyReflectiveToolkitTests\TinyReflectiveToolkitTests.csproj", "{5809D126-B430-418B-8099-9793D3E1B0ED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManualTests", "ManualTests\ManualTests.csproj", "{D281A5E8-31BC-4EB5-A34B-5C8C2DF6BA64}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{5809D126-B430-418B-8099-9793D3E1B0ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5809D126-B430-418B-8099-9793D3E1B0ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5809D126-B430-418B-8099-9793D3E1B0ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D281A5E8-31BC-4EB5-A34B-5C8C2DF6BA64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D281A5E8-31BC-4EB5-A34B-5C8C2DF6BA64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D281A5E8-31BC-4EB5-A34B-5C8C2DF6BA64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D281A5E8-31BC-4EB5-A34B-5C8C2DF6BA64}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
