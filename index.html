@@ -96,7 +96,7 @@
     }
 </code></pre>
 
-<p>And then go ahead and add that interface to the list of interfaces these types implement. <strong>But often you can't do that because at least one of these types comes from a 3rd party library/framework/component</strong> and you don't have access to its code (or it may be impractical to change it and rebuild).</p>
+<p>And then go ahead and add that interface to the list of interfaces these types implement. <strong>But often you can't do that because at least one of these types comes from a 3rd party library/framework</strong> and you don't have access to its code (or it may be impractical to change it and rebuild).</p>
 
 <p>Most likely, you end up in the frustrating situation of having to use reflection or employ dynamic typing.</p>
 
@@ -105,7 +105,7 @@
 <ol>
 <li>You have to cast the instances to a common supertype (like <code>object</code>) that's not useful for you and in the process <strong>you lose compile-time type safety</strong>.</li>
 <li>
-<strong>The call spots are ugly</strong>, in the sense that they are littered with <code>typeof</code> and <code>Invoke</code> and even more casting and boxing.</li>
+<strong>The call spots are ugly</strong>, in the sense that they are littered with <code>typeof</code>, <code>GetType()</code> and <code>Invoke</code> and possibly more casting and boxing.</li>
 <li>
 <strong>Member access using reflection is often slower</strong> than access through a statically typed expression (even if that call is a virtual call through an interface).</li>
 </ol>
@@ -120,9 +120,9 @@
 <strong>Member access using dynamic expressions is often slower</strong> than access through a statically typed expression (as above).</li>
 </ol>
 
-<p>Using this very library, you have a third way to solve this problem - so <strong>don't throw away that type-safe interface</strong> you declared earlier! Just find an object whose runtime type satisfies your interface, <strong>simply call <code>.ToContract&lt;T&gt;()</code></strong> where <code>T</code> is your interface and you're done!</p>
+<p>Using this very library, you have a third way to solve this problem - so <strong>don't throw away that type-safe interface</strong> you declared earlier! Find an object whose runtime type satisfies your interface, <strong>simply call <code>.ToContract&lt;T&gt;()</code></strong> where <code>T</code> is your interface and you're done!</p>
 
-<p>With the types declared as above, just do:</p>
+<p>With the example types declared above, this becomes:</p>
 
 <pre><code>    var values = new IValue[]
     {
@@ -132,18 +132,20 @@
     var sum = values.Sum(x =&gt; x.GetValue());
 </code></pre>
 
-<p><strong>And it works!</strong> This techinque has some important advantages:</p>
+<p><strong>And it works!</strong> </p>
+
+<p>This techinque has some important advantages:</p>
 
 <ol>
 <li>
 <strong>The syntax is clean</strong> and natural C#.</li>
 <li>
 <strong>IntelliSense doesn't go away at all</strong> and neither does type safety at the call spots.</li>
-<li>When calling through the interface, <strong>the actual methods are stubs implemented using IL</strong> - not using reflection and lookups.</li>
+<li>When calling through the interface, <strong>the actual methods are stubs implemented using IL</strong> - the interface doesn't use reflection and lookups.</li>
 <li>It's extremely easy to use.</li>
 </ol>
 
-<p>It also has disadvantages and limitations:</p>
+<p>Of course, it also has some disadvantages and limitations:</p>
 
 <ol>
 <li>The <code>ToContract&lt;T&gt;()</code> call can be expensive, because it uses reflection (to verify compatibility for each type/interface combination) and it emits IL dynamically to generate proxy types. However, this is largely mitigated by the fact that <strong>each type/interface combination is cached and existing proxies are reused</strong> if they are applicable.</li>
@@ -151,6 +153,7 @@
 <li>The runtime type of the passed object must be declared public.</li>
 <li>The interface <code>T</code> must also be public.</li>
 <li>Generic methods are not supported yet.</li>
+<li>Properties are not supported yet.</li>
 </ol>
 
 <h2>
