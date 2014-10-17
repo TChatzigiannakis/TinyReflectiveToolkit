@@ -59,19 +59,16 @@
 <pre><code>  new AssemblyLoader().LoadAllDependencies();
 </code></pre>
 
-<ul>
-<li>
 <p><strong>It exposes events</strong> to which you can subscribe and be alerted between loading dependencies - it's great for (say) creating <em>informative</em> splash screens for your application!</p>
 
-<p>var loader = new AssemblyLoader();
+<pre><code>  var loader = new AssemblyLoader();
   loader.AssemblyLoading += (obj) =&gt;
   {
       Application.Invoke((a, b) =&gt; splash.LoadingText = obj.Name);
       Task.Delay(1).Wait();
   };
-  loader.LoadAllDependencies();</p>
-</li>
-</ul>
+  loader.LoadAllDependencies();
+</code></pre>
 
 <h2>
 <a name="runtime-contracts-implementing-net-interfaces-at-runtime" class="anchor" href="#runtime-contracts-implementing-net-interfaces-at-runtime"><span class="octicon octicon-link"></span></a>Runtime Contracts: Implementing .NET interfaces at runtime</h2>
