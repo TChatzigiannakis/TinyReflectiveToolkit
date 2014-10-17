@@ -103,7 +103,7 @@ namespace TinyReflectiveToolkit
                     generator.Emit(OpCodes.Ldarg_0);
                     generator.Emit(OpCodes.Ldfld, mimicObjectField);
                     for (var i = 0; i < parameters.Count(); i++)
-                        generator.Emit(OpCodes.Ldarg_S, i);
+                        generator.Emit(OpCodes.Ldarg, i + 1);
                     generator.EmitCall(OpCodes.Callvirt, x, null);
                     generator.Emit(OpCodes.Ret);
                     return proxyMethod;

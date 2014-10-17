@@ -72,7 +72,15 @@ namespace TinyReflectiveToolkitTests
         public void ParameterizedContract()
         {
             var value = new UnrelatedType5().ToContract<IParam>();
-            value.Value(1, 2, "", 3, 4, "");
+            Assert.AreEqual(6, value.Value(1, 2, "", 1, 2, ""));
+        }
+
+        [Test]
+        public void Overloads()
+        {
+            var value = new UnrelatedType5().ToContract<ITwoMethods>();
+            value.Value();
+            Assert.AreEqual(10, value.Value(1, 2, "", 3, 4, ""));
         }
     }
     public interface IValue
@@ -126,13 +134,24 @@ namespace TinyReflectiveToolkitTests
 
     public interface IParam
     {
-        void Value(int a, int b, string c, int d, int e, string f);
+        int Value(int a, int b, string c, int d, int e, string f);
     }
 
     public class UnrelatedType5
     {
-        public void Value(int a, int b, string c, int d, int e, string f)
+        public int Value(int a, int b, string c, int d, int e, string f)
+        {
+            return a + b + d + e + c.Count() + f.Count();
+        }
+
+        public void Value()
         {            
         }
+    }
+
+    public interface ITwoMethods
+    {
+        int Value(int a, int b, string c, int d, int e, string f);
+        void Value();
     }
 }

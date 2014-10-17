@@ -12,19 +12,20 @@ namespace ManualTests
         static void Main(string[] args)
         {
             var contracts = new Contracts();
-            contracts.SimpleMethodContract();
-            contracts.FailingContract();
-            contracts.VoidContract();
+            //contracts.SimpleMethodContract();
+            //contracts.FailingContract();
+            //contracts.VoidContract();
             contracts.ParameterizedContract();
+            contracts.Overloads();
         }
 
         class ConcreteType
         {
             private IParam obj;
 
-            public void Value(int a, int b, string c, int d, int e, string f)
+            public int Value(int a, int b, string c, int d, int e, string f)
             {
-                obj.Value(a, b, c, d, e, f);
+                return obj.Value(a, b, c, d, e, f);
             }
         }
     }
