@@ -49,5 +49,17 @@ namespace TinyReflectiveToolkit
 
             return type.GetMethods().Where(x => x.IsAbstract);
         }
+
+        /// <summary>
+        /// Returns a generic method of a given type.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static IEnumerable<MethodInfo> GetGenericMethod(this Type type)
+        {
+            if (type == null) throw new ArgumentNullException("type");
+
+            throw new NotImplementedException();
+        }
     }
 }

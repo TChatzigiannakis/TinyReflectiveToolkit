@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using EnumerableExtensions;
 
 namespace TinyReflectiveToolkit
 {
@@ -60,11 +61,34 @@ namespace TinyReflectiveToolkit
             return sequence.WithAttribute<TAttribute, TMemberInfo>().Where(x => x.SelectAttribute<TAttribute>().Any(predicate));
         }
 
+        /// <summary>
+        /// Returns all elements that are not decorated with a specified attribute.
+        /// </summary>
+        /// <typeparam name="TAttribute"></typeparam>
+        /// <typeparam name="TMemberInfo"></typeparam>
+        /// <param name="sequence"></param>
+        /// <returns></returns>
+        public static IEnumerable<TMemberInfo> WithoutAttribute<TAttribute, TMemberInfo>(
+            this IEnumerable<TMemberInfo> sequence)
+            where TAttribute : Attribute
+            where TMemberInfo : MemberInfo
+        {
+            if (sequence == null) throw new ArgumentNullException("sequence");
+
+            return sequence.WithoutAttributeImpl<TAttribute, TMemberInfo>(false);
+        }
+
         private static IEnumerable<TMemberInfo> WithAttributeImpl<TAttribute, TMemberInfo>(this IEnumerable<TMemberInfo> sequence, bool inherited)
             where TAttribute : Attribute
             where TMemberInfo : MemberInfo
         {
             return sequence.Where(x => x.GetCustomAttributes(typeof (TAttribute), inherited).Any());
+        }
+        private static IEnumerable<TMemberInfo> WithoutAttributeImpl<TAttribute, TMemberInfo>(this IEnumerable<TMemberInfo> sequence, bool inherited)
+            where TAttribute : Attribute
+            where TMemberInfo : MemberInfo
+        {
+            return sequence.Except(x => x.GetCustomAttributes(typeof(TAttribute), inherited).Any());
         }
 
         /// <summary>
@@ -142,6 +166,43 @@ namespace TinyReflectiveToolkit
             where TAttribute : Attribute
         {
             return sequence.WithAttribute<TAttribute, PropertyInfo>(predicate);
+        }
+
+
+        /// <summary>
+        /// Returns all types that are not decorated with a specified attribute.
+        /// </summary>
+        /// <typeparam name="TAttribute"></typeparam>
+        /// <param name="sequence"></param>
+        /// <returns></returns>
+        public static IEnumerable<Type> WithoutAttribute<TAttribute>(this IEnumerable<Type> sequence)
+            where TAttribute : Attribute
+        {
+            return sequence.WithoutAttribute<TAttribute, Type>();
+        }
+
+        /// <summary>
+        /// Returns all methods that are not decorated with a specified attribute.
+        /// </summary>
+        /// <typeparam name="TAttribute"></typeparam>
+        /// <param name="sequence"></param>
+        /// <returns></returns>
+        public static IEnumerable<MethodInfo> WithoutAttribute<TAttribute>(this IEnumerable<MethodInfo> sequence)
+            where TAttribute : Attribute
+        {
+            return sequence.WithoutAttribute<TAttribute, MethodInfo>();
+        }
+
+        /// <summary>
+        /// Retyrns all properties that are not decorated with a specified attribute.
+        /// </summary>
+        /// <typeparam name="TAttribute"></typeparam>
+        /// <param name="sequence"></param>
+        /// <returns></returns>
+        public static IEnumerable<PropertyInfo> WithoutAttribute<TAttribute>(this IEnumerable<PropertyInfo> sequence)
+            where TAttribute : Attribute
+        {
+            return sequence.WithoutAttribute<TAttribute, PropertyInfo>();
         }
     }
 }
