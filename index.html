@@ -148,7 +148,7 @@
 <p>Of course, it also has some disadvantages and limitations:</p>
 
 <ol>
-<li>The <code>ToContract&lt;T&gt;()</code> call can be expensive, because it uses reflection (to verify compatibility for each type/interface combination) and it emits IL dynamically to generate proxy types. However, this is largely mitigated by the fact that <strong>each type/interface combination is cached and existing proxies are reused</strong> if they are applicable.</li>
+<li>The <code>ToContract&lt;T&gt;()</code> call can be expensive, because it uses reflection (to verify compatibility for each type/interface combination) and it emits IL dynamically to generate proxy types. However, this is largely mitigated by the fact that <strong>each type/interface combination is cached and existing proxy types are reused</strong> if they are applicable.</li>
 <li>The <code>ToContract&lt;T&gt;()</code> call can only verify compatibility at runtime, not compile time.</li>
 <li>The runtime type of the passed object must be declared public.</li>
 <li>The interface <code>T</code> must also be public.</li>
