@@ -1,37 +1,37 @@
 <!DOCTYPE html>
 <html>
+
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <title>TinyReflectiveToolkit by TChatzigiannakis</title>
+    <meta name="description" content="TinyReflectiveToolkit : A small library containing utilities related to reflection under the CLR.">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>TinyReflectiveToolkit</title>
   </head>
 
   <body>
-    <div id="container">
-      <div class="inner">
 
-        <header>
-          <h1>TinyReflectiveToolkit</h1>
-          <h2>A small library containing utilities related to reflection under the CLR.</h2>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/TChatzigiannakis/TinyReflectiveToolkit">View on GitHub</a>
+
+          <h1 id="project_title">TinyReflectiveToolkit</h1>
+          <h2 id="project_tagline">A small library containing utilities related to reflection under the CLR.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/TChatzigiannakis/TinyReflectiveToolkit/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/TChatzigiannakis/TinyReflectiveToolkit/tarball/master">Download this project as a tar.gz file</a>
+            </section>
         </header>
+    </div>
 
-        <section id="downloads" class="clearfix">
-          <a href="https://github.com/TChatzigiannakis/TinyReflectiveToolkit/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
-          <a href="https://github.com/TChatzigiannakis/TinyReflectiveToolkit/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
-          <a href="https://github.com/TChatzigiannakis/TinyReflectiveToolkit" id="view-on-github" class="button"><span>View on GitHub</span></a>
-        </section>
-
-        <hr>
-
-        <section id="main_content">
-          <h1>
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
 <a name="whats-this" class="anchor" href="#whats-this"><span class="octicon octicon-link"></span></a>What's this?</h1>
 
 <p>It's a small library that offers some cool reflection-related facilities.</p>
@@ -41,13 +41,13 @@
 
 <p>By default, your runtime may be loading your application's dependencies lazily - that is, just before the first time you attempt to use them. This is good for applications that value short startup time and can handle small, distributed performance hits along the way.</p>
 
-<p>But there are scenarios in which eager loading and thus a longer startup time is preferred over incremental but possibly unpredictable lazy loading of dependencies. Games are an example of an application that can fall into this category.</p>
+<p>But there are scenarios in which eager loading and thus a longer startup time is preferred over incremental but possibly unpredictable lazy loading of dependencies. (A game is an example of an application that might fall into this category.)</p>
 
-<p>The <code>AssemblyLoader</code> class gives you the opportunity to load pending dependencies (and their dependencies, in turn) at any specified point.</p>
+<p>The <code>AssemblyLoader</code> class gives you the opportunity to <strong>load pending dependencies</strong> (and their dependencies, in turn) <strong>at any specified point.</strong></p>
 
 <ul>
-<li>It works without requiring any configuration from you. </li>
-<li>It offers events to which you can subscribe and be alerted between loading dependencies - allowing you to easily create informative splash screens for your GUI, for example.</li>
+<li>It works <strong>without requiring any configuration</strong> from you. </li>
+<li>It <strong>offers events</strong> to which you can subscribe and be alerted between loading dependencies - allowing you to easily create informative splash screens for your GUI, for example.</li>
 </ul>
 
 <h2>
@@ -139,15 +139,18 @@ var sum = values.Sum(x =&gt; x.GetValue());
 </code></pre>
 
 <p>...and more stuff will be added.</p>
-        </section>
-
-        <footer>
-          TinyReflectiveToolkit is maintained by <a href="https://github.com/TChatzigiannakis">TChatzigiannakis</a><br>
-          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
-        </footer>
-
-        
-      </div>
+      </section>
     </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">TinyReflectiveToolkit maintained by <a href="https://github.com/TChatzigiannakis">TChatzigiannakis</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
   </body>
 </html>
