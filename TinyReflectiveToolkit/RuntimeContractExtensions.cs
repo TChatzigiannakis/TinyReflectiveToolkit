@@ -38,14 +38,15 @@ namespace TinyReflectiveToolkit
                 .DefineDynamicAssembly(new AssemblyName("TinyReflectiveToolkit-Dynamic"),
                     AssemblyBuilderAccess.RunAndSave);
 
+        private const string DynamicAssemblyName = "Dynamic.dll";
+        private const string MimicObjectFieldName = "InternalObject";
+        private const string ProxyNamespace = "TinyReflectiveToolkit.Contracts";
+
         private static readonly ModuleBuilder ModuleBuilder =
-            DynamicAssembly.DefineDynamicModule("Contracts", "Dynamic.dll");
+            DynamicAssembly.DefineDynamicModule("Contracts", DynamicAssemblyName);
 
         private static readonly Dictionary<Tuple<Type, Type>, Type> Dictionary = 
             new Dictionary<Tuple<Type, Type>, Type>();
-
-        private const string MimicObjectFieldName = "_internalObject";
-        private const string ProxyNamespace = "TinyReflectiveToolkit.Contracts";
 
         /// <summary>
         /// Returns a runtime-generated proxy that implements a specified interface and forwards method calls to the given object - even if the relationship between the object's type and the interface wasn't declared at build time.
@@ -59,7 +60,7 @@ namespace TinyReflectiveToolkit
             return CreateContractProxyFromObject<TContract>(obj);
         }
 
-        private static TContract CreateContractProxyFromObject<TContract>(object mimicObject)
+        private static TContract CreateContractProxyFromObject<TContract>(object mimicObject, bool saveAssembly = false)
             where TContract : class
         {
             var baseType = typeof(TContract);
@@ -77,7 +78,8 @@ namespace TinyReflectiveToolkit
             else
             {
                 var guid = Guid.NewGuid().ToString();
-                var proxyName = ProxyNamespace + "." + baseType.Name + "_" + guid.Replace("-", "");
+                var sanitizedGuid = guid.Replace("-", "");
+                var proxyName = ProxyNamespace + "." + baseType.Name + "_" + sanitizedGuid;
 
                 var typeBuilder = ModuleBuilder.DefineType(proxyName, TypeAttributes.Public, null, new[] {baseType});
 
@@ -96,12 +98,12 @@ namespace TinyReflectiveToolkit
                     var name = x.Name;
                     var parameters = x.GetParameters().Select(n => n.ParameterType).ToArray();
                     var retType = x.ReturnType;
-                    var proxyMethod = typeBuilder.DefineMethod(name,
-                        MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.NewSlot |
-                        MethodAttributes.Final, retType, parameters);
+                    var proxyMethod = typeBuilder.DefineMethod(name, MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.NewSlot |MethodAttributes.Final, retType, parameters);
                     var generator = proxyMethod.GetILGenerator();
                     generator.Emit(OpCodes.Ldarg_0);
                     generator.Emit(OpCodes.Ldfld, mimicObjectField);
+                    for (var i = 0; i < parameters.Count(); i++)
+                        generator.Emit(OpCodes.Ldarg_S, i);
                     generator.EmitCall(OpCodes.Callvirt, x, null);
                     generator.Emit(OpCodes.Ret);
                     return proxyMethod;
@@ -109,6 +111,9 @@ namespace TinyReflectiveToolkit
 
                 var proxyType = typeBuilder.CreateType();
                 Dictionary.Add(combination, proxyType);
+
+                if (saveAssembly)
+                    DynamicAssembly.Save(DynamicAssemblyName);
 
                 return mimicObject.GenerateProxy<TContract>(combination);
             }

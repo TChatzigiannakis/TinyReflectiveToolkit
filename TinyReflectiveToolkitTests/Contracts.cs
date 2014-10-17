@@ -27,7 +27,7 @@ using TinyReflectiveToolkit;
 namespace TinyReflectiveToolkitTests
 {
     [TestFixture]
-    internal class Contracts
+    public class Contracts
     {
         [Test]
         public void SimpleMethodContract()
@@ -37,15 +37,44 @@ namespace TinyReflectiveToolkitTests
                 new UnrelatedType1().ToContract<IValue>(),
                 new UnrelatedType2().ToContract<IValue>(),
                 new UnrelatedType3().ToContract<IValue>(),
-                new UnrelatedType1().ToContract<IValue>()
+                new UnrelatedType1().ToContract<IValue>(),
+                new Unrelated<int>().ToContract<IValue>(),
+                new Unrelated<bool>().ToContract<IValue>(),
+                new Unrelated<int>().ToContract<IValue>()
             };
 
             var sum = thingsWithValue.Sum(x => x.Value());
 
-            Assert.AreEqual(7, sum);
+            Assert.AreEqual(34, sum);
+        }
+
+        [Test]
+        public void FailingContract()
+        {
+            try
+            {
+                var value = new UnrelatedType4().ToContract<IValue>();
+                Assert.Fail();
+            }
+            catch (TypeLoadException)
+            {
+            }
+        }
+
+        [Test]
+        public void VoidContract()
+        {
+            var value = new UnrelatedType4().ToContract<IVoid>();
+            value.Value();
+        }
+
+        [Test]
+        public void ParameterizedContract()
+        {
+            var value = new UnrelatedType5().ToContract<IParam>();
+            value.Value(1, 2, "", 3, 4, "");
         }
     }
-
     public interface IValue
     {
         int Value();
@@ -72,6 +101,38 @@ namespace TinyReflectiveToolkitTests
         public int Value()
         {
             return 3;
+        }
+    }
+
+    public class Unrelated<T>
+    {
+        public int Value()
+        {
+            return 9;
+        }
+    }
+
+    public interface IVoid
+    {
+        void Value();
+    }
+
+    public class UnrelatedType4
+    {
+        public void Value()
+        {
+        }
+    }
+
+    public interface IParam
+    {
+        void Value(int a, int b, string c, int d, int e, string f);
+    }
+
+    public class UnrelatedType5
+    {
+        public void Value(int a, int b, string c, int d, int e, string f)
+        {            
         }
     }
 }
