@@ -32,38 +32,113 @@
 
         <section id="main_content">
           <h1>
-<a name="readme" class="anchor" href="#readme"><span class="octicon octicon-link"></span></a>README</h1>
+<a name="whats-this" class="anchor" href="#whats-this"><span class="octicon octicon-link"></span></a>What's this?</h1>
 
-<h3>
-<a name="what-is-this-repository-for" class="anchor" href="#what-is-this-repository-for"><span class="octicon octicon-link"></span></a>What is this repository for?</h3>
+<p>It's a small library that offers some cool reflection-related facilities.</p>
 
-<ul>
-<li>Tiny Reflective Toolkit - a small library containing utilities related to reflection under the CLR.</li>
-<li>This is an extremely early version.</li>
-</ul><h3>
-<a name="how-do-i-get-set-up" class="anchor" href="#how-do-i-get-set-up"><span class="octicon octicon-link"></span></a>How do I get set up?</h3>
+<h2>
+<a name="assemblyloader" class="anchor" href="#assemblyloader"><span class="octicon octicon-link"></span></a>AssemblyLoader</h2>
 
-<ul>
-<li>Open the solution file using Visual Studio or Xamarin Studio.</li>
-<li>Select Build Solution.</li>
-</ul><h3>
-<a name="contribution-guidelines" class="anchor" href="#contribution-guidelines"><span class="octicon octicon-link"></span></a>Contribution guidelines</h3>
+<p>By default, your runtime may be loading your application's dependencies lazily - that is, just before the first time you attempt to use them. This is good for applications that value short startup time and can handle small, distributed performance hits along the way.</p>
+
+<p>But there are scenarios in which eager loading and thus a longer startup time is preferred over incremental but possibly unpredictable lazy loading of dependencies. Games are an example of an application that can fall into this category.</p>
+
+<p>The <code>AssemblyLoader</code> class gives you the opportunity to load pending dependencies (and their dependencies, in turn) at any specified point.</p>
 
 <ul>
-<li>This repository is intended to contain only contributions from the project's author. Even though you are welcome to fork it, any pull requests will be ignored.</li>
-</ul><h3>
-<a name="who-do-i-talk-to" class="anchor" href="#who-do-i-talk-to"><span class="octicon octicon-link"></span></a>Who do I talk to?</h3>
-
-<ul>
-<li>TChatzigiannakis</li>
-</ul><h3>
-<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h3>
-
-<ul>
-<li>Copyright (C) 2014  Theodoros Chatzigiannakis</li>
-<li>Distributed under the GNU GPLv3. For more information, see LICENSE</li>
-<li>If you would like to receive this software under a different license, feel free to contact me.</li>
+<li>It works without requiring any configuration from you. </li>
+<li>It offers events to which you can subscribe and be alerted between loading dependencies - allowing you to easily create informative splash screens for your GUI, for example.</li>
 </ul>
+
+<h2>
+<a name="runtime-contracts" class="anchor" href="#runtime-contracts"><span class="octicon octicon-link"></span></a>Runtime Contracts</h2>
+
+<p>When working with C# (or any other language with static and nominal typing), you may occasionally end up in a situation where you have two or more types that both expose one or more compatible methods:</p>
+
+<pre><code>public class UnrelatedType1 {
+    public int GetValue() { return 1; }
+}
+
+public class UnrelatedType2 {
+    public int GetValue() { return 2; }
+}
+</code></pre>
+
+<p>You want to put instances of these types in a common variable or collection and call <code>GetValue()</code> on them, but you can't because they don't have a declared useful relationship that would allow substitution. So, you write an interface that you know they both implement:</p>
+
+<pre><code>public interface IValue {
+    int GetValue();
+}
+</code></pre>
+
+<p>And you attempt to declare that they implement this interface, only to find out that you can't - because at least one of these types comes from a 3rd party library/framework/component and you don't have access to its code (at least, not directly). You end up in the frustrating situation of having to use reflection or employ dynamic typing.</p>
+
+<p>Reflection has disadvantages:</p>
+
+<ol>
+<li>You have to cast the instances to a common supertype (like <code>object</code>) that's not useful for you and in the process <strong>you lose compile-time type safety</strong>.</li>
+<li>
+<strong>The call spots are ugly</strong>, in the sense that they are littered with <code>typeof</code> and <code>Invoke</code> and even more casting and boxing.</li>
+<li>
+<strong>Member access using reflection is often slower</strong> than access through a statically typed expression (even if that call is a virtual call through an interface).</li>
+</ol>
+
+<p>Dynamic typing has disadvantages:</p>
+
+<ol>
+<li>You have to use a dynamic variable and <strong>lose compile-time type safety</strong>.</li>
+<li>When you're using a dynamic expression, <a href="https://www.youtube.com/watch?v=WWaLxFIVX1s"><strong>you lose IntelliSense!</strong></a>
+</li>
+<li>
+<strong>Member access using dynamic expressions is often slower</strong> than access through a statically typed expression (as above).</li>
+</ol>
+
+<p>Using this very library, you have a third way to solve this problem - so don't throw away that type-safe interface you declared earlier! Just find an object whose runtime type satisfies your interface, call <code>.ToContract&lt;T&gt;()</code> where <code>T</code> is your interface and you're done!</p>
+
+<pre><code>var values = new IValue[] {
+   new UnrelatedType1().ToContract&lt;IValue&gt;(),
+   new UnrelatedType2().ToContract&lt;IValue&gt;() 
+};
+var sum = values.Sum(x =&gt; x.GetValue());
+</code></pre>
+
+<p>This works and it has some important advantages:</p>
+
+<ol>
+<li>
+<strong>The syntax is clean</strong> and natural C#.</li>
+<li>
+<strong>IntelliSense doesn't go away at all</strong> and neither does type safety at the call spots.</li>
+<li>When calling through the interface, <strong>the actual methods are stubs implemented using IL</strong> - not using reflection and lookups.</li>
+</ol>
+
+<p>It also has disadvantages and limitations:</p>
+
+<ol>
+<li>The <code>ToContract&lt;T&gt;()</code> call can be expensive, because it uses reflection (to verify compatibility for each type/interface combination) and it emits IL dynamically to generate proxy types. However, this is largely mitigated by the fact that <strong>each type/interface combination is cached and existing proxies are reused</strong> if they are applicable.</li>
+<li>The <code>ToContract&lt;T&gt;()</code> call can only verify compatibility at runtime, not compile time.</li>
+<li>The runtime type of the passed object must be declared public.</li>
+<li>The interface <code>T</code> must also be public.</li>
+<li>Generic methods are not supported yet.</li>
+</ol>
+
+<h2>
+<a name="extension-methods-for-reflection-types-and-collections" class="anchor" href="#extension-methods-for-reflection-types-and-collections"><span class="octicon octicon-link"></span></a>Extension methods for reflection types and collections</h2>
+
+<p>Some built-in reflection-related methods aren't as easy to use as they could be. Some slightly more humane extension methods are offered, to make life a little bit easier:</p>
+
+<p>Find all things with a specified attribute: </p>
+
+<pre><code>var tests = allTypes.WithAttribute&lt;TestFixtureAttribute&gt;();
+</code></pre>
+
+<p>Effortlessly apply a filter <em>to that attribute</em>, while still returning the members you want: </p>
+
+<pre><code>var thoseTests = allTypes
+    .WithAttribute&lt;TestFixtureAttribute&gt;(x =&gt; x.Description == "That test");
+</code></pre>
+
+<p>...and more stuff will be added.</p>
         </section>
 
         <footer>
