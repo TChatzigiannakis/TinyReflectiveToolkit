@@ -50,39 +50,52 @@
 
 <p>By default, your runtime may be loading your application's dependencies lazily - that is, just before the first time you attempt to use them. This is good for applications that value short startup time and can handle small, distributed performance hits along the way.</p>
 
-<p>But there are scenarios in which eager loading and thus a longer startup time is preferred over incremental but possibly unpredictable lazy loading of dependencies. (A game is an example of an application that might fall into this category.)</p>
+<p>But there are scenarios in which eager loading (even with a longer startup time) is <em>preferred</em> over incremental but possibly unpredictable lazy loading of dependencies. (A game is an example of an application that might fall into this category.)</p>
 
-<p>The <strong><code>AssemblyLoader</code></strong> class gives you the opportunity to <strong>eagerly load pending dependencies</strong> (and their dependencies, in turn) <strong>at any specified point.</strong></p>
+<p><strong>The <code>AssemblyLoader</code> class gives you the opportunity to eagerly load pending dependencies</strong> (and their dependencies, in turn) at any specified point.</p>
 
 <ul>
-<li>It works <strong>without requiring any configuration</strong> from you. </li>
-<li>It <strong>offers events</strong> to which you can subscribe and be alerted between loading dependencies - allowing you to easily create informative splash screens for your GUI, for example.</li>
+<li>
+<strong>It works without requiring any configuration</strong> from you, but some things can be configured (including ordering logic for immediate dependencies).</li>
+<li>
+<strong>It exposes events</strong> to which you can subscribe and be alerted between loading dependencies - it's great for (say) creating <em>informative</em> splash screens for your app!</li>
 </ul>
 
 <h2>
-<a name="runtime-contracts" class="anchor" href="#runtime-contracts"><span class="octicon octicon-link"></span></a>Runtime Contracts</h2>
+<a name="runtime-contracts-implementing-net-interfaces-at-runtime" class="anchor" href="#runtime-contracts-implementing-net-interfaces-at-runtime"><span class="octicon octicon-link"></span></a>Runtime Contracts: Implementing .NET interfaces at runtime</h2>
 
-<p>When working with C# (or any other language with static and nominal typing), you may occasionally end up in a situation where you have two or more types that both expose one or more compatible methods:</p>
+<p>When working with C# (or any other language with static and nominal typing), you may occasionally end up in a situation where <strong>you have two or more types that both expose one or more compatible methods:</strong></p>
 
-<pre><code>public class UnrelatedType1 {
-    public int GetValue() { return 1; }
-}
+<pre><code>  public class UnrelatedType1 {
+      public int GetValue() { return 1; }
+  }
 
-public class UnrelatedType2 {
-    public int GetValue() { return 2; }
-}
+  public class UnrelatedType2 {
+      public int GetValue() { return 2; }
+  }
 </code></pre>
 
-<p>You want to put instances of these types in a common variable or collection and call <code>GetValue()</code> on them, but you can't because they don't have a declared useful relationship that would allow substitution. So, you write an interface that you know they both implement:</p>
+<p><strong>You want to put instances of these types in a common variable</strong> or collection and call <code>GetValue()</code> on them, <strong>but you can't</strong>, because they don't have a declared relationship that would allow the substitution you want:</p>
 
-<pre><code>public interface IValue {
-    int GetValue();
-}
+<pre><code>  var values = new IValue[] {
+     new UnrelatedType1(),          // this fails
+     new UnrelatedType2()
+  };
+  var sum = values.Sum(x =&gt; x.GetValue());
 </code></pre>
 
-<p>And you attempt to declare that they implement this interface, only to find out that you can't - because at least one of these types comes from a 3rd party library/framework/component and you don't have access to its code (at least, not directly). You end up in the frustrating situation of having to use reflection or employ dynamic typing.</p>
+<p>Usually, the solution is to <strong>define an interface that you know they already implement in practice:</strong></p>
 
-<p>Reflection has disadvantages:</p>
+<pre><code>  public interface IValue {
+      int GetValue();
+  }
+</code></pre>
+
+<p>And then go ahead and add that interface to the list of interfaces these types implement. <strong>But often you can't do that because at least one of these types comes from a 3rd party library/framework/component</strong> and you don't have access to its code (or it may be impractical to change it and rebuild).</p>
+
+<p>Most likely, you end up in the frustrating situation of having to use reflection or employ dynamic typing.</p>
+
+<p><strong>Reflection</strong> has disadvantages:</p>
 
 <ol>
 <li>You have to cast the instances to a common supertype (like <code>object</code>) that's not useful for you and in the process <strong>you lose compile-time type safety</strong>.</li>
@@ -92,7 +105,7 @@ public class UnrelatedType2 {
 <strong>Member access using reflection is often slower</strong> than access through a statically typed expression (even if that call is a virtual call through an interface).</li>
 </ol>
 
-<p>Dynamic typing has disadvantages:</p>
+<p><strong>Dynamic typing</strong> has disadvantages:</p>
 
 <ol>
 <li>You have to use a dynamic variable and <strong>lose compile-time type safety</strong>.</li>
@@ -102,16 +115,18 @@ public class UnrelatedType2 {
 <strong>Member access using dynamic expressions is often slower</strong> than access through a statically typed expression (as above).</li>
 </ol>
 
-<p>Using this very library, you have a third way to solve this problem - so don't throw away that type-safe interface you declared earlier! Just find an object whose runtime type satisfies your interface, call <code>.ToContract&lt;T&gt;()</code> where <code>T</code> is your interface and you're done!</p>
+<p>Using this very library, you have a third way to solve this problem - so <strong>don't throw away that type-safe interface</strong> you declared earlier! Just find an object whose runtime type satisfies your interface, <strong>simply call <code>.ToContract&lt;T&gt;()</code></strong> where <code>T</code> is your interface and you're done!</p>
 
-<pre><code>var values = new IValue[] {
-   new UnrelatedType1().ToContract&lt;IValue&gt;(),
-   new UnrelatedType2().ToContract&lt;IValue&gt;() 
-};
-var sum = values.Sum(x =&gt; x.GetValue());
+<p>With the types declared as above, just do:</p>
+
+<pre><code>  var values = new IValue[] {
+     new UnrelatedType1().ToContract&lt;IValue&gt;(),
+     new UnrelatedType2().ToContract&lt;IValue&gt;() 
+  };
+  var sum = values.Sum(x =&gt; x.GetValue());
 </code></pre>
 
-<p>This works and it has some important advantages:</p>
+<p><strong>And it works!</strong> This techinque has some important advantages:</p>
 
 <ol>
 <li>
@@ -119,6 +134,7 @@ var sum = values.Sum(x =&gt; x.GetValue());
 <li>
 <strong>IntelliSense doesn't go away at all</strong> and neither does type safety at the call spots.</li>
 <li>When calling through the interface, <strong>the actual methods are stubs implemented using IL</strong> - not using reflection and lookups.</li>
+<li>It's extremely easy to use.</li>
 </ol>
 
 <p>It also has disadvantages and limitations:</p>
@@ -138,13 +154,13 @@ var sum = values.Sum(x =&gt; x.GetValue());
 
 <p>Find all things with a specified attribute: </p>
 
-<pre><code>var tests = allTypes.WithAttribute&lt;TestFixtureAttribute&gt;();
+<pre><code>  var tests = allTypes.WithAttribute&lt;TestFixtureAttribute&gt;();
 </code></pre>
 
 <p>Effortlessly apply a filter <em>to that attribute</em>, while still returning the members you want: </p>
 
-<pre><code>var thoseTests = allTypes
-    .WithAttribute&lt;TestFixtureAttribute&gt;(x =&gt; x.Description == "That test");
+<pre><code>  var thoseTests = allTypes
+      .WithAttribute&lt;TestFixtureAttribute&gt;(x =&gt; x.Description == "That test");
 </code></pre>
 
 <p>...and more stuff will be added.</p>
