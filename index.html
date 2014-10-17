@@ -44,9 +44,7 @@
 
 <p>But there are scenarios in which eager loading (even with a longer startup time) is <em>preferred</em> over incremental but possibly unpredictable lazy loading of dependencies. (A game is an example of an application that might fall into this category.)</p>
 
-<p><strong>The <code>AssemblyLoader</code> class gives you the opportunity to eagerly load pending dependencies</strong> (and their dependencies, in turn) at any specified point.</p>
-
-<p><strong>It works out of the box:</strong></p>
+<p><strong>The <code>AssemblyLoader</code> class gives you the opportunity to eagerly load pending dependencies</strong> (and their dependencies, in turn) at any specified point. It's easy to use:</p>
 
 <pre><code>    new AssemblyLoader().LoadAllDependencies();
 </code></pre>
