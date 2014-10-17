@@ -54,11 +54,23 @@
 
 <p><strong>The <code>AssemblyLoader</code> class gives you the opportunity to eagerly load pending dependencies</strong> (and their dependencies, in turn) at any specified point.</p>
 
+<p><strong>It works out of the box:</strong></p>
+
+<pre><code>  new AssemblyLoader().LoadAllDependencies();
+</code></pre>
+
 <ul>
 <li>
-<strong>It works without requiring any configuration</strong> from you, but some things can be configured (including ordering logic for immediate dependencies).</li>
-<li>
-<strong>It exposes events</strong> to which you can subscribe and be alerted between loading dependencies - it's great for (say) creating <em>informative</em> splash screens for your app!</li>
+<p><strong>It exposes events</strong> to which you can subscribe and be alerted between loading dependencies - it's great for (say) creating <em>informative</em> splash screens for your application!</p>
+
+<p>var loader = new AssemblyLoader();
+  loader.AssemblyLoading += (obj) =&gt;
+  {
+      Application.Invoke((a, b) =&gt; splash.LoadingText = obj.Name);
+      Task.Delay(1).Wait();
+  };
+  loader.LoadAllDependencies();</p>
+</li>
 </ul>
 
 <h2>
