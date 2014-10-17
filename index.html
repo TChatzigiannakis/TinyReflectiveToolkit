@@ -75,18 +75,21 @@
 
 <p>When working with C# (or any other language with static and nominal typing), you may occasionally end up in a situation where <strong>you have two or more types that both expose one or more compatible methods:</strong></p>
 
-<pre><code>    public class UnrelatedType1 {
+<pre><code>    public class UnrelatedType1 
+    {
         public int GetValue() { return 1; }
     }
 
-    public class UnrelatedType2 {
+    public class UnrelatedType2
+    {
         public int GetValue() { return 2; }
     }
 </code></pre>
 
 <p><strong>You want to put instances of these types in a common variable</strong> or collection and call <code>GetValue()</code> on them, <strong>but you can't</strong>, because they don't have a declared relationship that would allow the substitution you want:</p>
 
-<pre><code>    var values = new IValue[] {
+<pre><code>    var values = new IValue[] 
+    {
        new UnrelatedType1(),          // this fails
        new UnrelatedType2()
     };
@@ -95,7 +98,8 @@
 
 <p>Usually, the solution is to <strong>define an interface that you know they already implement in practice:</strong></p>
 
-<pre><code>    public interface IValue {
+<pre><code>    public interface IValue 
+    {
         int GetValue();
     }
 </code></pre>
@@ -128,7 +132,8 @@
 
 <p>With the types declared as above, just do:</p>
 
-<pre><code>    var values = new IValue[] {
+<pre><code>    var values = new IValue[]
+    {
        new UnrelatedType1().ToContract&lt;IValue&gt;(),
        new UnrelatedType2().ToContract&lt;IValue&gt;() 
     };
