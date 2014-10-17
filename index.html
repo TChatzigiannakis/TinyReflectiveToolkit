@@ -173,8 +173,8 @@
 
 <p>Effortlessly apply a filter <em>to that attribute</em>, while still returning the members you want: </p>
 
-<pre><code>    var thoseTests = allTypes
-        .WithAttribute&lt;TestFixtureAttribute&gt;(x =&gt; x.Description == "That test");
+<pre><code>    var thoseTests = allMethods
+        .WithAttribute&lt;TestAttribute&gt;(x =&gt; x.Description == "That test");
 </code></pre>
 
 <p>...and more stuff will be added.</p>
