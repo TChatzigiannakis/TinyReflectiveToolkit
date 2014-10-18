@@ -102,7 +102,7 @@ namespace TinyReflectiveToolkit
                 var parameters = x.GetParameters().Select(n => n.ParameterType).ToArray();
                 return actualObjectType.GetMethod(name, parameters);
             }).ToList();
-
+            
             // Find implementations for operators.
             var mimicObjectOperators = actualObjectType.GetMethods()
                 .Where(m => m.IsStatic)
@@ -126,14 +126,14 @@ namespace TinyReflectiveToolkit
             }).ToList();
 
             // Implement regular methods.
+            const MethodAttributes proxyMethodAttributes = MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.NewSlot |
+                                                           MethodAttributes.Final; 
             var proxyImplementations = actualMethodsForThisObject.Select(x =>
             {
                 var name = x.Name;
                 var parameters = x.GetParameters().Select(n => n.ParameterType).ToArray();
                 var retType = x.ReturnType;
-                var proxyMethod = proxyBuilder.DefineMethod(name,
-                    MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.NewSlot | MethodAttributes.Final, 
-                    retType, parameters);
+                var proxyMethod = proxyBuilder.DefineMethod(name, proxyMethodAttributes, retType, parameters);
                 var generator = proxyMethod.GetILGenerator();
                 generator.Emit(OpCodes.Ldarg_0);
                 generator.Emit(OpCodes.Ldfld, fieldWithActualObject);
@@ -144,14 +144,13 @@ namespace TinyReflectiveToolkit
                 return proxyMethod;
             }).ToList();
 
+
             // Implement operators.
             var explicitConversionsInProxy = actualExplicitConversionsForThisObject.Select(x =>
             {
                 var name = x.Name;
                 var retType = x.CastFunction.ReturnType;
-                var proxyMethod = proxyBuilder.DefineMethod(name,
-                    MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.NewSlot | MethodAttributes.Final, 
-                    retType, new Type[0]);
+                var proxyMethod = proxyBuilder.DefineMethod(name, proxyMethodAttributes, retType, new Type[0]);
                 var generator = proxyMethod.GetILGenerator();
                 generator.Emit(OpCodes.Ldarg_0);
                 generator.Emit(OpCodes.Ldfld, fieldWithActualObject);
@@ -163,9 +162,7 @@ namespace TinyReflectiveToolkit
             {
                 var name = x.Name;
                 var retType = x.CastFunction.ReturnType;
-                var proxyMethod = proxyBuilder.DefineMethod(name,
-                    MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.NewSlot | MethodAttributes.Final,
-                    retType, new Type[0]);
+                var proxyMethod = proxyBuilder.DefineMethod(name, proxyMethodAttributes, retType, new Type[0]);
                 var generator = proxyMethod.GetILGenerator();
                 generator.Emit(OpCodes.Ldarg_0);
                 generator.Emit(OpCodes.Ldfld, fieldWithActualObject);
@@ -178,7 +175,7 @@ namespace TinyReflectiveToolkit
             var proxyType = proxyBuilder.CreateType();
             ContractToProxyDictionary.Add(typeContractCombination, proxyType);
 
-            // Save dynamic assembly - enable ONLY when testing, to examine results in an IL viewer.
+            // Save dynamic assembly - enable ONLY when testing, to examine results in an IL viewer. Unit tests will fail with this.
             if (saveAssemblyForDebuggingPurposes)
                 DynamicAssembly.Save(DynamicAssemblyName);
 

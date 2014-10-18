@@ -97,6 +97,28 @@ namespace TinyReflectiveToolkitTests
             Assert.AreEqual(2.5f, value.ToFloat());
         }
 
+        [Test]
+        public void GetProperties()
+        {
+            var obj = new UnrelatedType6().ToContract<IGet>();
+            Assert.AreEqual(1, obj.OnlyGet);
+        }
+
+        [Test]
+        public void SetProperties()
+        {
+            var obj = new UnrelatedType6().ToContract<ISet>();
+            obj.OnlySet = 5;
+        }
+
+        [Test]
+        public void GetSetProperties()
+        {
+            var obj = new UnrelatedType6().ToContract<IGetSet>();
+            obj.GetSet = 10;
+            Assert.AreEqual(10, obj.GetSet);
+        }
+
     }
     public interface IValue
     {
@@ -190,5 +212,27 @@ namespace TinyReflectiveToolkitTests
     {
         [ImplicitConversion]
         float ToFloat();
+    }
+
+    public class UnrelatedType6
+    {
+        public int OnlyGet { get { return 1; } }
+        public int OnlySet { set { } }
+        public int GetSet { get; set; }
+    }
+
+    public interface IGet
+    {
+        int OnlyGet { get; }
+    }
+
+    public interface ISet
+    {
+        int OnlySet { set; }
+    }
+
+    public interface IGetSet
+    {
+        int GetSet { get; set; }
     }
 }
