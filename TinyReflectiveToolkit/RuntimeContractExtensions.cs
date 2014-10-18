@@ -39,13 +39,13 @@ namespace TinyReflectiveToolkit
                     AssemblyBuilderAccess.RunAndSave);
 
         private const string DynamicAssemblyName = "Dynamic.dll";
-        private const string MimicObjectFieldName = "InternalObject";
+        private const string ActualObjectFieldName = "InternalObject";
         private const string ProxyNamespace = "TinyReflectiveToolkit.Contracts";
 
         private static readonly ModuleBuilder ModuleBuilder =
             DynamicAssembly.DefineDynamicModule("Contracts", DynamicAssemblyName);
 
-        private static readonly Dictionary<Tuple<Type, Type>, Type> Dictionary = 
+        private static readonly Dictionary<Tuple<Type, Type>, Type> ContractToProxyDictionary = 
             new Dictionary<Tuple<Type, Type>, Type>();
 
         /// <summary>
@@ -60,70 +60,137 @@ namespace TinyReflectiveToolkit
             return CreateContractProxyFromObject<TContract>(obj);
         }
 
-        private static TContract CreateContractProxyFromObject<TContract>(object mimicObject, bool saveAssembly = false)
+        private static TContract CreateContractProxyFromObject<TContract>(object actualObject, bool saveAssemblyForDebuggingPurposes = false)
             where TContract : class
         {
-            var baseType = typeof(TContract);
+            // Check arguments.
+            var contract = typeof (TContract);
+            if (!contract.IsInterface) throw new NotSupportedException("TContract must be an interface type.");
+            if (!contract.IsPublic) throw new NotSupportedException(contract.Name + " must be public.");
 
-            if (!baseType.IsInterface) throw new NotSupportedException("TContract must be an interface type.");
-            if (!baseType.IsPublic) throw new NotSupportedException(baseType.Name + " must be public.");
+            var actualObjectType = actualObject.GetType();
+            if (!actualObjectType.IsPublic) throw new NotSupportedException(actualObjectType.Name + " must be public.");
+
+            // Reuse an existing proxy type if possible.
+            var typeContractCombination = new Tuple<Type, Type>(actualObjectType, contract);
+            if (ContractToProxyDictionary.ContainsKey(typeContractCombination))
+                return actualObject.GenerateProxy<TContract>(typeContractCombination);
             
-            var mimicType = mimicObject.GetType();
+            // Start building a new proxy type.
+            var guid = Guid.NewGuid().ToString();
+            var sanitizedGuid = guid.Replace("-", "");
+            var proxyName = ProxyNamespace + "." + contract.Name + "_" + sanitizedGuid;
+            var proxyBuilder = ModuleBuilder.DefineType(proxyName, TypeAttributes.Public, null, new[] {contract});
+            var fieldWithActualObject = proxyBuilder.DefineField(ActualObjectFieldName, actualObjectType, FieldAttributes.Public);
 
-            if (!mimicType.IsPublic) throw new NotSupportedException(mimicType.Name + " must be public.");
+            // Read contract.
+            var methodsToImplement = contract.GetMethods()
+                .WithoutAttribute<ExplicitConversionAttribute>()
+                .WithoutAttribute<ImplicitConversionAttribute>()
+                .ToList();
+            var explicitConversionsToImplement = contract.GetMethods()
+                .WithAttribute<ExplicitConversionAttribute>()
+                .ToList();
+            var implicitConversionsToImplement = contract.GetMethods()
+                .WithAttribute<ImplicitConversionAttribute>()
+                .ToList();
 
-            var combination = new Tuple<Type, Type>(mimicType, baseType);
-            if (Dictionary.ContainsKey(combination))
-                return mimicObject.GenerateProxy<TContract>(combination);
-            else
+            // Find regular method implementations.
+            var actualMethodsForThisObject = methodsToImplement.Select(x =>
             {
-                var guid = Guid.NewGuid().ToString();
-                var sanitizedGuid = guid.Replace("-", "");
-                var proxyName = ProxyNamespace + "." + baseType.Name + "_" + sanitizedGuid;
+                var name = x.Name;
+                var parameters = x.GetParameters().Select(n => n.ParameterType).ToArray();
+                return actualObjectType.GetMethod(name, parameters);
+            }).ToList();
 
-                var typeBuilder = ModuleBuilder.DefineType(proxyName, TypeAttributes.Public, null, new[] {baseType});
+            // Find implementations for operators.
+            var mimicObjectOperators = actualObjectType.GetMethods()
+                .Where(m => m.IsStatic)
+                .Where(m => m.Name.StartsWith("op_"))
+                .ToList();
+            var actualExplicitConversionsForThisObject = explicitConversionsToImplement.Select(x =>
+            {
+                var conversions = mimicObjectOperators
+                    .Where(m => m.ReturnType == x.ReturnType)
+                    .Where(m => m.Name == "op_Explicit")
+                    .ToList();
+                return new {Name = x.Name, CastFunction = conversions.Single()};
+            }).ToList();
+            var actualImplicitConversionsForThisObject = implicitConversionsToImplement.Select(x =>
+            {
+                var conversions = mimicObjectOperators
+                    .Where(m => m.ReturnType == x.ReturnType)
+                    .Where(m => m.Name == "op_Implicit")
+                    .ToList();
+                return new {Name = x.Name, CastFunction = conversions.Single()};
+            }).ToList();
 
-                var mimicObjectField = typeBuilder.DefineField(MimicObjectFieldName, mimicType, FieldAttributes.Public);
+            // Implement regular methods.
+            var proxyImplementations = actualMethodsForThisObject.Select(x =>
+            {
+                var name = x.Name;
+                var parameters = x.GetParameters().Select(n => n.ParameterType).ToArray();
+                var retType = x.ReturnType;
+                var proxyMethod = proxyBuilder.DefineMethod(name,
+                    MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.NewSlot | MethodAttributes.Final, 
+                    retType, parameters);
+                var generator = proxyMethod.GetILGenerator();
+                generator.Emit(OpCodes.Ldarg_0);
+                generator.Emit(OpCodes.Ldfld, fieldWithActualObject);
+                for (var i = 0; i < parameters.Count(); i++)
+                    generator.Emit(OpCodes.Ldarg, i + 1);
+                generator.EmitCall(OpCodes.Callvirt, x, null);
+                generator.Emit(OpCodes.Ret);
+                return proxyMethod;
+            }).ToList();
 
-                var methodsToImplement = baseType.GetMethods().ToList();
-                var actualMethodsForThisObject = methodsToImplement.Select(x =>
-                {
-                    var name = x.Name;
-                    var parameters = x.GetParameters().Select(n => n.ParameterType).ToArray();
-                    return mimicType.GetMethod(name, parameters);
-                }).ToList();
+            // Implement operators.
+            var explicitConversionsInProxy = actualExplicitConversionsForThisObject.Select(x =>
+            {
+                var name = x.Name;
+                var retType = x.CastFunction.ReturnType;
+                var proxyMethod = proxyBuilder.DefineMethod(name,
+                    MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.NewSlot | MethodAttributes.Final, 
+                    retType, new Type[0]);
+                var generator = proxyMethod.GetILGenerator();
+                generator.Emit(OpCodes.Ldarg_0);
+                generator.Emit(OpCodes.Ldfld, fieldWithActualObject);
+                generator.EmitCall(OpCodes.Call, x.CastFunction, null);
+                generator.Emit(OpCodes.Ret);
+                return proxyMethod;
+            }).ToList();
+            var implicitConversionsInProxy = actualImplicitConversionsForThisObject.Select(x =>
+            {
+                var name = x.Name;
+                var retType = x.CastFunction.ReturnType;
+                var proxyMethod = proxyBuilder.DefineMethod(name,
+                    MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.NewSlot | MethodAttributes.Final,
+                    retType, new Type[0]);
+                var generator = proxyMethod.GetILGenerator();
+                generator.Emit(OpCodes.Ldarg_0);
+                generator.Emit(OpCodes.Ldfld, fieldWithActualObject);
+                generator.EmitCall(OpCodes.Call, x.CastFunction, null);
+                generator.Emit(OpCodes.Ret);
+                return proxyMethod;
+            }).ToList();
 
-                var proxyImplementations = actualMethodsForThisObject.Select(x =>
-                {
-                    var name = x.Name;
-                    var parameters = x.GetParameters().Select(n => n.ParameterType).ToArray();
-                    var retType = x.ReturnType;
-                    var proxyMethod = typeBuilder.DefineMethod(name, MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.NewSlot |MethodAttributes.Final, retType, parameters);
-                    var generator = proxyMethod.GetILGenerator();
-                    generator.Emit(OpCodes.Ldarg_0);
-                    generator.Emit(OpCodes.Ldfld, mimicObjectField);
-                    for (var i = 0; i < parameters.Count(); i++)
-                        generator.Emit(OpCodes.Ldarg, i + 1);
-                    generator.EmitCall(OpCodes.Callvirt, x, null);
-                    generator.Emit(OpCodes.Ret);
-                    return proxyMethod;
-                }).ToList();
+            // Create final proxy type.
+            var proxyType = proxyBuilder.CreateType();
+            ContractToProxyDictionary.Add(typeContractCombination, proxyType);
 
-                var proxyType = typeBuilder.CreateType();
-                Dictionary.Add(combination, proxyType);
+            // Save dynamic assembly - enable ONLY when testing, to examine results in an IL viewer.
+            if (saveAssemblyForDebuggingPurposes)
+                DynamicAssembly.Save(DynamicAssemblyName);
 
-                if (saveAssembly)
-                    DynamicAssembly.Save(DynamicAssemblyName);
-
-                return mimicObject.GenerateProxy<TContract>(combination);
-            }
+            // Return proxy of new type.
+            return actualObject.GenerateProxy<TContract>(typeContractCombination);
         }
 
         private static TContract GenerateProxy<TContract>(this object mimicObject, Tuple<Type, Type> combination)
         {
-            var proxyType = Dictionary[combination];
+            var proxyType = ContractToProxyDictionary[combination];
             var proxy = DynamicAssembly.CreateInstance(proxyType.FullName);
-            var runtimeProxyMimicField = proxyType.GetField(MimicObjectFieldName);
+            var runtimeProxyMimicField = proxyType.GetField(ActualObjectFieldName);
             runtimeProxyMimicField.SetValue(proxy, mimicObject);
             return (TContract)proxy;
         }

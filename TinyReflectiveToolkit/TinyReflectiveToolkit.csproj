@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExplicitConversionAttribute.cs" />
+    <Compile Include="ImplicitConversionAttribute.cs" />
     <Compile Include="RuntimeContractExtensions.cs" />
     <Compile Include="GetMethods.cs" />
     <Compile Include="GetProperties.cs" />

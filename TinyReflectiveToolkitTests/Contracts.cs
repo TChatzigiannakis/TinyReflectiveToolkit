@@ -82,6 +82,21 @@ namespace TinyReflectiveToolkitTests
             value.Value();
             Assert.AreEqual(10, value.Value(1, 2, "", 3, 4, ""));
         }
+
+        [Test]
+        public void ExplicitConversionOperator()
+        {
+            var value = new UnrelatedType5().ToContract<ICastableToInt32>();
+            Assert.AreEqual(1, value.ToInt32());
+        }
+
+        [Test]
+        public void ImplicitConversionOperator()
+        {
+            var value = new UnrelatedType5().ToContract<IConvertibleToFloat>();
+            Assert.AreEqual(2.5f, value.ToFloat());
+        }
+
     }
     public interface IValue
     {
@@ -147,11 +162,33 @@ namespace TinyReflectiveToolkitTests
         public void Value()
         {            
         }
+
+        public static explicit operator int(UnrelatedType5 obj)
+        {
+            return 1;
+        }
+
+        public static implicit operator float(UnrelatedType5 obj)
+        {
+            return 2.5f;
+        }
     }
 
     public interface ITwoMethods
     {
         int Value(int a, int b, string c, int d, int e, string f);
-        void Value();
+        void Value();        
+    }
+
+    public interface ICastableToInt32
+    {
+        [ExplicitConversion]
+        int ToInt32();
+    }
+
+    public interface IConvertibleToFloat
+    {
+        [ImplicitConversion]
+        float ToFloat();
     }
 }
