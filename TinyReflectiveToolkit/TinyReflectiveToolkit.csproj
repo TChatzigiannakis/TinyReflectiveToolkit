@@ -39,6 +39,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Contracts\ContractProvider.cs" />
     <Compile Include="Contracts\ExplicitConversionAttribute.cs" />
     <Compile Include="Contracts\ImplicitConversionAttribute.cs" />
     <Compile Include="Contracts\ProxyInfo.cs" />
