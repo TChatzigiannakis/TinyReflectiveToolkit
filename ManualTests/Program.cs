@@ -12,7 +12,7 @@ namespace ManualTests
         static void Main(string[] args)
         {
             var contracts = new Contracts();
-            //contracts.SimpleMethodContract();
+            contracts.CachedMethodContracts();
             //contracts.FailingContract();
             //contracts.VoidContract();
             //contracts.ParameterizedContract();

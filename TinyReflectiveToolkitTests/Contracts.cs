@@ -23,6 +23,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using TinyReflectiveToolkit;
+using TinyReflectiveToolkit.Contracts;
 
 namespace TinyReflectiveToolkitTests
 {
@@ -30,7 +31,7 @@ namespace TinyReflectiveToolkitTests
     public class Contracts
     {
         [Test]
-        public void SimpleMethodContract()
+        public void CachedMethodContracts()
         {
             var thingsWithValue = new IValue[]
             {
@@ -117,6 +118,18 @@ namespace TinyReflectiveToolkitTests
             var obj = new UnrelatedType6().ToContract<IGetSet>();
             obj.GetSet = 10;
             Assert.AreEqual(10, obj.GetSet);
+        }
+
+        [Test]
+        public void ContractChecks()
+        {
+            Assert.IsTrue(new UnrelatedType1().Satisfies<IValue>());
+            Assert.IsTrue(new UnrelatedType1().Satisfies<IValue>());
+            Assert.IsTrue(new UnrelatedType2().Satisfies<IValue>());
+            Assert.IsFalse(new UnrelatedType1().Satisfies<IGet>());
+            Assert.IsFalse(new UnrelatedType1().Satisfies<IGet>());
+            Assert.IsFalse(new UnrelatedType1().Satisfies<ISet>());
+            Assert.IsFalse(new UnrelatedType1().Satisfies<IGetSet>());
         }
 
     }

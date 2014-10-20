@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace TinyReflectiveToolkit
+namespace TinyReflectiveToolkit.Contracts
 {
     /// <summary>
     /// Declares that this method will return the result of the explicit conversion of the given type to the method's return type.

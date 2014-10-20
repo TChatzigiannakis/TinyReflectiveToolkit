@@ -39,9 +39,10 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExplicitConversionAttribute.cs" />
-    <Compile Include="ImplicitConversionAttribute.cs" />
-    <Compile Include="RuntimeContractExtensions.cs" />
+    <Compile Include="Contracts\ExplicitConversionAttribute.cs" />
+    <Compile Include="Contracts\ImplicitConversionAttribute.cs" />
+    <Compile Include="Contracts\ProxyInfo.cs" />
+    <Compile Include="Contracts\RuntimeContractExtensions.cs" />
     <Compile Include="GetMethods.cs" />
     <Compile Include="GetProperties.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
