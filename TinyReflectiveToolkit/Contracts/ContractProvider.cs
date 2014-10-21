@@ -18,8 +18,9 @@ namespace TinyReflectiveToolkit.Contracts
         private const string ProxyNamespace = "TinyReflectiveToolkit.Contracts";
         private const MethodAttributes ProxyMethodAttributes = MethodAttributes.Public | MethodAttributes.Virtual |
                                                MethodAttributes.NewSlot | MethodAttributes.Final;
+        private const int LockTimeout = 1000;
 
-        private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
+        private readonly ReaderWriterLock _lock = new ReaderWriterLock();
         private readonly AssemblyBuilder _dynamicAssembly;
         private readonly string _dynamicAssemblyName;
         private readonly ModuleBuilder _moduleBuilder;
@@ -80,12 +81,17 @@ namespace TinyReflectiveToolkit.Contracts
 
             var combination = new Tuple<Type, Type>(type, contract);
 
+            _lock.AcquireReaderLock(LockTimeout);
             var proxy = GetProxyTypeOrNull(type, contract);
+            _lock.ReleaseReaderLock();
+
             if (proxy != null)
                 return new Tuple<bool, Type, ProxyInfo>(true, proxy, null);                
 
             if (!alwaysGiveProxyInfo && _knownSatisfiedContracts.Contains(combination))
-                return new Tuple<bool, Type, ProxyInfo>(true, null, null);                
+                return new Tuple<bool, Type, ProxyInfo>(true, null, null);
+
+            _lock.AcquireWriterLock(LockTimeout);
 
             var info = new ProxyInfo
             {
@@ -135,6 +141,8 @@ namespace TinyReflectiveToolkit.Contracts
                 return new Tuple<bool, Type, ProxyInfo>(false, null, null);
 
             _knownSatisfiedContracts.Add(combination);
+            _lock.ReleaseWriterLock();
+
             return new Tuple<bool, Type, ProxyInfo>(true, null, info);
         }
 
@@ -181,12 +189,7 @@ namespace TinyReflectiveToolkit.Contracts
                 var retType = x.ReturnType;
                 var proxyMethod = proxyBuilder.DefineMethod(name, ProxyMethodAttributes, retType, parameters);
                 var generator = proxyMethod.GetILGenerator();
-                generator.Emit(OpCodes.Ldarg_0);
-                generator.Emit(OpCodes.Ldfld, fieldWithActualObject);
-                for (var i = 0; i < parameters.Count(); i++)
-                    generator.Emit(OpCodes.Ldarg, i + 1);
-                generator.EmitCall(OpCodes.Callvirt, x, null);
-                generator.Emit(OpCodes.Ret);
+                GenerateStub(generator, fieldWithActualObject, x, true, parameters);
                 return proxyMethod;
             }).ToList();
             var proxyStubsForOperators = proxyInfo.FoundExplicitConversions.Concat(proxyInfo.FoundImplicitConversions)
@@ -196,23 +199,33 @@ namespace TinyReflectiveToolkit.Contracts
                     var retType = x.Item2.ReturnType;
                     var proxyMethod = proxyBuilder.DefineMethod(name, ProxyMethodAttributes, retType, new Type[0]);
                     var generator = proxyMethod.GetILGenerator();
-                    generator.Emit(OpCodes.Ldarg_0);
-                    generator.Emit(OpCodes.Ldfld, fieldWithActualObject);
-                    generator.EmitCall(OpCodes.Call, x.Item2, null);
-                    generator.Emit(OpCodes.Ret);
+                    GenerateStub(generator, fieldWithActualObject, x.Item2, false);
                     return proxyMethod;
                 }).ToList();
 
             // Create final proxy type.
+            _lock.AcquireWriterLock(LockTimeout);
             var proxyType = proxyBuilder.CreateType();
             _contractToProxyDictionary.Add(new Tuple<Type, Type>(actualObjectType, contractType), proxyType);
 
             // Save dynamic assembly - enable ONLY when testing, to examine results in an IL viewer. Unit tests will fail with this.
             if (saveAssemblyForDebuggingPurposes)
                 _dynamicAssembly.Save(_dynamicAssemblyName);
+            _lock.ReleaseWriterLock();
 
             // Return proxy of new type.
             return GenerateProxy<TContract>(actualObject, proxyType);
+        }
+
+        private static void GenerateStub(ILGenerator generator, FieldInfo field, MethodInfo method, bool callVirt, Type[] parameters = null)
+        {
+            generator.Emit(OpCodes.Ldarg_0);
+            generator.Emit(OpCodes.Ldfld, field);
+            if(parameters != null)
+                for (var i = 0; i < parameters.Count(); i++)
+                    generator.Emit(OpCodes.Ldarg, i + 1);
+            generator.EmitCall(callVirt ? OpCodes.Callvirt : OpCodes.Call, method, null);
+            generator.Emit(OpCodes.Ret);
         }
     }
 }
