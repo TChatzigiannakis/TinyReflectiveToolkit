@@ -30,8 +30,9 @@ namespace ManualTests
         static void Main(string[] args)
         {
             var contracts = new Contracts();
-            contracts.GenericContract();
-            contracts.CastableToInt();
+            contracts.SelfCastable();
+            //contracts.GenericContract();
+            //contracts.CastableToInt();
             //contracts.FailingContract();
             //contracts.VoidContract();
             //contracts.ParameterizedContract();

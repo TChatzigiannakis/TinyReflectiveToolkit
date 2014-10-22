@@ -185,6 +185,15 @@ namespace TinyReflectiveToolkitTests
             Assert.AreEqual(12, (12m).ToContract<ICastableTo<int>>().Cast());
             Assert.AreEqual(12, ((byte)12).ToContract<ICastableTo<int>>().Cast());
         }
+
+        [Test]
+        public void SelfCastable()
+        {
+            var nn = new UnrelatedType7 {Value = 99};
+            var contract = nn.ToContract<ICastableTo<UnrelatedType7>>();
+            var self = contract.Cast();
+            Assert.AreSame(nn, self);
+        }
     }
     public interface IValue
     {

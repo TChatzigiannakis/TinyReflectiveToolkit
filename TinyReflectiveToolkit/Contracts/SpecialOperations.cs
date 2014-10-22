@@ -31,6 +31,11 @@ namespace TinyReflectiveToolkit.Contracts
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class SpecialOperations
     {
+        internal static MethodInfo IdentityMarkerMethodInfo
+        {
+            get { return typeof (SpecialOperations).GetMethods().Single(m => m.Name == "IdentityMarker"); }
+        }
+
         internal static MethodInfo GetSpecialConversion(Type source, Type target)
         {
             var matches = typeof (SpecialOperations).GetMethods()
@@ -43,6 +48,13 @@ namespace TinyReflectiveToolkit.Contracts
         }
 
         /// <summary>
+        /// Empty method, marking the need for a runtime-generated (non-generic) identity function.
+        /// </summary>
+        public static void IdentityMarker()
+        {            
+        }
+
+        /// <summary>
         /// Casts float to int.
         /// </summary>
         /// <param name="input"></param>
@@ -51,17 +63,6 @@ namespace TinyReflectiveToolkit.Contracts
         public static int FloatToInt(float input)
         {
             return (int)input;
-        }
-
-        /// <summary>
-        /// Casts int to int.
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        [SpecialConversion]
-        public static int IntToInt(int input)
-        {
-            return input;
         }
 
         /// <summary>

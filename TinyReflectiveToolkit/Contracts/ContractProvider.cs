@@ -180,6 +180,8 @@ namespace TinyReflectiveToolkit.Contracts
                     if (specialOp != null) 
                         conversions.Add(specialOp);
                 }
+                if (!conversions.Any() && type == x.ReturnType)
+                    conversions.Add(SpecialOperations.IdentityMarkerMethodInfo);                                        
                 return new Tuple<string, MethodInfo, int>(x.Name, conversions.FirstOrDefault(), 0);
             }).ToList();
             info.FoundImplicitConversions = info.RequiredImplicitConversions.Select(x =>
@@ -194,6 +196,8 @@ namespace TinyReflectiveToolkit.Contracts
                     if (specialOp != null)
                         conversions.Add(specialOp);
                 }
+                if (!conversions.Any() && type == x.ReturnType)
+                    conversions.Add(SpecialOperations.IdentityMarkerMethodInfo);    
                 return new Tuple<string, MethodInfo, int>(x.Name, conversions.FirstOrDefault(), 0);
             }).ToList();
             Action<List<MethodInfo>, List<Tuple<String, MethodInfo, int>>, string, int> act =
@@ -287,6 +291,16 @@ namespace TinyReflectiveToolkit.Contracts
             var proxyStubsForOperators = proxyInfo.AllFoundOperators
                 .Select(x =>
                 {
+                    if (x.Item2 == SpecialOperations.IdentityMarkerMethodInfo)
+                    {
+                        var px = proxyBuilder.DefineMethod(x.Item1, ProxyMethodAttributes, actualObjectType, new Type[0]);
+                        var gen = px.GetILGenerator();
+                        gen.Emit(OpCodes.Ldarg_0);
+                        gen.Emit(OpCodes.Ldfld, fieldWithActualObject);
+                        gen.Emit(OpCodes.Ret);
+                        return px;
+                    }
+
                     var name = x.Item1;
                     var retType = x.Item2.ReturnType;
                     var index = x.Item3;
