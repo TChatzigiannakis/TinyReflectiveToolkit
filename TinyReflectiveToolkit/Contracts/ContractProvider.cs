@@ -174,6 +174,12 @@ namespace TinyReflectiveToolkit.Contracts
                     .Where(m => m.ReturnType == x.ReturnType)
                     .Where(m => m.Name == "op_Explicit")
                     .ToList();
+                if (!conversions.Any())
+                {
+                    var specialOp = SpecialOperations.GetSpecialConversion(type, x.ReturnType);
+                    if (specialOp != null) 
+                        conversions.Add(specialOp);
+                }
                 return new Tuple<string, MethodInfo, int>(x.Name, conversions.FirstOrDefault(), 0);
             }).ToList();
             info.FoundImplicitConversions = info.RequiredImplicitConversions.Select(x =>
@@ -182,6 +188,12 @@ namespace TinyReflectiveToolkit.Contracts
                     .Where(m => m.ReturnType == x.ReturnType)
                     .Where(m => m.Name == "op_Implicit")
                     .ToList();
+                if (!conversions.Any())
+                {
+                    var specialOp = SpecialOperations.GetSpecialConversion(type, x.ReturnType);
+                    if (specialOp != null)
+                        conversions.Add(specialOp);
+                }
                 return new Tuple<string, MethodInfo, int>(x.Name, conversions.FirstOrDefault(), 0);
             }).ToList();
             Action<List<MethodInfo>, List<Tuple<String, MethodInfo, int>>, string, int> act =
@@ -245,7 +257,7 @@ namespace TinyReflectiveToolkit.Contracts
             var cachedProxy = satisfactionCheckResult.Item2;
             var proxyInfo = satisfactionCheckResult.Item3;
             if (!satisfies)
-                throw new InvalidOperationException();
+                throw new NotSupportedException();
             if (cachedProxy != null)
                 return GenerateProxy<TContract>(actualObject, cachedProxy);
 

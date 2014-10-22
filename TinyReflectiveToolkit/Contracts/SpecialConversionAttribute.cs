@@ -20,25 +20,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using TinyReflectiveToolkit;
-using TinyReflectiveToolkitTests;
 
-namespace ManualTests
+namespace TinyReflectiveToolkit.Contracts
 {
-    class Program
+    [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
+    internal class SpecialConversionAttribute : Attribute
     {
-        static void Main(string[] args)
-        {
-            var contracts = new Contracts();
-            contracts.GenericContract();
-            contracts.CastableToInt();
-            //contracts.FailingContract();
-            //contracts.VoidContract();
-            //contracts.ParameterizedContract();
-            //contracts.Overloads();
-            //contracts.ExplicitConversionOperator();
-            //contracts.ImplicitConversionOperator();
-            //contracts.GetProperties();
-        }        
     }
 }

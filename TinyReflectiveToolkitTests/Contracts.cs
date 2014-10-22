@@ -175,6 +175,16 @@ namespace TinyReflectiveToolkitTests
             var twelve = new UnrelatedType7 {Value = 12}.ToContract<IDividable<int, int>>();
             Assert.AreEqual(3, twelve.DivideBy(4));
         }
+
+        [Test]
+        public void CastableToInt()
+        {
+            Assert.AreEqual(12, (12).ToContract<ICastableTo<int>>().Cast());
+            Assert.AreEqual(12, (12.0f).ToContract<ICastableTo<int>>().Cast());
+            Assert.AreEqual(12, (12.0).ToContract<ICastableTo<int>>().Cast());
+            Assert.AreEqual(12, (12m).ToContract<ICastableTo<int>>().Cast());
+            Assert.AreEqual(12, ((byte)12).ToContract<ICastableTo<int>>().Cast());
+        }
     }
     public interface IValue
     {
