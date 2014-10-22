@@ -32,7 +32,12 @@ namespace TinyReflectiveToolkit.Contracts
         /// Specifies which side of the operator the internal object will be on.
         /// </summary>
         public OpSide OperatorSide { get; private set; }
-        protected internal ExposeBinaryOperatorAttribute(OpSide side)
+
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        /// <param name="side"></param>
+        protected ExposeBinaryOperatorAttribute(OpSide side)
         {
             OperatorSide = side;
         }
