@@ -86,9 +86,27 @@ namespace TinyReflectiveToolkit.Contracts
                 if (RequiredMethods.Count != FoundMethods.Count) return false;
                 if (RequiredExplicitConversions.Count != FoundExplicitConversions.Count) return false;
                 if (RequiredImplicitConversions.Count != FoundImplicitConversions.Count) return false;
+                if (RequiredLeftSideAdditionOperators.Count != FoundLeftSideAdditionOperators.Count) return false;
+                if (RequiredRightSideAdditionOperators.Count != FoundRightSideAdditionOperators.Count) return false;
+                if (RequiredLeftSideSubtractionOperators.Count != FoundLeftSideSubtractionOperators.Count) return false;
+                if (RequiredRightSideSubtractionOperators.Count != FoundRightSideSubtractionOperators.Count) return false;
+                if (RequiredLeftSideMultiplicationOperators.Count != FoundLeftSideMultiplicationOperators.Count) return false;
+                if (RequiredRightSideMultiplicationOperators.Count != FoundRightSideMultiplicationOperators.Count) return false;
+                if (RequiredLeftSideDivisionOperators.Count != FoundLeftSideDivisionOperators.Count) return false;
+                if (RequiredRightSideDivisionOperators.Count != FoundRightSideDivisionOperators.Count) return false;
+
                 if (FoundMethods.Any(x => x == null)) return false;
                 if (FoundExplicitConversions.Any(x => x.Item2 == null)) return false;
                 if (FoundImplicitConversions.Any(x => x.Item2 == null)) return false;
+                if (FoundLeftSideAdditionOperators.Any(x => x.Item2 == null)) return false;
+                if (FoundRightSideAdditionOperators.Any(x => x.Item2 == null)) return false;
+                if (FoundLeftSideSubtractionOperators.Any(x => x.Item2 == null)) return false;
+                if (FoundRightSideSubtractionOperators.Any(x => x.Item2 == null)) return false;
+                if (FoundLeftSideMultiplicationOperators.Any(x => x.Item2 == null)) return false;
+                if (FoundRightSideMultiplicationOperators.Any(x => x.Item2 == null)) return false;
+                if (FoundLeftSideDivisionOperators.Any(x => x.Item2 == null)) return false;
+                if (FoundRightSideDivisionOperators.Any(x => x.Item2 == null)) return false;
+
                 return true;
             }
         }
