@@ -1,4 +1,22 @@
-﻿using System;
+﻿/*
+ *  Tiny Reflective Toolkit
+    Copyright (C) 2014  Theodoros Chatzigiannakis
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>. 
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -125,7 +143,7 @@ namespace TinyReflectiveToolkit.Contracts
                     .Where(m => m.Name == "op_Explicit")
                     .ToList();
                 return new Tuple<string, MethodInfo>(x.Name, conversions.FirstOrDefault());
-            }).Except(x => x == null).ToList();
+            }).ToList();
             info.FoundImplicitConversions = info.RequiredImplicitConversions.Select(x =>
             {
                 var conversions = mimicObjectOperators
@@ -133,11 +151,9 @@ namespace TinyReflectiveToolkit.Contracts
                     .Where(m => m.Name == "op_Implicit")
                     .ToList();
                 return new Tuple<string, MethodInfo>(x.Name, conversions.FirstOrDefault());
-            }).Except(x => x == null).ToList();
-
-            if (info.RequiredMethods.Count != info.FoundMethods.Count ||
-                info.RequiredExplicitConversions.Count != info.FoundExplicitConversions.Count ||
-                info.RequiredImplicitConversions.Count != info.FoundImplicitConversions.Count)
+            }).ToList();
+            
+            if(!info.IsValid)
                 return new Tuple<bool, Type, ProxyInfo>(false, null, null);
 
             _knownSatisfiedContracts.Add(combination);

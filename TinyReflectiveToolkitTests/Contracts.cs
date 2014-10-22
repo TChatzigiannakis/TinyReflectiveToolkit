@@ -99,6 +99,13 @@ namespace TinyReflectiveToolkitTests
         }
 
         [Test]
+        public void GenericContract()
+        {
+            var value = new UnrelatedType5().ToContract<ICastableTo<int>>();
+            Assert.AreEqual(1, value.Cast());
+        }
+
+        [Test]
         public void GetProperties()
         {
             var obj = new UnrelatedType6().ToContract<IGet>();
@@ -131,6 +138,7 @@ namespace TinyReflectiveToolkitTests
             Assert.IsFalse(new UnrelatedType1().Satisfies<ISet>());
             Assert.IsFalse(new UnrelatedType1().Satisfies<IGetSet>());
         }
+
 
     }
     public interface IValue
@@ -225,6 +233,12 @@ namespace TinyReflectiveToolkitTests
     {
         [ImplicitConversion]
         float ToFloat();
+    }
+
+    public interface ICastableTo<out T>
+    {
+        [ExplicitConversion]
+        T Cast();
     }
 
     public class UnrelatedType6
