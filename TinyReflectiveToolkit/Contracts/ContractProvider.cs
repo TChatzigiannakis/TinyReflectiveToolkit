@@ -147,9 +147,9 @@ namespace TinyReflectiveToolkit.Contracts
                     .WithAttribute<SubtractionAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
                 RequiredRightSideSubtractionOperators = contract.GetMethods()
                     .WithAttribute<SubtractionAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList(),
-                RequiredLeftSideMultiplicationOperators = contract.GetMethods()
+                RequiredLeftSideMultiplyOperators = contract.GetMethods()
                     .WithAttribute<MultiplicationAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
-                RequiredRightSideMultiplicationOperators = contract.GetMethods()
+                RequiredRightSideMultiplyOperators = contract.GetMethods()
                     .WithAttribute<MultiplicationAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList(),
                 RequiredLeftSideDivisionOperators = contract.GetMethods()
                     .WithAttribute<DivisionAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
@@ -200,8 +200,8 @@ namespace TinyReflectiveToolkit.Contracts
             act(info.RequiredRightSideAdditionOperators, info.FoundRightSideAdditionOperators, "op_Addition", 1);
             act(info.RequiredLeftSideSubtractionOperators, info.FoundLeftSideSubtractionOperators, "op_Subtraction", 0);
             act(info.RequiredRightSideSubtractionOperators, info.FoundRightSideSubtractionOperators, "op_Subtraction", 1);
-            act(info.RequiredLeftSideMultiplicationOperators, info.FoundLeftSideMultiplicationOperators, "op_Multiply", 0);
-            act(info.RequiredRightSideMultiplicationOperators, info.FoundRightSideMultiplicationOperators, "op_Multiply", 1);
+            act(info.RequiredLeftSideMultiplyOperators, info.FoundLeftSideMultiplyOperators, "op_Multiply", 0);
+            act(info.RequiredRightSideMultiplyOperators, info.FoundRightSideMultiplyOperators, "op_Multiply", 1);
             act(info.RequiredLeftSideDivisionOperators, info.FoundLeftSideDivisionOperators, "op_Division", 0);
             act(info.RequiredRightSideDivisionOperators, info.FoundRightSideDivisionOperators, "op_Division", 1);
            
@@ -272,16 +272,7 @@ namespace TinyReflectiveToolkit.Contracts
                 generator.Emit(OpCodes.Ret);
                 return proxyMethod;
             }).ToList();
-            var proxyStubsForOperators = proxyInfo.FoundExplicitConversions
-                .Concat(proxyInfo.FoundImplicitConversions)
-                .Concat(proxyInfo.FoundLeftSideAdditionOperators)
-                .Concat(proxyInfo.FoundRightSideAdditionOperators)
-                .Concat(proxyInfo.FoundLeftSideSubtractionOperators)
-                .Concat(proxyInfo.FoundRightSideSubtractionOperators)
-                .Concat(proxyInfo.FoundLeftSideMultiplicationOperators)
-                .Concat(proxyInfo.FoundRightSideMultiplicationOperators)
-                .Concat(proxyInfo.FoundLeftSideDivisionOperators)
-                .Concat(proxyInfo.FoundRightSideDivisionOperators)
+            var proxyStubsForOperators = proxyInfo.AllFoundOperators
                 .Select(x =>
                 {
                     var name = x.Item1;

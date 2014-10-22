@@ -358,7 +358,7 @@ namespace TinyReflectiveToolkitTests
         T MultiplyBy(T p);
     }
 
-    public interface IDividable<T1, T2>
+    public interface IDividable<out T1, in T2>
     {
         [Division(OpSide.ThisLeft)]
         T1 DivideBy(T2 p);

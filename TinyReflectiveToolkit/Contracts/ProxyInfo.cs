@@ -21,36 +21,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using EnumerableExtensions;
 
 namespace TinyReflectiveToolkit.Contracts
 {
-    internal class ProxyInfo
+    internal sealed class ProxyInfo
     {
         public ProxyInfo()
         {
-            RequiredMethods = new List<MethodInfo>();
-            RequiredExplicitConversions = new List<MethodInfo>();
-            RequiredImplicitConversions = new List<MethodInfo>();
-            RequiredLeftSideAdditionOperators = new List<MethodInfo>();
-            RequiredRightSideAdditionOperators = new List<MethodInfo>();
-            RequiredLeftSideSubtractionOperators = new List<MethodInfo>();
-            RequiredRightSideSubtractionOperators = new List<MethodInfo>();
-            RequiredLeftSideMultiplicationOperators = new List<MethodInfo>();
-            RequiredRightSideMultiplicationOperators = new List<MethodInfo>();
-            RequiredLeftSideDivisionOperators = new List<MethodInfo>();
-            RequiredRightSideDivisionOperators = new List<MethodInfo>();
-
-            FoundMethods = new List<MethodInfo>();
-            FoundExplicitConversions = new List<Tuple<string, MethodInfo, int>>();
-            FoundImplicitConversions = new List<Tuple<string, MethodInfo, int>>();
-            FoundLeftSideAdditionOperators = new List<Tuple<string, MethodInfo, int>>();
-            FoundRightSideAdditionOperators = new List<Tuple<string, MethodInfo, int>>();
-            FoundLeftSideSubtractionOperators = new List<Tuple<string, MethodInfo, int>>();
-            FoundRightSideSubtractionOperators = new List<Tuple<string, MethodInfo, int>>();
-            FoundLeftSideMultiplicationOperators = new List<Tuple<string, MethodInfo, int>>();
-            FoundRightSideMultiplicationOperators = new List<Tuple<string, MethodInfo, int>>();
-            FoundLeftSideDivisionOperators = new List<Tuple<string, MethodInfo, int>>();
-            FoundRightSideDivisionOperators = new List<Tuple<string, MethodInfo, int>>();
+            typeof (ProxyInfo).GetProperties()
+                .Where(x => x.PropertyType == typeof (List<MethodInfo>))
+                .ForEach(x => x.SetValue(this, new List<MethodInfo>(), null));
+            typeof (ProxyInfo).GetProperties()
+                .Where(x => x.PropertyType == typeof (List<Tuple<string, MethodInfo, int>>))
+                .ForEach(x => x.SetValue(this, new List<Tuple<string, MethodInfo, int>>(), null));            
         }
 
         public Type ProvidedType { get; set; }
@@ -62,8 +46,8 @@ namespace TinyReflectiveToolkit.Contracts
         public List<MethodInfo> RequiredRightSideAdditionOperators { get; set; }
         public List<MethodInfo> RequiredLeftSideSubtractionOperators { get; set; }
         public List<MethodInfo> RequiredRightSideSubtractionOperators { get; set; }
-        public List<MethodInfo> RequiredLeftSideMultiplicationOperators { get; set; }
-        public List<MethodInfo> RequiredRightSideMultiplicationOperators { get; set; }
+        public List<MethodInfo> RequiredLeftSideMultiplyOperators { get; set; }
+        public List<MethodInfo> RequiredRightSideMultiplyOperators { get; set; }
         public List<MethodInfo> RequiredLeftSideDivisionOperators { get; set; }
         public List<MethodInfo> RequiredRightSideDivisionOperators { get; set; }
 
@@ -74,10 +58,21 @@ namespace TinyReflectiveToolkit.Contracts
         public List<Tuple<string, MethodInfo, int>> FoundRightSideAdditionOperators { get; set; }
         public List<Tuple<string, MethodInfo, int>> FoundLeftSideSubtractionOperators { get; set; }
         public List<Tuple<string, MethodInfo, int>> FoundRightSideSubtractionOperators { get; set; }
-        public List<Tuple<string, MethodInfo, int>> FoundLeftSideMultiplicationOperators { get; set; }
-        public List<Tuple<string, MethodInfo, int>> FoundRightSideMultiplicationOperators { get; set; }
+        public List<Tuple<string, MethodInfo, int>> FoundLeftSideMultiplyOperators { get; set; }
+        public List<Tuple<string, MethodInfo, int>> FoundRightSideMultiplyOperators { get; set; }
         public List<Tuple<string, MethodInfo, int>> FoundLeftSideDivisionOperators { get; set; }
         public List<Tuple<string, MethodInfo, int>> FoundRightSideDivisionOperators { get; set; }
+
+        public IEnumerable<Tuple<string, MethodInfo, int>> AllFoundOperators
+        {
+            get
+            {
+                return typeof (ProxyInfo).GetProperties()
+                    .Where(x => x.PropertyType == typeof (List<Tuple<string, MethodInfo, int>>))
+                    .Select(x => (List<Tuple<string, MethodInfo, int>>) x.GetValue(this, null))
+                    .SelectMany(x => x);
+            }
+        }
 
         public bool IsValid
         {
@@ -90,22 +85,13 @@ namespace TinyReflectiveToolkit.Contracts
                 if (RequiredRightSideAdditionOperators.Count != FoundRightSideAdditionOperators.Count) return false;
                 if (RequiredLeftSideSubtractionOperators.Count != FoundLeftSideSubtractionOperators.Count) return false;
                 if (RequiredRightSideSubtractionOperators.Count != FoundRightSideSubtractionOperators.Count) return false;
-                if (RequiredLeftSideMultiplicationOperators.Count != FoundLeftSideMultiplicationOperators.Count) return false;
-                if (RequiredRightSideMultiplicationOperators.Count != FoundRightSideMultiplicationOperators.Count) return false;
+                if (RequiredLeftSideMultiplyOperators.Count != FoundLeftSideMultiplyOperators.Count) return false;
+                if (RequiredRightSideMultiplyOperators.Count != FoundRightSideMultiplyOperators.Count) return false;
                 if (RequiredLeftSideDivisionOperators.Count != FoundLeftSideDivisionOperators.Count) return false;
                 if (RequiredRightSideDivisionOperators.Count != FoundRightSideDivisionOperators.Count) return false;
 
                 if (FoundMethods.Any(x => x == null)) return false;
-                if (FoundExplicitConversions.Any(x => x.Item2 == null)) return false;
-                if (FoundImplicitConversions.Any(x => x.Item2 == null)) return false;
-                if (FoundLeftSideAdditionOperators.Any(x => x.Item2 == null)) return false;
-                if (FoundRightSideAdditionOperators.Any(x => x.Item2 == null)) return false;
-                if (FoundLeftSideSubtractionOperators.Any(x => x.Item2 == null)) return false;
-                if (FoundRightSideSubtractionOperators.Any(x => x.Item2 == null)) return false;
-                if (FoundLeftSideMultiplicationOperators.Any(x => x.Item2 == null)) return false;
-                if (FoundRightSideMultiplicationOperators.Any(x => x.Item2 == null)) return false;
-                if (FoundLeftSideDivisionOperators.Any(x => x.Item2 == null)) return false;
-                if (FoundRightSideDivisionOperators.Any(x => x.Item2 == null)) return false;
+                if (AllFoundOperators.Any(x => x.Item2 == null)) return false;
 
                 return true;
             }
