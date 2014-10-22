@@ -20,24 +20,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using TinyReflectiveToolkit;
-using TinyReflectiveToolkitTests;
 
-namespace ManualTests
+namespace TinyReflectiveToolkit.Contracts
 {
-    class Program
+    /// <summary>
+    /// Declares that instead of being an actual method implemented by the type of the provided object,
+    /// this will be a new, automatically implemented method that returns the result of the
+    /// application of the division operator on the provided object and another object.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
+    public sealed class DivisionAttribute : ExposeBinaryOperatorAttribute
     {
-        static void Main(string[] args)
+        /// <summary>
+        /// The default constructor.
+        /// </summary>
+        /// <param name="side">The side on which the current instance will be provided to the division operator (with the argument going to the other side).</param>
+        public DivisionAttribute(OpSide side)
+            : base(side)
         {
-            var contracts = new Contracts();
-            contracts.AdditionRightSide();
-            //contracts.FailingContract();
-            //contracts.VoidContract();
-            //contracts.ParameterizedContract();
-            //contracts.Overloads();
-            //contracts.ExplicitConversionOperator();
-            //contracts.ImplicitConversionOperator();
-            //contracts.GetProperties();
-        }        
+        }
     }
 }

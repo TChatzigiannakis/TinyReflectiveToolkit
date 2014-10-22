@@ -39,11 +39,18 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Contracts\AdditionAttribute.cs" />
     <Compile Include="Contracts\ContractProvider.cs" />
-    <Compile Include="Contracts\ExplicitConversionAttribute.cs" />
-    <Compile Include="Contracts\ImplicitConversionAttribute.cs" />
+    <Compile Include="Contracts\CastAttribute.cs" />
+    <Compile Include="Contracts\DivisionAttribute.cs" />
+    <Compile Include="Contracts\ExposeBinaryOperatorAttribute.cs" />
+    <Compile Include="Contracts\ExposeOperatorAttribute.cs" />
+    <Compile Include="Contracts\ImplicitAttribute.cs" />
+    <Compile Include="Contracts\MultiplicationAttribute.cs" />
+    <Compile Include="Contracts\OpSide.cs" />
     <Compile Include="Contracts\ProxyInfo.cs" />
     <Compile Include="Contracts\RuntimeContractExtensions.cs" />
+    <Compile Include="Contracts\SubtractionAttribute.cs" />
     <Compile Include="GetMethods.cs" />
     <Compile Include="GetProperties.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

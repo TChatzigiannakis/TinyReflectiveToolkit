@@ -17,14 +17,16 @@
  */
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace TinyReflectiveToolkit.Contracts
 {
     /// <summary>
-    /// Declares that this method will return the result of the explicit conversion of the given type to the method's return type.
+    /// Base type for operator-exposing attributes.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
-    public sealed class ExplicitConversionAttribute : Attribute
+    public abstract class ExposeOperatorAttribute : Attribute
     {
     }
 }

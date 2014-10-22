@@ -44,21 +44,27 @@ namespace TinyReflectiveToolkit.Contracts
         private readonly ModuleBuilder _moduleBuilder;
         private readonly Dictionary<Tuple<Type, Type>, Type> _contractToProxyDictionary =
             new Dictionary<Tuple<Type, Type>, Type>();
-        private readonly HashSet<Tuple<Type, Type>> _knownSatisfiedContracts =
+        private readonly Dictionary<Tuple<Type, Type>, ProxyInfo> _knownSatisfiedContracts =
+            new Dictionary<Tuple<Type, Type>, ProxyInfo>();
+        private readonly HashSet<Tuple<Type, Type>> _knownFailingContracts = 
             new HashSet<Tuple<Type, Type>>();
 
         /// <summary>
         /// Creates a ContractProvider using the default configuration.
         /// </summary>
         public ContractProvider()
+            : this(Guid.NewGuid().ToString().Replace("-", ""))
         {
-            var guid = Guid.NewGuid().ToString().Replace("-", "");
+        }
+        internal ContractProvider(string identifier)
+        {
             _dynamicAssembly =
                 Thread.GetDomain()
-                    .DefineDynamicAssembly(new AssemblyName("TinyReflectiveToolkit-Dynamic-" + guid),
+                    .DefineDynamicAssembly(new AssemblyName("TinyReflectiveToolkit-Dynamic-" + identifier),
                         AssemblyBuilderAccess.RunAndSave);
-            _dynamicAssemblyName = "Dynamic-" + guid + ".dll";
+            _dynamicAssemblyName = "Dynamic-" + identifier + ".dll";
             _moduleBuilder = _dynamicAssembly.DefineDynamicModule("Contracts", _dynamicAssemblyName);
+            
         }
 
         private TContract GenerateProxy<TContract>(object mimicObject, Type proxyType)
@@ -92,6 +98,7 @@ namespace TinyReflectiveToolkit.Contracts
         private Tuple<bool, Type, ProxyInfo> CheckIfSatisfies<TContract>(Type type, bool alwaysGiveProxyInfo)
             where TContract : class
         {
+            // Check arguments.
             var contract = typeof(TContract);
             if (!contract.IsInterface) throw new NotSupportedException("TContract must be an interface type.");
             if (!contract.IsPublic) throw new NotSupportedException(contract.Name + " must be public.");
@@ -99,32 +106,57 @@ namespace TinyReflectiveToolkit.Contracts
 
             var combination = new Tuple<Type, Type>(type, contract);
 
+            // Check if there is an existing proxy type for this combination.
             _lock.AcquireReaderLock(LockTimeout);
             var proxy = GetProxyTypeOrNull(type, contract);
             _lock.ReleaseReaderLock();
 
             if (proxy != null)
-                return new Tuple<bool, Type, ProxyInfo>(true, proxy, null);                
+                return new Tuple<bool, Type, ProxyInfo>(true, proxy, null);
 
-            if (!alwaysGiveProxyInfo && _knownSatisfiedContracts.Contains(combination))
-                return new Tuple<bool, Type, ProxyInfo>(true, null, null);
+            // If this combination has been validated before, return the existing analysis data.
+            _lock.AcquireReaderLock(LockTimeout);
+            var hasBeenValidatedBefore = _knownSatisfiedContracts.ContainsKey(combination);
+            if (hasBeenValidatedBefore)
+            {
+                var knownProxyInfo = _knownSatisfiedContracts[combination];
+                _lock.ReleaseReaderLock();
+                return new Tuple<bool, Type, ProxyInfo>(true, null, knownProxyInfo);
+            }
 
-            _lock.AcquireWriterLock(LockTimeout);
+            // If this combination has been rejected before, return the existing analysis data.
+            var hasBeenRejectedBefore = _knownFailingContracts.Contains(combination);
+            if (hasBeenRejectedBefore)
+            {
+                _lock.ReleaseReaderLock();
+                return new Tuple<bool, Type, ProxyInfo>(false, null, null);
+            }
+            _lock.ReleaseReaderLock();
 
+            // If this is a new combination, analyze it.
             var info = new ProxyInfo
             {
-                RequiredMethods = contract.GetMethods()
-                    .WithoutAttribute<ExplicitConversionAttribute>()
-                    .WithoutAttribute<ImplicitConversionAttribute>()
-                    .ToList(),
-                RequiredExplicitConversions = contract.GetMethods()
-                    .WithAttribute<ExplicitConversionAttribute>()
-                    .ToList(),
-                RequiredImplicitConversions = contract.GetMethods()
-                    .WithAttribute<ImplicitConversionAttribute>()
-                    .ToList()
-            };
+                RequiredMethods = contract.GetMethods().WithoutAttribute<ExposeOperatorAttribute>().ToList(),
+                RequiredExplicitConversions = contract.GetMethods().WithAttribute<CastAttribute>().ToList(),
+                RequiredImplicitConversions = contract.GetMethods().WithAttribute<ImplicitAttribute>().ToList(),
+                RequiredLeftSideAdditionOperators = contract.GetMethods()
+                    .WithAttribute<AdditionAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
+                RequiredRightSideAdditionOperators = contract.GetMethods()
+                    .WithAttribute<AdditionAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList(),
+                RequiredLeftSideSubtractionOperators = contract.GetMethods()
+                    .WithAttribute<SubtractionAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
+                RequiredRightSideSubtractionOperators = contract.GetMethods()
+                    .WithAttribute<SubtractionAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList(),
+                RequiredLeftSideMultiplicationOperators = contract.GetMethods()
+                    .WithAttribute<MultiplicationAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
+                RequiredRightSideMultiplicationOperators = contract.GetMethods()
+                    .WithAttribute<MultiplicationAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList(),
+                RequiredLeftSideDivisionOperators = contract.GetMethods()
+                    .WithAttribute<DivisionAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
+                RequiredRightSideDivisionOperators = contract.GetMethods()
+                    .WithAttribute<DivisionAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList(),
 
+            };
             info.FoundMethods = info.RequiredMethods.Select(x =>
             {
                 var name = x.Name;
@@ -142,7 +174,7 @@ namespace TinyReflectiveToolkit.Contracts
                     .Where(m => m.ReturnType == x.ReturnType)
                     .Where(m => m.Name == "op_Explicit")
                     .ToList();
-                return new Tuple<string, MethodInfo>(x.Name, conversions.FirstOrDefault());
+                return new Tuple<string, MethodInfo, int>(x.Name, conversions.FirstOrDefault(), 0);
             }).ToList();
             info.FoundImplicitConversions = info.RequiredImplicitConversions.Select(x =>
             {
@@ -150,15 +182,42 @@ namespace TinyReflectiveToolkit.Contracts
                     .Where(m => m.ReturnType == x.ReturnType)
                     .Where(m => m.Name == "op_Implicit")
                     .ToList();
-                return new Tuple<string, MethodInfo>(x.Name, conversions.FirstOrDefault());
+                return new Tuple<string, MethodInfo, int>(x.Name, conversions.FirstOrDefault(), 0);
             }).ToList();
-            
-            if(!info.IsValid)
-                return new Tuple<bool, Type, ProxyInfo>(false, null, null);
+            Action<List<MethodInfo>, List<Tuple<String, MethodInfo, int>>, string, int> act =
+                (required, found, op, index) => found.AddRange(required.Select(x =>
+                {
+                    var otherParameter = x.GetParameters().Single().ParameterType;
+                    var operatorMethods = mimicObjectOperators
+                        .Where(m => m.ReturnType == x.ReturnType)
+                        .Where(m => m.Name == op)
+                        .Where(m => m.GetParameters().ElementAt(1 - index).ParameterType == otherParameter)
+                        .ToList();
+                    return new Tuple<string, MethodInfo, int>(x.Name, operatorMethods.FirstOrDefault(), index);
+                }).ToList());
 
-            _knownSatisfiedContracts.Add(combination);
+            act(info.RequiredLeftSideAdditionOperators, info.FoundLeftSideAdditionOperators, "op_Addition", 0);
+            act(info.RequiredRightSideAdditionOperators, info.FoundRightSideAdditionOperators, "op_Addition", 1);
+            act(info.RequiredLeftSideSubtractionOperators, info.FoundLeftSideSubtractionOperators, "op_Subtraction", 0);
+            act(info.RequiredRightSideSubtractionOperators, info.FoundRightSideSubtractionOperators, "op_Subtraction", 1);
+            act(info.RequiredLeftSideMultiplicationOperators, info.FoundLeftSideMultiplicationOperators, "op_Multiply", 0);
+            act(info.RequiredRightSideMultiplicationOperators, info.FoundRightSideMultiplicationOperators, "op_Multiply", 1);
+            act(info.RequiredLeftSideDivisionOperators, info.FoundLeftSideDivisionOperators, "op_Division", 0);
+            act(info.RequiredRightSideDivisionOperators, info.FoundRightSideDivisionOperators, "op_Division", 1);
+           
+            // If this looks like a wrong contract, cache analysis results, then return them.
+            if (!info.IsValid)
+            {
+                _lock.AcquireWriterLock(LockTimeout);
+                _knownFailingContracts.Add(combination);
+                _lock.ReleaseWriterLock();
+                return new Tuple<bool, Type, ProxyInfo>(false, null, null);                
+            }
+
+            // If this looks like a matching contract, cache analysis results, then return them.
+            _lock.AcquireWriterLock(LockTimeout);
+            _knownSatisfiedContracts.Add(combination, info);
             _lock.ReleaseWriterLock();
-
             return new Tuple<bool, Type, ProxyInfo>(true, null, info);
         }
 
@@ -201,21 +260,46 @@ namespace TinyReflectiveToolkit.Contracts
             var proxyStubsForMethods = proxyInfo.FoundMethods.Select(x =>
             {
                 var name = x.Name;
-                var parameters = x.GetParameters().Select(n => n.ParameterType).ToArray();
+                var parameters = x.GetParameters().Select(p => p.ParameterType).ToArray();
                 var retType = x.ReturnType;
                 var proxyMethod = proxyBuilder.DefineMethod(name, ProxyMethodAttributes, retType, parameters);
                 var generator = proxyMethod.GetILGenerator();
-                GenerateStub(generator, fieldWithActualObject, x, true, parameters);
+                generator.Emit(OpCodes.Ldarg_0);
+                generator.Emit(OpCodes.Ldfld, fieldWithActualObject);
+                for (var i = 0; i < parameters.Count(); i++)
+                    generator.Emit(OpCodes.Ldarg, i + 1);
+                generator.EmitCall(OpCodes.Callvirt, x, null);
+                generator.Emit(OpCodes.Ret);
                 return proxyMethod;
             }).ToList();
-            var proxyStubsForOperators = proxyInfo.FoundExplicitConversions.Concat(proxyInfo.FoundImplicitConversions)
+            var proxyStubsForOperators = proxyInfo.FoundExplicitConversions
+                .Concat(proxyInfo.FoundImplicitConversions)
+                .Concat(proxyInfo.FoundLeftSideAdditionOperators)
+                .Concat(proxyInfo.FoundRightSideAdditionOperators)
+                .Concat(proxyInfo.FoundLeftSideSubtractionOperators)
+                .Concat(proxyInfo.FoundRightSideSubtractionOperators)
+                .Concat(proxyInfo.FoundLeftSideMultiplicationOperators)
+                .Concat(proxyInfo.FoundRightSideMultiplicationOperators)
+                .Concat(proxyInfo.FoundLeftSideDivisionOperators)
+                .Concat(proxyInfo.FoundRightSideDivisionOperators)
                 .Select(x =>
                 {
                     var name = x.Item1;
                     var retType = x.Item2.ReturnType;
-                    var proxyMethod = proxyBuilder.DefineMethod(name, ProxyMethodAttributes, retType, new Type[0]);
+                    var index = x.Item3;
+                    var parameters = x.Item2.GetParameters().Select(p => p.ParameterType).Where((p, i) => i != index).ToArray();
+                    var proxyMethod = proxyBuilder.DefineMethod(name, ProxyMethodAttributes, retType, parameters);
                     var generator = proxyMethod.GetILGenerator();
-                    GenerateStub(generator, fieldWithActualObject, x.Item2, false);
+                    for (var i = 0; i < parameters.Count() + 1; i++)
+                        if (i < index) generator.Emit(OpCodes.Ldarg, i + 1);
+                        else if (i > index) generator.Emit(OpCodes.Ldarg, i);
+                        else
+                        {
+                            generator.Emit(OpCodes.Ldarg_0);
+                            generator.Emit(OpCodes.Ldfld, fieldWithActualObject);
+                        }
+                    generator.EmitCall(OpCodes.Call, x.Item2, null);
+                    generator.Emit(OpCodes.Ret);
                     return proxyMethod;
                 }).ToList();
 
@@ -233,15 +317,5 @@ namespace TinyReflectiveToolkit.Contracts
             return GenerateProxy<TContract>(actualObject, proxyType);
         }
 
-        private static void GenerateStub(ILGenerator generator, FieldInfo field, MethodInfo method, bool callVirt, Type[] parameters = null)
-        {
-            generator.Emit(OpCodes.Ldarg_0);
-            generator.Emit(OpCodes.Ldfld, field);
-            if(parameters != null)
-                for (var i = 0; i < parameters.Count(); i++)
-                    generator.Emit(OpCodes.Ldarg, i + 1);
-            generator.EmitCall(callVirt ? OpCodes.Callvirt : OpCodes.Call, method, null);
-            generator.Emit(OpCodes.Ret);
-        }
     }
 }

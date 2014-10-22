@@ -17,27 +17,16 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using TinyReflectiveToolkit;
-using TinyReflectiveToolkitTests;
 
-namespace ManualTests
+namespace TinyReflectiveToolkit.Contracts
 {
-    class Program
+    /// <summary>
+    /// Declares that instead of being an actual method implemented by the type of the provided object,
+    /// this will be a new, automatically implemented method that returns the result of the
+    /// implicit conversion of the given type to this method's return type.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
+    public sealed class ImplicitAttribute : ExposeOperatorAttribute
     {
-        static void Main(string[] args)
-        {
-            var contracts = new Contracts();
-            contracts.AdditionRightSide();
-            //contracts.FailingContract();
-            //contracts.VoidContract();
-            //contracts.ParameterizedContract();
-            //contracts.Overloads();
-            //contracts.ExplicitConversionOperator();
-            //contracts.ImplicitConversionOperator();
-            //contracts.GetProperties();
-        }        
     }
 }

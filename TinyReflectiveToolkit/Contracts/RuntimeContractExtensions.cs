@@ -31,7 +31,7 @@ namespace TinyReflectiveToolkit.Contracts
     /// </summary>
     public static class RuntimeContractExtensions
     {
-        private static readonly ContractProvider DefaultContractProvider = new ContractProvider();
+        private static readonly ContractProvider DefaultContractProvider = new ContractProvider("Default");
 
         /// <summary>
         /// Returns a runtime-generated proxy that implements a specified interface and forwards method calls to the given object - even if the relationship between the object's type and the interface wasn't declared at build time.

@@ -139,7 +139,42 @@ namespace TinyReflectiveToolkitTests
             Assert.IsFalse(new UnrelatedType1().Satisfies<IGetSet>());
         }
 
+        [Test]
+        public void AdditionLeftSide()
+        {
+            var five = new UnrelatedType7 {Value = 5}.ToContract<IAdditionLeft>();
+            var sum = five.Add(3);
+            Assert.AreEqual(8, sum);
+        }
+        [Test]
+        public void AdditionRightSide()
+        {
+            var nine = new UnrelatedType7 { Value = 9 }.ToContract<IAdditionRight>();
+            var sum = nine.Add(4);
+            Assert.AreEqual(13, sum);
+        }
 
+        [Test]
+        public void SubtractionBothSides()
+        {
+            var ten = new UnrelatedType7 {Value = 10}.ToContract<ISubtractable>();
+            Assert.AreEqual(3, ten.Subtract(7));
+            Assert.AreEqual(4, ten.SubtractFrom(14));
+        }
+
+        [Test]
+        public void MultiplicationGeneric()
+        {
+            var nine = new UnrelatedType7 {Value = 9}.ToContract<IMultiply<int>>();
+            Assert.AreEqual(81, nine.MultiplyBy(9));
+        }
+
+        [Test]
+        public void DivisionGeneric()
+        {
+            var twelve = new UnrelatedType7 {Value = 12}.ToContract<IDividable<int, int>>();
+            Assert.AreEqual(3, twelve.DivideBy(4));
+        }
     }
     public interface IValue
     {
@@ -225,19 +260,19 @@ namespace TinyReflectiveToolkitTests
 
     public interface ICastableToInt32
     {
-        [ExplicitConversion]
+        [Cast]
         int ToInt32();
     }
 
     public interface IConvertibleToFloat
     {
-        [ImplicitConversion]
+        [Implicit]
         float ToFloat();
     }
 
     public interface ICastableTo<out T>
     {
-        [ExplicitConversion]
+        [Cast]
         T Cast();
     }
 
@@ -261,5 +296,71 @@ namespace TinyReflectiveToolkitTests
     public interface IGetSet
     {
         int GetSet { get; set; }
+    }
+
+    public class UnrelatedType7
+    {
+        public int Value { get; set; }
+        
+        public static int operator +(UnrelatedType7 a, int b)
+        {
+            return a.Value + b;
+        }
+        public static int operator +(int a, UnrelatedType7 b)
+        {
+            return a + b.Value;
+        }
+
+        public static int operator -(UnrelatedType7 a, int b)
+        {
+            return a.Value - b;
+        }
+        public static int operator -(int a, UnrelatedType7 b)
+        {
+            return a - b.Value;
+        }
+
+        public static int operator *(UnrelatedType7 a, int b)
+        {
+            return a.Value*b;
+        }
+
+        public static int operator /(UnrelatedType7 a, int b)
+        {
+            return a.Value / b;
+        }
+    }
+
+    public interface IAdditionLeft
+    {
+        [Addition(OpSide.ThisLeft)]
+        int Add(int p);
+    }
+
+    public interface IAdditionRight
+    {
+        [Addition(OpSide.ThisRight)]
+        int Add(int p);
+    }
+
+    public interface ISubtractable
+    {
+        [Subtraction(OpSide.ThisLeft)]
+        int Subtract(int p);
+
+        [Subtraction(OpSide.ThisRight)]
+        int SubtractFrom(int p);
+    }
+
+    public interface IMultiply<T>
+    {
+        [Multiplication(OpSide.ThisLeft)]
+        T MultiplyBy(T p);
+    }
+
+    public interface IDividable<T1, T2>
+    {
+        [Division(OpSide.ThisLeft)]
+        T1 DivideBy(T2 p);
     }
 }

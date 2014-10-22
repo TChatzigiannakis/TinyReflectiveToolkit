@@ -26,14 +26,59 @@ namespace TinyReflectiveToolkit.Contracts
 {
     internal class ProxyInfo
     {
+        public ProxyInfo()
+        {
+            RequiredMethods = new List<MethodInfo>();
+            RequiredExplicitConversions = new List<MethodInfo>();
+            RequiredImplicitConversions = new List<MethodInfo>();
+            RequiredLeftSideAdditionOperators = new List<MethodInfo>();
+            RequiredRightSideAdditionOperators = new List<MethodInfo>();
+            RequiredLeftSideSubtractionOperators = new List<MethodInfo>();
+            RequiredRightSideSubtractionOperators = new List<MethodInfo>();
+            RequiredLeftSideMultiplicationOperators = new List<MethodInfo>();
+            RequiredRightSideMultiplicationOperators = new List<MethodInfo>();
+            RequiredLeftSideDivisionOperators = new List<MethodInfo>();
+            RequiredRightSideDivisionOperators = new List<MethodInfo>();
+
+            FoundMethods = new List<MethodInfo>();
+            FoundExplicitConversions = new List<Tuple<string, MethodInfo, int>>();
+            FoundImplicitConversions = new List<Tuple<string, MethodInfo, int>>();
+            FoundLeftSideAdditionOperators = new List<Tuple<string, MethodInfo, int>>();
+            FoundRightSideAdditionOperators = new List<Tuple<string, MethodInfo, int>>();
+            FoundLeftSideSubtractionOperators = new List<Tuple<string, MethodInfo, int>>();
+            FoundRightSideSubtractionOperators = new List<Tuple<string, MethodInfo, int>>();
+            FoundLeftSideMultiplicationOperators = new List<Tuple<string, MethodInfo, int>>();
+            FoundRightSideMultiplicationOperators = new List<Tuple<string, MethodInfo, int>>();
+            FoundLeftSideDivisionOperators = new List<Tuple<string, MethodInfo, int>>();
+            FoundRightSideDivisionOperators = new List<Tuple<string, MethodInfo, int>>();
+        }
+
         public Type ProvidedType { get; set; }
         public Type Contract { get; set; }
         public List<MethodInfo> RequiredMethods { get; set; }
         public List<MethodInfo> RequiredExplicitConversions { get; set; }
         public List<MethodInfo> RequiredImplicitConversions { get; set; }
+        public List<MethodInfo> RequiredLeftSideAdditionOperators { get; set; }
+        public List<MethodInfo> RequiredRightSideAdditionOperators { get; set; }
+        public List<MethodInfo> RequiredLeftSideSubtractionOperators { get; set; }
+        public List<MethodInfo> RequiredRightSideSubtractionOperators { get; set; }
+        public List<MethodInfo> RequiredLeftSideMultiplicationOperators { get; set; }
+        public List<MethodInfo> RequiredRightSideMultiplicationOperators { get; set; }
+        public List<MethodInfo> RequiredLeftSideDivisionOperators { get; set; }
+        public List<MethodInfo> RequiredRightSideDivisionOperators { get; set; }
+
         public List<MethodInfo> FoundMethods { get; set; }
-        public List<Tuple<string, MethodInfo>> FoundExplicitConversions { get; set; }
-        public List<Tuple<string, MethodInfo>> FoundImplicitConversions { get; set; }
+        public List<Tuple<string, MethodInfo, int>> FoundExplicitConversions { get; set; }
+        public List<Tuple<string, MethodInfo, int>> FoundImplicitConversions { get; set; }
+        public List<Tuple<string, MethodInfo, int>> FoundLeftSideAdditionOperators { get; set; }
+        public List<Tuple<string, MethodInfo, int>> FoundRightSideAdditionOperators { get; set; }
+        public List<Tuple<string, MethodInfo, int>> FoundLeftSideSubtractionOperators { get; set; }
+        public List<Tuple<string, MethodInfo, int>> FoundRightSideSubtractionOperators { get; set; }
+        public List<Tuple<string, MethodInfo, int>> FoundLeftSideMultiplicationOperators { get; set; }
+        public List<Tuple<string, MethodInfo, int>> FoundRightSideMultiplicationOperators { get; set; }
+        public List<Tuple<string, MethodInfo, int>> FoundLeftSideDivisionOperators { get; set; }
+        public List<Tuple<string, MethodInfo, int>> FoundRightSideDivisionOperators { get; set; }
+
         public bool IsValid
         {
             get

@@ -17,14 +17,24 @@
  */
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace TinyReflectiveToolkit.Contracts
 {
     /// <summary>
-    /// Declares that this method will return the result of the implicit conversion of the given type to the method's return type.
+    /// Specifies where the runtime type appears in a binary operator.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
-    public sealed class ImplicitConversionAttribute : Attribute
+    public enum OpSide
     {
+        /// <summary>
+        /// The runtime type appears on the left side of the binary operator and the method's argument appears on the right side.
+        /// </summary>
+        ThisLeft,
+        /// <summary>
+        /// The runtime type appears on the right side of the binary operator and the method's argument appears on the left side.
+        /// </summary>
+        ThisRight
     }
 }

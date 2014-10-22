@@ -20,24 +20,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using TinyReflectiveToolkit;
-using TinyReflectiveToolkitTests;
 
-namespace ManualTests
+namespace TinyReflectiveToolkit.Contracts
 {
-    class Program
+    /// <summary>
+    /// Base type for binary-operator-exposing attributes.
+    /// </summary>
+    public abstract class ExposeBinaryOperatorAttribute : ExposeOperatorAttribute
     {
-        static void Main(string[] args)
+        /// <summary>
+        /// Specifies which side of the operator the internal object will be on.
+        /// </summary>
+        public OpSide OperatorSide { get; private set; }
+        protected internal ExposeBinaryOperatorAttribute(OpSide side)
         {
-            var contracts = new Contracts();
-            contracts.AdditionRightSide();
-            //contracts.FailingContract();
-            //contracts.VoidContract();
-            //contracts.ParameterizedContract();
-            //contracts.Overloads();
-            //contracts.ExplicitConversionOperator();
-            //contracts.ImplicitConversionOperator();
-            //contracts.GetProperties();
-        }        
+            OperatorSide = side;
+        }
     }
 }
