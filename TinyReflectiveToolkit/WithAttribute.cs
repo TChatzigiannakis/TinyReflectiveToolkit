@@ -168,41 +168,5 @@ namespace TinyReflectiveToolkit
             return sequence.WithAttribute<TAttribute, PropertyInfo>(predicate);
         }
 
-
-        /// <summary>
-        /// Returns all types that are not decorated with a specified attribute.
-        /// </summary>
-        /// <typeparam name="TAttribute"></typeparam>
-        /// <param name="sequence"></param>
-        /// <returns></returns>
-        public static IEnumerable<Type> WithoutAttribute<TAttribute>(this IEnumerable<Type> sequence)
-            where TAttribute : Attribute
-        {
-            return sequence.WithoutAttribute<TAttribute, Type>();
-        }
-
-        /// <summary>
-        /// Returns all methods that are not decorated with a specified attribute.
-        /// </summary>
-        /// <typeparam name="TAttribute"></typeparam>
-        /// <param name="sequence"></param>
-        /// <returns></returns>
-        public static IEnumerable<MethodInfo> WithoutAttribute<TAttribute>(this IEnumerable<MethodInfo> sequence)
-            where TAttribute : Attribute
-        {
-            return sequence.WithoutAttribute<TAttribute, MethodInfo>();
-        }
-
-        /// <summary>
-        /// Retyrns all properties that are not decorated with a specified attribute.
-        /// </summary>
-        /// <typeparam name="TAttribute"></typeparam>
-        /// <param name="sequence"></param>
-        /// <returns></returns>
-        public static IEnumerable<PropertyInfo> WithoutAttribute<TAttribute>(this IEnumerable<PropertyInfo> sequence)
-            where TAttribute : Attribute
-        {
-            return sequence.WithoutAttribute<TAttribute, PropertyInfo>();
-        }
     }
 }
