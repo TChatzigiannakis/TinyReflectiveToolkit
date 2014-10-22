@@ -46,7 +46,7 @@ namespace TinyReflectiveToolkit.Contracts
                 .ToList();
             return matches.SingleOrDefault();
         }
-
+        
         /// <summary>
         /// Empty method, marking the need for a runtime-generated (non-generic) identity function.
         /// </summary>
