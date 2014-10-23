@@ -203,10 +203,13 @@ namespace TinyReflectiveToolkitTests
         }
 
         [Test]
-        public void Equality()
+        public void EqualityAndInequality()
         {
             var eight = new UnrelatedType7 {Value = 8}.ToContract<IComparableTo<int>>();
             Assert.IsTrue(eight.Equals(8));
+            Assert.IsFalse(eight.Equals(9));
+            Assert.IsTrue(eight.NotEqualTo(9));
+            Assert.IsFalse(eight.Equals(9));
         }
     }
     public interface IValue
@@ -422,5 +425,8 @@ namespace TinyReflectiveToolkitTests
     {
         [Equality(OpSide.ThisLeft)]
         bool Equals(int p);
+
+        [Inequality(OpSide.ThisLeft)]
+        bool NotEqualTo(int p);
     }
 }
