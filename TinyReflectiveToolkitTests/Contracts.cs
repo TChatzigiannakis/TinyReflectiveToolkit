@@ -201,6 +201,13 @@ namespace TinyReflectiveToolkitTests
             var ten = new UnrelatedType7 {Value = 10}.ToContract<IHasModulus>();
             Assert.AreEqual(1, ten.Modulus(3));
         }
+
+        [Test]
+        public void Equality()
+        {
+            var eight = new UnrelatedType7 {Value = 8}.ToContract<IComparableTo<int>>();
+            Assert.IsTrue(eight.Equals(8));
+        }
     }
     public interface IValue
     {
@@ -360,6 +367,16 @@ namespace TinyReflectiveToolkitTests
         {
             return a.Value % b;
         }
+
+        public static bool operator ==(UnrelatedType7 a, int b)
+        {
+            return a.Value == b;
+        }
+
+        public static bool operator !=(UnrelatedType7 a, int b)
+        {
+            return !(a == b);
+        }
     }
 
     public interface IAdditionLeft
@@ -399,5 +416,11 @@ namespace TinyReflectiveToolkitTests
     {
         [Modulus(OpSide.ThisLeft)]
         int Modulus(int p);
+    }
+
+    public interface IComparableTo<T>
+    {
+        [Equality(OpSide.ThisLeft)]
+        bool Equals(int p);
     }
 }

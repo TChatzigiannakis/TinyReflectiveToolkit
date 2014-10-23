@@ -43,6 +43,7 @@
     <Compile Include="Contracts\ContractProvider.cs" />
     <Compile Include="Contracts\CastAttribute.cs" />
     <Compile Include="Contracts\DivisionAttribute.cs" />
+    <Compile Include="Contracts\EqualityAttribute.cs" />
     <Compile Include="Contracts\ExposeBinaryOperatorAttribute.cs" />
     <Compile Include="Contracts\ExposeOperatorAttribute.cs" />
     <Compile Include="Contracts\ImplicitAttribute.cs" />
