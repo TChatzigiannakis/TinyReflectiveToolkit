@@ -155,7 +155,10 @@ namespace TinyReflectiveToolkit.Contracts
                     .WithAttribute<DivisionAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
                 RequiredRightSideDivisionOperators = contract.GetMethods()
                     .WithAttribute<DivisionAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList(),
-
+                RequiredLeftSideModulusOperators = contract.GetMethods()
+                    .WithAttribute<ModulusAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
+                RequiredRightSideModulusOperators = contract.GetMethods()
+                    .WithAttribute<ModulusAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList(),
             };
             info.FoundMethods = info.RequiredMethods.Select(x =>
             {
@@ -220,6 +223,8 @@ namespace TinyReflectiveToolkit.Contracts
             act(info.RequiredRightSideMultiplyOperators, info.FoundRightSideMultiplyOperators, "op_Multiply", 1);
             act(info.RequiredLeftSideDivisionOperators, info.FoundLeftSideDivisionOperators, "op_Division", 0);
             act(info.RequiredRightSideDivisionOperators, info.FoundRightSideDivisionOperators, "op_Division", 1);
+            act(info.RequiredLeftSideModulusOperators, info.FoundLeftSideModulusOperators, "op_Modulus", 0);
+            act(info.RequiredRightSideModulusOperators, info.FoundRightSideModulusOperators, "op_Modulus", 1);
            
             // If this looks like a wrong contract, cache analysis results, then return them.
             if (!info.IsValid)

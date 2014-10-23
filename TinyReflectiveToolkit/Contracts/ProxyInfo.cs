@@ -50,6 +50,8 @@ namespace TinyReflectiveToolkit.Contracts
         public List<MethodInfo> RequiredRightSideMultiplyOperators { get; set; }
         public List<MethodInfo> RequiredLeftSideDivisionOperators { get; set; }
         public List<MethodInfo> RequiredRightSideDivisionOperators { get; set; }
+        public List<MethodInfo> RequiredLeftSideModulusOperators { get; set; }
+        public List<MethodInfo> RequiredRightSideModulusOperators { get; set; }
 
         public List<MethodInfo> FoundMethods { get; set; }
         public List<Tuple<string, MethodInfo, int>> FoundExplicitConversions { get; set; }
@@ -62,6 +64,8 @@ namespace TinyReflectiveToolkit.Contracts
         public List<Tuple<string, MethodInfo, int>> FoundRightSideMultiplyOperators { get; set; }
         public List<Tuple<string, MethodInfo, int>> FoundLeftSideDivisionOperators { get; set; }
         public List<Tuple<string, MethodInfo, int>> FoundRightSideDivisionOperators { get; set; }
+        public List<Tuple<string, MethodInfo, int>> FoundLeftSideModulusOperators { get; set; }
+        public List<Tuple<string, MethodInfo, int>> FoundRightSideModulusOperators { get; set; }
 
         public IEnumerable<Tuple<string, MethodInfo, int>> AllFoundOperators
         {
@@ -89,6 +93,8 @@ namespace TinyReflectiveToolkit.Contracts
                 if (RequiredRightSideMultiplyOperators.Count != FoundRightSideMultiplyOperators.Count) return false;
                 if (RequiredLeftSideDivisionOperators.Count != FoundLeftSideDivisionOperators.Count) return false;
                 if (RequiredRightSideDivisionOperators.Count != FoundRightSideDivisionOperators.Count) return false;
+                if (RequiredLeftSideModulusOperators.Count != FoundLeftSideModulusOperators.Count) return false;
+                if (RequiredRightSideModulusOperators.Count != FoundRightSideModulusOperators.Count) return false;
 
                 if (FoundMethods.Any(x => x == null)) return false;
                 if (AllFoundOperators.Any(x => x.Item2 == null)) return false;

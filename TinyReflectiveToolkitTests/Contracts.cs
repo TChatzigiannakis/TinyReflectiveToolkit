@@ -194,6 +194,13 @@ namespace TinyReflectiveToolkitTests
             var self = contract.Cast();
             Assert.AreSame(nn, self);
         }
+
+        [Test]
+        public void Modulus()
+        {
+            var ten = new UnrelatedType7 {Value = 10}.ToContract<IHasModulus>();
+            Assert.AreEqual(1, ten.Modulus(3));
+        }
     }
     public interface IValue
     {
@@ -348,6 +355,11 @@ namespace TinyReflectiveToolkitTests
         {
             return a.Value / b;
         }
+
+        public static int operator %(UnrelatedType7 a, int b)
+        {
+            return a.Value % b;
+        }
     }
 
     public interface IAdditionLeft
@@ -381,5 +393,11 @@ namespace TinyReflectiveToolkitTests
     {
         [Division(OpSide.ThisLeft)]
         T1 DivideBy(T2 p);
+    }
+
+    public interface IHasModulus
+    {
+        [Modulus(OpSide.ThisLeft)]
+        int Modulus(int p);
     }
 }

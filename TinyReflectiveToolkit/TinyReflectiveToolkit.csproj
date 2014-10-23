@@ -46,6 +46,7 @@
     <Compile Include="Contracts\ExposeBinaryOperatorAttribute.cs" />
     <Compile Include="Contracts\ExposeOperatorAttribute.cs" />
     <Compile Include="Contracts\ImplicitAttribute.cs" />
+    <Compile Include="Contracts\ModulusAttribute.cs" />
     <Compile Include="Contracts\MultiplicationAttribute.cs" />
     <Compile Include="Contracts\OpSide.cs" />
     <Compile Include="Contracts\ProxyInfo.cs" />
