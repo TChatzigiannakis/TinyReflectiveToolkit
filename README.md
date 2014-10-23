@@ -10,7 +10,8 @@
 ### How do I get set up? ###
 
 * Open the solution file using Visual Studio or Xamarin Studio.
-* Select Build Solution.
+* Fetch latest NuGet packages by running `nuget restore` (if your environment doesn't fetch them automatically).
+* Build Solution.
 
 ### Contribution guidelines ###
 
