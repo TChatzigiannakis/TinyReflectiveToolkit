@@ -265,7 +265,7 @@ namespace TinyReflectiveToolkit.Contracts
             return CreateContractProxyFromObject<TContract>(obj);
         }
 
-        private TContract CreateContractProxyFromObject<TContract>(object actualObject, bool saveAssemblyForDebuggingPurposes = false)
+        private TContract CreateContractProxyFromObject<TContract>(object actualObject, bool saveAssemblyForDebuggingPurposes = true)
             where TContract : class
         {
             var contractType = typeof(TContract);
@@ -284,7 +284,7 @@ namespace TinyReflectiveToolkit.Contracts
             // Start building a new proxy type.
             var guid = Guid.NewGuid().ToString();
             var sanitizedGuid = guid.Replace("-", "");
-            var proxyName = ProxyNamespace + "." + contractType.Name + "_" + sanitizedGuid;
+            var proxyName = ProxyNamespace + "." + contractType.Name + "_Proxy_" + sanitizedGuid;
             var proxyBuilder = _moduleBuilder.DefineType(proxyName, TypeAttributes.Public, null, new[] { contractType });
             var fieldWithActualObject = proxyBuilder.DefineField(ActualObjectFieldName, actualObjectType, FieldAttributes.Public);
 
