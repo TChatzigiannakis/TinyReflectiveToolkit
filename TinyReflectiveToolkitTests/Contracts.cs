@@ -24,6 +24,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using TinyReflectiveToolkit;
 using TinyReflectiveToolkit.Contracts;
+using TinyReflectiveToolkit.Contracts.Premade;
 
 namespace TinyReflectiveToolkitTests
 {
@@ -306,12 +307,6 @@ namespace TinyReflectiveToolkitTests
         float ToFloat();
     }
 
-    public interface ICastableTo<out T>
-    {
-        [Cast]
-        T Cast();
-    }
-
     public class UnrelatedType6
     {
         public int OnlyGet { get { return 1; } }
@@ -424,9 +419,9 @@ namespace TinyReflectiveToolkitTests
     public interface IComparableTo<T>
     {
         [Equality(OpSide.ThisLeft)]
-        bool Equals(int p);
+        bool Equals(T p);
 
         [Inequality(OpSide.ThisLeft)]
-        bool NotEqualTo(int p);
+        bool NotEqualTo(T p);
     }
 }
