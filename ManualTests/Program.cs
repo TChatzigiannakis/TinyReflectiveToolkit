@@ -34,12 +34,13 @@ namespace ManualTests
             //contracts.GenericContract();
             //contracts.CastableToInt();
             //contracts.FailingContract();
-            contracts.VoidContract();
+            //contracts.VoidContract();
             //contracts.ParameterizedContract();
             //contracts.Overloads();
             //contracts.ExplicitConversionOperator();
             //contracts.ImplicitConversionOperator();
             //contracts.GetProperties();
+            contracts.CovariantContract();
         }        
     }
 }
