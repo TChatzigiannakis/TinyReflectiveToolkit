@@ -29,7 +29,7 @@ namespace TinyReflectiveToolkit.Contracts
     /// <summary>
     /// A class that provides supports for runtime-checked type contracts.
     /// </summary>
-    public class ContractProvider
+    public sealed class ContractProvider
     {
         private const string ActualObjectFieldName = "InternalObject";
         private const string ProxyNamespace = "TinyReflectiveToolkit.Contracts";

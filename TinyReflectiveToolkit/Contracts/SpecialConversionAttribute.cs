@@ -21,7 +21,7 @@ using System;
 namespace TinyReflectiveToolkit.Contracts
 {
     [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
-    internal class SpecialConversionAttribute : Attribute
+    internal sealed class SpecialConversionAttribute : Attribute
     {
     }
 }
