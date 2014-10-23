@@ -341,7 +341,7 @@ namespace TinyReflectiveToolkit.Contracts
             var proxyType = proxyBuilder.CreateType();
             _contractToProxyDictionary.Add(new Tuple<Type, Type>(actualObjectType, contractType), proxyType);
 
-            // Save dynamic assembly - enable ONLY when testing, to examine results in an IL viewer. Unit tests will fail with this.
+            // Save dynamic assembly - enable ONLY when debugging, to examine results in an IL viewer. Unit tests will fail with this.
             if (saveAssemblyForDebuggingPurposes)
                 _dynamicAssembly.Save(_dynamicAssemblyName);
             _lock.ReleaseWriterLock();
