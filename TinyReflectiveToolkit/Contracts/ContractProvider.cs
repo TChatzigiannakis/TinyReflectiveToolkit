@@ -265,7 +265,7 @@ namespace TinyReflectiveToolkit.Contracts
             return CreateContractProxyFromObject<TContract>(obj);
         }
 
-        private TContract CreateContractProxyFromObject<TContract>(object actualObject, bool saveAssemblyForDebuggingPurposes = true)
+        private TContract CreateContractProxyFromObject<TContract>(object actualObject, bool saveAssemblyForDebuggingPurposes = false)
             where TContract : class
         {
             var contractType = typeof(TContract);
