@@ -30,17 +30,6 @@ namespace ManualTests
         static void Main(string[] args)
         {
             var contracts = new Contracts();
-            //contracts.SelfCastable();
-            //contracts.GenericContract();
-            //contracts.CastableToInt();
-            //contracts.FailingContract();
-            //contracts.VoidContract();
-            //contracts.ParameterizedContract();
-            //contracts.Overloads();
-            //contracts.ExplicitConversionOperator();
-            //contracts.ImplicitConversionOperator();
-            //contracts.GetProperties();
-            contracts.CovariantContract();
         }        
     }
 }
