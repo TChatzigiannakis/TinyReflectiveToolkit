@@ -120,12 +120,12 @@ var sum = values.Sum(x =&gt; x.GetValue());
 <p>Of course, it also has some disadvantages and limitations:</p>
 
 <ol>
-<li>The <code>ToContract&lt;T&gt;()</code> call can be expensive, because it uses reflection (to verify compatibility for each type/interface combination) and it emits IL dynamically to generate proxy types. However, this is largely mitigated by the fact that <strong>each type/interface combination is cached and existing proxy types are reused</strong> if they are applicable.</li>
-<li>The <code>ToContract&lt;T&gt;()</code> call can only verify compatibility at runtime, not compile time.</li>
+<li>The <code>ToContract&lt;TContract&gt;()</code> call can be expensive, because it uses reflection (to verify compatibility for each type/interface combination) and it emits IL dynamically to generate proxy types. However, this is largely mitigated by the fact that <strong>each type/interface combination is cached and existing proxy types are reused</strong> if they are applicable.</li>
+<li>The <code>ToContract&lt;TContract&gt;()</code> call can only verify compatibility at runtime, not compile time.</li>
 <li>The runtime type of the passed object must be declared public.</li>
-<li>The interface <code>T</code> must also be public.</li>
-<li>Generic methods are not supported yet.</li>
-<li>Properties are not supported yet.</li>
+<li>The interface <code>TContract</code> must also be public.</li>
+<li>Generic methods (methods that declare their own type parameters) are not supported yet (and they may never be).</li>
+<li>Generic interfaces <em>are</em> supported and those type parameters <em>can</em> be used in the property/method signatures normally. However, covariance and contravariance in the type parameters are not supported yet (<code>in T</code> and <code>out T</code> are both handled as just <code>T</code>).</li>
 </ol>
 
 <h2>
