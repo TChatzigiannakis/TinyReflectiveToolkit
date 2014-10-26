@@ -34,34 +34,8 @@
 
 <p>It is distributed as free software, covered by the <a href="https://github.com/TChatzigiannakis/TinyReflectiveToolkit/blob/master/LICENSE"><strong>GNU GPLv3</strong></a>. If this is too restrictive for your needs and you would like to obtain it under different licensing terms, feel free to contact me.</p>
 
-<h1>
-<a name="highlights" class="anchor" href="#highlights"><span class="octicon octicon-link"></span></a>Highlights</h1>
-
 <h2>
-<a name="assemblyloader-loading-dependencies-eagerly" class="anchor" href="#assemblyloader-loading-dependencies-eagerly"><span class="octicon octicon-link"></span></a>AssemblyLoader: Loading dependencies eagerly</h2>
-
-<p>By default, your runtime may be loading your application's dependencies lazily - that is, just before the first time you attempt to use them. This is good for applications that value short startup time and can handle small, distributed performance hits along the way.</p>
-
-<p>But there are scenarios in which eager loading (even with a longer startup time) is <em>preferred</em> over incremental but possibly unpredictable lazy loading of dependencies. (A game is an example of an application that might fall into this category.)</p>
-
-<p><strong>The <code>AssemblyLoader</code> class gives you the opportunity to eagerly load pending dependencies</strong> (and their dependencies, in turn) at any specified point. It's easy to use:</p>
-
-<pre><code>    new AssemblyLoader().LoadAllDependencies();
-</code></pre>
-
-<p><strong>It exposes events</strong> to which you can subscribe and be alerted between loading dependencies - it's great for (say) creating <em>informative</em> splash screens for your application!</p>
-
-<pre><code>    var loader = new AssemblyLoader();
-    loader.AssemblyLoading += (assembly) =&gt;
-    {
-        Application.Invoke((a, b) =&gt; splash.LoadingText = assembly.Name);
-        Task.Delay(1).Wait();
-    };
-    loader.LoadAllDependencies();
-</code></pre>
-
-<h2>
-<a name="runtime-contracts-implementing-net-interfaces-at-runtime" class="anchor" href="#runtime-contracts-implementing-net-interfaces-at-runtime"><span class="octicon octicon-link"></span></a>Runtime Contracts: Implementing .NET interfaces at runtime</h2>
+<a name="runtime-contracts-part-1-implementing-net-interfaces-at-runtime" class="anchor" href="#runtime-contracts-part-1-implementing-net-interfaces-at-runtime"><span class="octicon octicon-link"></span></a>Runtime Contracts, Part 1: Implementing .NET interfaces at runtime</h2>
 
 <p>When working with C# (or any other language with static and nominal typing), you may occasionally end up in a situation where <strong>you have two or more types that both expose one or more compatible methods:</strong></p>
 
@@ -153,6 +127,49 @@
 <li>Generic methods are not supported yet.</li>
 <li>Properties are not supported yet.</li>
 </ol>
+
+<h2>
+<a name="runtime-contracts-part-2-operators" class="anchor" href="#runtime-contracts-part-2-operators"><span class="octicon octicon-link"></span></a>Runtime contracts, Part 2: Operators</h2>
+
+<p>Normal .NET interfaces are designed to only declare instanced public properties and methods. This means that an interface can't describe the existence of static methods, operators, conversions, etc. This usually makes sense from a design viewpoint, but there are times when it limits the expressiveness of the constraints.</p>
+
+<p>Even though the runtime contracts offered in this library are described as .NET interfaces, they can bind to other things, using some attributes. For example, consider the following contract:</p>
+
+<pre><code>public interface ICastableTo&lt;T&gt;
+{
+    [Cast]
+    T PerformCast();
+}
+</code></pre>
+
+<p>The <code>[Cast]</code> attribute means that the candidate types are not required to implement a <code>PerformCast()</code> method. Instead, they are required to contain an explicit conversion operator to <code>T</code>. If they do, then they satisfy this contract. (The name of the method is irrelevant.)</p>
+
+<p>For example, the built-in types <code>int</code>, <code>float</code>, <code>double</code>, <code>decimal</code> satisfy the <code>ICastableTo&lt;int&gt;</code> contract.</p>
+
+<p>With that out of the way, whenever instances of these types are accessed through this contract, a <code>PerformCast()</code> method will be available and it will polymorphically invoke the correct cast operator for that particular runtime type.</p>
+
+<h2>
+<a name="assemblyloader-loading-dependencies-eagerly" class="anchor" href="#assemblyloader-loading-dependencies-eagerly"><span class="octicon octicon-link"></span></a>AssemblyLoader: Loading dependencies eagerly</h2>
+
+<p>By default, your runtime may be loading your application's dependencies lazily - that is, just before the first time you attempt to use them. This is good for applications that value short startup time and can handle small, distributed performance hits along the way.</p>
+
+<p>But there are scenarios in which eager loading (even with a longer startup time) is <em>preferred</em> over incremental but possibly unpredictable lazy loading of dependencies. (A game is an example of an application that might fall into this category.)</p>
+
+<p><strong>The <code>AssemblyLoader</code> class gives you the opportunity to eagerly load pending dependencies</strong> (and their dependencies, in turn) at any specified point. It's easy to use:</p>
+
+<pre><code>    new AssemblyLoader().LoadAllDependencies();
+</code></pre>
+
+<p><strong>It exposes events</strong> to which you can subscribe and be alerted between loading dependencies - it's great for (say) creating <em>informative</em> splash screens for your application!</p>
+
+<pre><code>    var loader = new AssemblyLoader();
+    loader.AssemblyLoading += (assembly) =&gt;
+    {
+        Application.Invoke((a, b) =&gt; splash.LoadingText = assembly.Name);
+        Task.Delay(1).Wait();
+    };
+    loader.LoadAllDependencies();
+</code></pre>
 
 <h2>
 <a name="extension-methods-for-reflection-types-and-collections" class="anchor" href="#extension-methods-for-reflection-types-and-collections"><span class="octicon octicon-link"></span></a>Extension methods for reflection types and collections</h2>
