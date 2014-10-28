@@ -24,5 +24,5 @@
 ### License ###
 
 * Copyright (C) 2014  Theodoros Chatzigiannakis
-* Distributed under the GNU GPLv3. For more information, see LICENSE
+* Distributed as free and open source software. For more information, see LICENSE file.
 * If you would like to receive this software under a different license, feel free to contact me.
