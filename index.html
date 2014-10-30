@@ -110,9 +110,10 @@ var sum = values.Sum(x =&gt; x.GetValue());
 <li>
 <strong>The syntax is clean</strong> and natural C#.</li>
 <li>
-<strong>IntelliSense doesn't go away at all</strong> and neither does type safety at the call spots.</li>
+<strong>IntelliSense doesn't go away at all</strong> and neither does type safety at the interface call spots.</li>
 <li>When calling through the interface, <strong>the actual methods are stubs implemented using IL</strong> - the interface doesn't use reflection and lookups.</li>
-<li>It's extremely easy to use: just define your interface, call an extension method on those objects and let things take care of themselves automatically!</li>
+<li>
+<strong>It's extremely easy to use:</strong> just define your interface, call an extension method on those objects and let things take care of themselves automatically!</li>
 </ol>
 
 <p>Of course, it also has some disadvantages and limitations:</p>
@@ -123,15 +124,16 @@ var sum = values.Sum(x =&gt; x.GetValue());
 <li>The runtime type of the passed object must be declared public.</li>
 <li>The interface <code>TContract</code> must also be public.</li>
 <li>Generic methods (methods that declare their own type parameters) are not supported yet (and they may never be).</li>
-<li>Generic interfaces <em>are</em> supported and those type parameters <em>can</em> be used in the property/method signatures normally. However, covariance and contravariance in the type parameters are not supported yet (<code>in T</code> and <code>out T</code> are both handled as just <code>T</code>).</li>
+<li>
+<strong>Generic interfaces <em>are</em> supported</strong> and their type parameters <em>can</em> be used in the property/method signatures normally. However, covariance and contravariance in the type parameters is not supported yet (<code>in T</code> and <code>out T</code> are both handled as just <code>T</code>).</li>
 </ol>
 
 <h2>
 <a name="runtime-contracts-part-2-operators" class="anchor" href="#runtime-contracts-part-2-operators"><span class="octicon octicon-link"></span></a>Runtime Contracts, Part 2: Operators</h2>
 
-<p>Normal .NET interfaces are designed to only declare instanced public properties and methods. This means that an interface can't describe the existence of static methods, operators, conversions, etc. This usually makes sense from a design viewpoint, but there are times when it limits the expressiveness of the constraints.</p>
+<p><strong>Normal .NET interfaces are designed to only declare instanced public properties and methods.</strong> This means that an interface can't describe the existence of static methods, operators, conversions, etc. This usually makes sense from a design viewpoint, but there are times when it limits the expressiveness of the constraints.</p>
 
-<p>Even though the runtime contracts offered in this library are described as .NET interfaces, they can bind to other things, using some attributes. For example, consider the following contract:</p>
+<p><strong>The runtime contracts offered in this library</strong> are described as .NET interfaces, but they <strong>can bind to things like operators,</strong> using some attributes. For example, consider the following contract:</p>
 
 <pre><code>public interface ICastableTo&lt;T&gt;
 {
@@ -140,7 +142,7 @@ var sum = values.Sum(x =&gt; x.GetValue());
 }
 </code></pre>
 
-<p>The <code>[Cast]</code> attribute means that the candidate types are not required to implement a <code>PerformCast()</code> method. Instead, they are required to contain an explicit conversion operator to <code>T</code>. If they do, then they satisfy this contract. (The name of the method is irrelevant.)</p>
+<p>The <code>[Cast]</code> attribute means that the candidate types are not required to implement a <code>PerformCast()</code> method. Instead, <strong>they are required to contain an explicit conversion operator</strong> to <code>T</code>. If they do, then they satisfy this contract. (The name of the method is irrelevant.)</p>
 
 <p>For example, the built-in types <code>int</code>, <code>float</code>, <code>double</code>, <code>decimal</code> satisfy the <code>ICastableTo&lt;int&gt;</code> contract.</p>
 
