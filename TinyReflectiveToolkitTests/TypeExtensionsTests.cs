@@ -7,6 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+using System.Linq.Expressions;
 using System.Reflection;
 using NUnit.Framework;
 using System;
@@ -139,5 +140,13 @@ namespace TinyReflectiveToolkitTests
             Assert.AreEqual(1, properties.Count);
         }
 
+        [Test]
+        public void IsDelegate()
+        {
+            Assert.IsTrue(typeof (Action<int>).IsDelegate());
+            Assert.IsTrue(typeof (Func<string, object>).IsDelegate());
+            Assert.IsFalse(typeof (int).IsDelegate());
+            Assert.IsFalse(typeof (Expression<Action<int>>).IsDelegate());
+        }
     }
 }
