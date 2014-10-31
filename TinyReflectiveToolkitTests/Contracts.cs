@@ -213,6 +213,17 @@ namespace TinyReflectiveToolkitTests
             var cObjStr = cObj.GetGeneric(obj);
             Assert.IsTrue(obj.ToString() == cObjStr);
         }
+
+        [Test]
+        public void MoreGenericMethods()
+        {
+            var obj = new UnrelatedType8();
+            Assert.IsTrue(obj.Satisfies<IGenericMethod2>());
+            var cObj = obj.ToContract<IGenericMethod2>();
+            var cObjStr = cObj.GetGeneric(obj, 0, obj);
+            Assert.IsTrue(obj.ToString() + obj.ToString() == cObjStr);
+
+        }
     }
     public interface IValue
     {
@@ -433,11 +444,21 @@ namespace TinyReflectiveToolkitTests
         {
             return obj.ToString();
         }
+
+        public string GetGeneric<T1, T2>(T1 obj1, int a, T2 obj2)
+        {
+            return obj1.ToString() + obj2.ToString();
+        }
     }
 
     public interface IGenericMethod
     {
         string GetGeneric<T>(T obj)
             where T : class;
+    }
+
+    public interface IGenericMethod2
+    {
+        string GetGeneric<T1, T2>(T1 obj1, int a, T2 obj2);
     }
 }

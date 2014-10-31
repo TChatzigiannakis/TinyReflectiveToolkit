@@ -8,6 +8,7 @@
  */
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -32,10 +33,10 @@ namespace TinyReflectiveToolkit.Contracts
         private readonly AssemblyBuilder _dynamicAssembly;
         private readonly string _dynamicAssemblyName;
         private readonly ModuleBuilder _moduleBuilder;
-        private readonly Dictionary<Tuple<Type, Type>, Type> _contractToProxyDictionary =
-            new Dictionary<Tuple<Type, Type>, Type>();
-        private readonly Dictionary<Tuple<Type, Type>, ProxyInfo> _knownSatisfiedContracts =
-            new Dictionary<Tuple<Type, Type>, ProxyInfo>();
+        private readonly ConcurrentDictionary<Tuple<Type, Type>, Type> _contractToProxyDictionary =
+            new ConcurrentDictionary<Tuple<Type, Type>, Type>();
+        private readonly ConcurrentDictionary<Tuple<Type, Type>, ProxyInfo> _knownSatisfiedContracts =
+            new ConcurrentDictionary<Tuple<Type, Type>, ProxyInfo>();
         private readonly HashSet<Tuple<Type, Type>> _knownFailingContracts = 
             new HashSet<Tuple<Type, Type>>();
 
@@ -97,20 +98,16 @@ namespace TinyReflectiveToolkit.Contracts
             var combination = new Tuple<Type, Type>(type, contract);
 
             // Check if there is an existing proxy type for this combination.
-            _lock.AcquireReaderLock(LockTimeout);
             var proxy = GetProxyTypeOrNull(type, contract);
-            _lock.ReleaseReaderLock();
 
             if (proxy != null)
                 return new Tuple<bool, Type, ProxyInfo>(true, proxy, null);
 
             // If this combination has been validated before, return the existing analysis data.
-            _lock.AcquireReaderLock(LockTimeout);
             var hasBeenValidatedBefore = _knownSatisfiedContracts.ContainsKey(combination);
             if (hasBeenValidatedBefore)
             {
                 var knownProxyInfo = _knownSatisfiedContracts[combination];
-                _lock.ReleaseReaderLock();
                 return new Tuple<bool, Type, ProxyInfo>(true, null, knownProxyInfo);
             }
 
@@ -118,10 +115,8 @@ namespace TinyReflectiveToolkit.Contracts
             var hasBeenRejectedBefore = _knownFailingContracts.Contains(combination);
             if (hasBeenRejectedBefore)
             {
-                _lock.ReleaseReaderLock();
                 return new Tuple<bool, Type, ProxyInfo>(false, null, null);
             }
-            _lock.ReleaseReaderLock();
 
             // If this is a new combination, analyze it.
             var info = new ProxyInfo
@@ -232,16 +227,12 @@ namespace TinyReflectiveToolkit.Contracts
             // If this looks like a wrong contract, cache analysis results, then return them.
             if (!info.IsValid)
             {
-                _lock.AcquireWriterLock(LockTimeout);
                 _knownFailingContracts.Add(combination);
-                _lock.ReleaseWriterLock();
                 return new Tuple<bool, Type, ProxyInfo>(false, null, null);                
             }
 
             // If this looks like a matching contract, cache analysis results, then return them.
-            _lock.AcquireWriterLock(LockTimeout);
-            _knownSatisfiedContracts.Add(combination, info);
-            _lock.ReleaseWriterLock();
+            _knownSatisfiedContracts.AddOrUpdate(combination, info, (a, b) => b);
             return new Tuple<bool, Type, ProxyInfo>(true, null, info);
         }
 
@@ -291,18 +282,16 @@ namespace TinyReflectiveToolkit.Contracts
 
                 if (x.IsGenericMethod)
                 {
-                    var typeParams = proxyMethod.DefineGenericParameters(x.GetParameters().Select(p => p.Name).ToArray());
-                    var attributes = x.GetParameters().Select(p => p.ParameterType.GenericParameterAttributes).ToArray();
-                    var constraints =
-                        x.GetParameters().Select(p => p.ParameterType.GetGenericParameterConstraints()).ToArray();
-                    var index = 0;
-                    foreach (var tp in typeParams)
+                    var parameterizedParameters = x.GetParameters().Where(p => p.ParameterType.IsGenericParameter).ToArray();
+                    var typeParams = proxyMethod.DefineGenericParameters(parameterizedParameters.Select(p => p.Name).ToArray());
+                    var attributes = parameterizedParameters.Select(p => p.ParameterType.GenericParameterAttributes).ToArray();
+                    var constraints = parameterizedParameters.Select(p => p.ParameterType.GetGenericParameterConstraints()).ToArray();
+                     typeParams.ForEach((tp, index) =>
                     {
                         tp.SetGenericParameterAttributes(attributes[index]);
                         tp.SetBaseTypeConstraint(constraints[index].SingleOrDefault(d => d.IsClass));
                         tp.SetInterfaceConstraints(constraints[index].Where(d => d.IsInterface).ToArray());
-                        index++;
-                    }
+                    });
                     proxyMethod.SetParameters(parameters);
                 }
                 else
@@ -350,14 +339,13 @@ namespace TinyReflectiveToolkit.Contracts
                 }).ToList();
 
             // Create final proxy type.
-            _lock.AcquireWriterLock(LockTimeout);
             var proxyType = proxyBuilder.CreateType();
-            _contractToProxyDictionary.Add(new Tuple<Type, Type>(actualObjectType, contractType), proxyType);
+            var combination = new Tuple<Type, Type>(actualObjectType, contractType);
+            _contractToProxyDictionary.AddOrUpdate(combination, proxyType, (a, b) => b);
 
             // Save dynamic assembly - enable ONLY when debugging, to examine results in an IL viewer. Unit tests will fail with this.
             if (saveAssemblyForDebuggingPurposes)
                 _dynamicAssembly.Save(_dynamicAssemblyName);
-            _lock.ReleaseWriterLock();
 
             // Return proxy of new type.
             return GenerateProxy<TContract>(actualObject, proxyType);

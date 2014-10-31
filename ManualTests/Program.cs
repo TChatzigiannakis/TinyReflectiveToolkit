@@ -21,22 +21,10 @@ namespace ManualTests
     {
         static void Main(string[] args)
         {
-            var m1 = typeof (Program).GetMethod("GenericMethod", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
-            var m2 = typeof (Program).GetGenericMethod("OtherMethod", m1.GetParameters());
-
             var contractTests = new Contracts();
-            contractTests.GenericMethods();
+            contractTests.MoreGenericMethods();
 
 
-        }
-        void GenericMethod<T>(T t1, T t2)
-        {
-            
-        }
-
-        void OtherMethod<T>(T t1, T t2)
-        {
-            
         }
     }
 
