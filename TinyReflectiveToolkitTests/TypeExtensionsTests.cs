@@ -139,22 +139,5 @@ namespace TinyReflectiveToolkitTests
             Assert.AreEqual(1, properties.Count);
         }
 
-        [Test]
-        public void InvariantCheck()
-        {
-            Assert.IsTrue(typeof (int).CanBeCastTo(typeof (int), Variance.Invariant));
-        }
-
-        [Test]
-        public void CovariantCheck()
-        {
-            Assert.IsTrue(typeof (int).CanBeCastTo(typeof (object), Variance.Covariant));
-        }
-
-        [Test]
-        public void ContravariantCheck()
-        {
-            Assert.IsTrue(typeof (object).CanBeCastTo(typeof (int), Variance.Contravariant));
-        }
     }
 }

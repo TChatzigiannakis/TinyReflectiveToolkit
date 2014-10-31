@@ -20,7 +20,6 @@ namespace ManualTests
     {
         static void Main(string[] args)
         {
-            var contracts = new Contracts();
         }        
     }
 }

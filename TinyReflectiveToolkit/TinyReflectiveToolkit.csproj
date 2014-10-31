@@ -63,7 +63,6 @@
     <Compile Include="AssemblyLoader.cs" />
     <Compile Include="SelectAttribute.cs" />
     <Compile Include="TypeExtensions.cs" />
-    <Compile Include="Variance.cs" />
     <Compile Include="WithAttribute.cs" />
     <Compile Include="WithoutAttribute.cs" />
   </ItemGroup>
