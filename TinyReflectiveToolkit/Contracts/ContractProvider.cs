@@ -154,7 +154,6 @@ namespace TinyReflectiveToolkit.Contracts
             info.FoundMethods = info.RequiredMethods.Select(x =>
             {
                 var name = x.Name;
-                var parameters = x.GetParameters().Select(n => n.ParameterType).ToArray();
                 var method = type.GetGenericMethod(name, x.GetParameters());
                 return method;
             }).Except(x => x == null).ToList();
