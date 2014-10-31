@@ -204,12 +204,6 @@ namespace TinyReflectiveToolkitTests
             Assert.IsFalse(eight.Equals(9));
         }
 
-        //[Test]
-        public void CovariantContract()
-        {
-            var castableToObject = new UnrelatedType5().ToContract<ICovariantCastable<object>>();
-            Assert.AreEqual(1, castableToObject.Cast());
-        }
     }
     public interface IValue
     {
@@ -423,9 +417,13 @@ namespace TinyReflectiveToolkitTests
         bool NotEqualTo(T p);
     }
 
-    public interface ICovariantCastable<out T>
+    public interface IInvariantToString<T>
     {
-        [Cast]
-        T Cast();
+        T ToString();
+    }
+
+    public interface ICovariantToString<out T>
+    {
+        T ToString();
     }
 }
