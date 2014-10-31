@@ -23,8 +23,6 @@ namespace ManualTests
         {
             var contractTests = new Contracts();
             contractTests.MoreGenericMethods();
-
-
         }
     }
 
