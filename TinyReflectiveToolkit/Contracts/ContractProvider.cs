@@ -18,7 +18,7 @@ using EnumerableExtensions;
 namespace TinyReflectiveToolkit.Contracts
 {
     /// <summary>
-    /// A class that provides supports for runtime-checked type contracts.
+    /// A class that provides supports for runtime-checked structural type contracts.
     /// </summary>
     public sealed class ContractProvider
     {
