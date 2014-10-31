@@ -204,6 +204,15 @@ namespace TinyReflectiveToolkitTests
             Assert.IsFalse(eight.Equals(9));
         }
 
+        [Test]
+        public void GenericMethods()
+        {
+            var obj = new UnrelatedType8();
+            Assert.IsTrue(obj.Satisfies<IGenericMethod>());
+            var cObj = obj.ToContract<IGenericMethod>();
+            var cObjStr = cObj.GetGeneric(obj);
+            Assert.IsTrue(obj.ToString() == cObjStr);
+        }
     }
     public interface IValue
     {
@@ -417,13 +426,18 @@ namespace TinyReflectiveToolkitTests
         bool NotEqualTo(T p);
     }
 
-    public interface IInvariantToString<T>
+    public class UnrelatedType8
     {
-        T ToString();
+        public string GetGeneric<T>(T obj)
+            where T : class
+        {
+            return obj.ToString();
+        }
     }
 
-    public interface ICovariantToString<out T>
+    public interface IGenericMethod
     {
-        T ToString();
+        string GetGeneric<T>(T obj)
+            where T : class;
     }
 }

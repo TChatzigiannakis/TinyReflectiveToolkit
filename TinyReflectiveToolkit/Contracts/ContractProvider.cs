@@ -162,7 +162,8 @@ namespace TinyReflectiveToolkit.Contracts
             {
                 var name = x.Name;
                 var parameters = x.GetParameters().Select(n => n.ParameterType).ToArray();
-                return type.GetMethod(name, parameters);
+                var method = type.GetGenericMethod(name, x.GetParameters());
+                return method;
             }).Except(x => x == null).ToList();
 
             var mimicObjectOperators = type.GetMethods()
@@ -285,7 +286,28 @@ namespace TinyReflectiveToolkit.Contracts
                 var name = x.Name;
                 var parameters = x.GetParameters().Select(p => p.ParameterType).ToArray();
                 var retType = x.ReturnType;
-                var proxyMethod = proxyBuilder.DefineMethod(name, ProxyMethodAttributes, retType, parameters);
+                var proxyMethod = proxyBuilder.DefineMethod(name, ProxyMethodAttributes);
+                proxyMethod.SetReturnType(retType);
+
+                if (x.IsGenericMethod)
+                {
+                    var typeParams = proxyMethod.DefineGenericParameters(x.GetParameters().Select(p => p.Name).ToArray());
+                    var attributes = x.GetParameters().Select(p => p.ParameterType.GenericParameterAttributes).ToArray();
+                    var constraints =
+                        x.GetParameters().Select(p => p.ParameterType.GetGenericParameterConstraints()).ToArray();
+                    var index = 0;
+                    foreach (var tp in typeParams)
+                    {
+                        tp.SetGenericParameterAttributes(attributes[index]);
+                        tp.SetBaseTypeConstraint(constraints[index].SingleOrDefault(d => d.IsClass));
+                        tp.SetInterfaceConstraints(constraints[index].Where(d => d.IsInterface).ToArray());
+                        index++;
+                    }
+                    proxyMethod.SetParameters(parameters);
+                }
+                else
+                    proxyMethod.SetParameters(parameters);                    
+
                 var generator = proxyMethod.GetILGenerator();
                 generator.Emit(OpCodes.Ldarg_0);
                 generator.Emit(OpCodes.Ldfld, fieldWithActualObject);
