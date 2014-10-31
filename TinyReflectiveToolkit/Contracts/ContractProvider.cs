@@ -84,9 +84,9 @@ namespace TinyReflectiveToolkit.Contracts
         public bool CheckIfSatisfies<TContract>(object obj)
             where TContract : class
         {
-            return CheckIfSatisfies<TContract>(obj.GetType(), false).Item1;
+            return CheckIfSatisfies<TContract>(obj.GetType()).Item1;
         } 
-        private Tuple<bool, Type, ProxyInfo> CheckIfSatisfies<TContract>(Type type, bool alwaysGiveProxyInfo)
+        private Tuple<bool, Type, ProxyInfo> CheckIfSatisfies<TContract>(Type type)
             where TContract : class
         {
             // Check arguments.
@@ -114,9 +114,7 @@ namespace TinyReflectiveToolkit.Contracts
             // If this combination has been rejected before, return the existing analysis data.
             var hasBeenRejectedBefore = _knownFailingContracts.Contains(combination);
             if (hasBeenRejectedBefore)
-            {
                 return new Tuple<bool, Type, ProxyInfo>(false, null, null);
-            }
 
             // If this is a new combination, analyze it.
             var info = new ProxyInfo
@@ -255,7 +253,7 @@ namespace TinyReflectiveToolkit.Contracts
             var actualObjectType = actualObject.GetType();
 
             // Check if contract is satisfied and if a proxy type already exists.
-            var satisfactionCheckResult = CheckIfSatisfies<TContract>(actualObjectType, true);
+            var satisfactionCheckResult = CheckIfSatisfies<TContract>(actualObjectType);
             var satisfies = satisfactionCheckResult.Item1;
             var cachedProxy = satisfactionCheckResult.Item2;
             var proxyInfo = satisfactionCheckResult.Item3;
