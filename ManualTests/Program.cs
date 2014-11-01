@@ -22,7 +22,7 @@ namespace ManualTests
         static void Main(string[] args)
         {
             var contractTests = new Contracts();
-            contractTests.MoreGenericMethods();
+            contractTests.ContractInheritance();
         }
     }
 

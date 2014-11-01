@@ -117,38 +117,39 @@ namespace TinyReflectiveToolkit.Contracts
                 return new Tuple<bool, Type, ProxyInfo>(false, null, null);
 
             // If this is a new combination, analyze it.
+            var contractMethods = contract.GetInheritedInterfaceMembers().OfType<MethodInfo>().ToArray();
             var info = new ProxyInfo
             {
-                RequiredMethods = contract.GetMethods().WithoutAttribute<ExposeOperatorAttribute>().ToList(),
-                RequiredExplicitConversions = contract.GetMethods().WithAttribute<CastAttribute>().ToList(),
-                RequiredImplicitConversions = contract.GetMethods().WithAttribute<ImplicitAttribute>().ToList(),
-                RequiredLeftSideAdditionOperators = contract.GetMethods()
+                RequiredMethods = contractMethods.WithoutAttribute<ExposeOperatorAttribute>().ToList(),
+                RequiredExplicitConversions = contractMethods.WithAttribute<CastAttribute>().ToList(),
+                RequiredImplicitConversions = contractMethods.WithAttribute<ImplicitAttribute>().ToList(),
+                RequiredLeftSideAdditionOperators = contractMethods
                     .WithAttribute<AdditionAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
-                RequiredRightSideAdditionOperators = contract.GetMethods()
+                RequiredRightSideAdditionOperators = contractMethods
                     .WithAttribute<AdditionAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList(),
-                RequiredLeftSideSubtractionOperators = contract.GetMethods()
+                RequiredLeftSideSubtractionOperators = contractMethods
                     .WithAttribute<SubtractionAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
-                RequiredRightSideSubtractionOperators = contract.GetMethods()
+                RequiredRightSideSubtractionOperators = contractMethods
                     .WithAttribute<SubtractionAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList(),
-                RequiredLeftSideMultiplyOperators = contract.GetMethods()
+                RequiredLeftSideMultiplyOperators = contractMethods
                     .WithAttribute<MultiplicationAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
-                RequiredRightSideMultiplyOperators = contract.GetMethods()
+                RequiredRightSideMultiplyOperators = contractMethods
                     .WithAttribute<MultiplicationAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList(),
-                RequiredLeftSideDivisionOperators = contract.GetMethods()
+                RequiredLeftSideDivisionOperators = contractMethods
                     .WithAttribute<DivisionAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
-                RequiredRightSideDivisionOperators = contract.GetMethods()
+                RequiredRightSideDivisionOperators = contractMethods
                     .WithAttribute<DivisionAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList(),
-                RequiredLeftSideModulusOperators = contract.GetMethods()
+                RequiredLeftSideModulusOperators = contractMethods
                     .WithAttribute<ModulusAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
-                RequiredRightSideModulusOperators = contract.GetMethods()
+                RequiredRightSideModulusOperators = contractMethods
                     .WithAttribute<ModulusAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList(),
-                RequiredLeftSideEqualityOperators = contract.GetMethods()
+                RequiredLeftSideEqualityOperators = contractMethods
                     .WithAttribute<EqualityAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
-                RequiredRightSideEqualityOperators = contract.GetMethods()
+                RequiredRightSideEqualityOperators = contractMethods
                     .WithAttribute<EqualityAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList(),
-                RequiredLeftSideInequalityOperators = contract.GetMethods()
+                RequiredLeftSideInequalityOperators = contractMethods
                     .WithAttribute<InequalityAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
-                RequiredRightSideInequalityOperators = contract.GetMethods()
+                RequiredRightSideInequalityOperators = contractMethods
                     .WithAttribute<InequalityAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList(),
             };
             info.FoundMethods = info.RequiredMethods.Select(x =>

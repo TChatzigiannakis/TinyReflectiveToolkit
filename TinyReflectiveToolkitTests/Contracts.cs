@@ -224,6 +224,15 @@ namespace TinyReflectiveToolkitTests
             Assert.IsTrue(obj.ToString() + obj.ToString() == cObjStr);
 
         }
+
+        [Test]
+        public void ContractInheritance()
+        {
+            var obj = new UnrelatedType8();
+            Assert.IsTrue(obj.Satisfies<ICastableTo<int>>());
+            Assert.IsTrue(obj.Satisfies<ICastableToInt>());
+            Assert.AreEqual((int) obj, obj.ToContract<ICastableToInt>().Cast());
+        }
     }
     public interface IValue
     {
@@ -449,6 +458,11 @@ namespace TinyReflectiveToolkitTests
         {
             return obj1.ToString() + obj2.ToString();
         }
+
+        public static explicit operator int(UnrelatedType8 a)
+        {
+            return 95;
+        }
     }
 
     public interface IGenericMethod
@@ -460,5 +474,9 @@ namespace TinyReflectiveToolkitTests
     public interface IGenericMethod2
     {
         string GetGeneric<T1, T2>(T1 obj1, int a, T2 obj2);
+    }
+
+    public interface ICastableToInt : ICastableTo<int>
+    {        
     }
 }
