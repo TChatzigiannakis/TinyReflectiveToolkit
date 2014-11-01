@@ -58,6 +58,7 @@
     <Compile Include="Contracts\SpecialConversionAttribute.cs" />
     <Compile Include="Contracts\SpecialOperations.cs" />
     <Compile Include="Contracts\SubtractionAttribute.cs" />
+    <Compile Include="GetInheritedInterfaceMembers.cs" />
     <Compile Include="GetMethods.cs" />
     <Compile Include="GetProperties.cs" />
     <Compile Include="IsDelegate.cs" />
