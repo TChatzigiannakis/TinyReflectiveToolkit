@@ -33,10 +33,7 @@
 <p>It is written and maintained by <a href="https://github.com/TChatzigiannakis"><strong>Theodoros Chatzigiannakis</strong></a>. It is distributed as free software, covered by the <a href="https://github.com/TChatzigiannakis/TinyReflectiveToolkit/blob/master/LICENSE"><strong>Mozilla Public License v2.0</strong></a>.</p>
 
 <h2>
-<a name="runtime-contracts" class="anchor" href="#runtime-contracts"><span class="octicon octicon-link"></span></a>Runtime Contracts</h2>
-
-<h3>
-<a name="implementing-net-interfaces-at-runtime" class="anchor" href="#implementing-net-interfaces-at-runtime"><span class="octicon octicon-link"></span></a>Implementing .NET interfaces at runtime</h3>
+<a name="runtime-contracts-part-1-implementing-net-interfaces-at-runtime" class="anchor" href="#runtime-contracts-part-1-implementing-net-interfaces-at-runtime"><span class="octicon octicon-link"></span></a>Runtime Contracts, Part 1: Implementing .NET interfaces at runtime</h2>
 
 <p>When working with C# (or any other language with static and nominal typing), you may occasionally end up in a situation where <strong>you have two or more types that both expose one or more compatible methods:</strong></p>
 
@@ -128,8 +125,8 @@ var sum = values.Sum(x =&gt; x.GetValue());
 <li>The interface <code>TContract</code> must also be public.</li>
 </ol>
 
-<h3>
-<a name="binding-to-operators" class="anchor" href="#binding-to-operators"><span class="octicon octicon-link"></span></a>Binding to Operators</h3>
+<h2>
+<a name="runtime-contracts-part-2-binding-to-operators" class="anchor" href="#runtime-contracts-part-2-binding-to-operators"><span class="octicon octicon-link"></span></a>Runtime Contracts, Part 2: Binding to Operators</h2>
 
 <p><strong>Normal .NET interfaces are designed to only declare instanced public properties and methods.</strong> This means that an interface can't describe the existence of static methods, operators, conversions, etc. This usually makes sense from a design viewpoint, but there are times when it limits the expressiveness of the constraints.</p>
 
