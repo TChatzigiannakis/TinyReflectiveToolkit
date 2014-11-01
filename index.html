@@ -32,8 +32,8 @@
 
 <p>It is written and maintained by <a href="https://github.com/TChatzigiannakis"><strong>Theodoros Chatzigiannakis</strong></a>. It is distributed as free software, covered by the <a href="https://github.com/TChatzigiannakis/TinyReflectiveToolkit/blob/master/LICENSE"><strong>Mozilla Public License v2.0</strong></a>.</p>
 
-<h2>
-<a name="runtime-contracts-part-1-implementing-net-interfaces-at-runtime" class="anchor" href="#runtime-contracts-part-1-implementing-net-interfaces-at-runtime"><span class="octicon octicon-link"></span></a>Runtime Contracts, Part 1: Implementing .NET interfaces at runtime</h2>
+<h1>
+<a name="runtime-contracts-part-1-implementing-net-interfaces-at-runtime" class="anchor" href="#runtime-contracts-part-1-implementing-net-interfaces-at-runtime"><span class="octicon octicon-link"></span></a>Runtime Contracts, Part 1: Implementing .NET interfaces at runtime</h1>
 
 <p>When working with C# (or any other language with static and nominal typing), you may occasionally end up in a situation where <strong>you have two or more types that both expose one or more compatible methods:</strong></p>
 
@@ -125,8 +125,8 @@ var sum = values.Sum(x =&gt; x.GetValue());
 <li>The interface <code>TContract</code> must also be public.</li>
 </ol>
 
-<h2>
-<a name="runtime-contracts-part-2-operators" class="anchor" href="#runtime-contracts-part-2-operators"><span class="octicon octicon-link"></span></a>Runtime Contracts, Part 2: Operators</h2>
+<h1>
+<a name="runtime-contracts-part-2-operators" class="anchor" href="#runtime-contracts-part-2-operators"><span class="octicon octicon-link"></span></a>Runtime Contracts, Part 2: Operators</h1>
 
 <p><strong>Normal .NET interfaces are designed to only declare instanced public properties and methods.</strong> This means that an interface can't describe the existence of static methods, operators, conversions, etc. This usually makes sense from a design viewpoint, but there are times when it limits the expressiveness of the constraints.</p>
 
@@ -145,8 +145,8 @@ var sum = values.Sum(x =&gt; x.GetValue());
 
 <p>With that out of the way, whenever instances of these types are accessed through this contract, a <code>PerformCast()</code> method will be available and it will polymorphically invoke the correct cast operator for that particular runtime type.</p>
 
-<h2>
-<a name="assemblyloader-loading-dependencies-eagerly" class="anchor" href="#assemblyloader-loading-dependencies-eagerly"><span class="octicon octicon-link"></span></a>AssemblyLoader: Loading dependencies eagerly</h2>
+<h1>
+<a name="assemblyloader-loading-dependencies-eagerly" class="anchor" href="#assemblyloader-loading-dependencies-eagerly"><span class="octicon octicon-link"></span></a>AssemblyLoader: Loading dependencies eagerly</h1>
 
 <p>By default, your runtime may be loading your application's dependencies lazily - that is, just before the first time you attempt to use them. This is good for applications that value short startup time and can handle small, distributed performance hits along the way.</p>
 
@@ -168,8 +168,8 @@ loader.AssemblyLoading += (assembly) =&gt;
 loader.LoadAllDependencies();
 </code></pre>
 
-<h2>
-<a name="extension-methods-for-reflection-types-and-collections" class="anchor" href="#extension-methods-for-reflection-types-and-collections"><span class="octicon octicon-link"></span></a>Extension methods for reflection types and collections</h2>
+<h1>
+<a name="extension-methods-for-reflection-types-and-collections" class="anchor" href="#extension-methods-for-reflection-types-and-collections"><span class="octicon octicon-link"></span></a>Extension methods for reflection types and collections</h1>
 
 <p>Some built-in reflection-related methods aren't as easy to use as they could be. Some slightly more humane extension methods are offered, to make life a little bit easier:</p>
 
