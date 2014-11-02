@@ -19,6 +19,8 @@ namespace TinyReflectiveToolkit
         public static IEnumerable<MethodInfo> GetGenericMethods(this Type type, string name, ParameterInfo[] parameters)
         {
             if (type == null) throw new ArgumentNullException("type");
+            if (name == null) throw new ArgumentNullException("name");
+            if (parameters == null) throw new ArgumentNullException("parameters");
 
             var allMethods = type.GetMethods(BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             var overloads = allMethods
