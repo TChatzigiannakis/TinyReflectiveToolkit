@@ -26,7 +26,7 @@ namespace TinyReflectiveToolkit
         {
             if (sequence == null) throw new ArgumentNullException("sequence");
 
-            return sequence.Select(x => x.GetMethods()).SelectMany(x => x);
+            return sequence.Select(x => x.GetMethods()).Flatten();
         }
     }
 }
