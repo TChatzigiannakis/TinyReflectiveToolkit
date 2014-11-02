@@ -11,6 +11,8 @@ namespace TinyReflectiveToolkit
     {
         internal static MemberInfo[] GetInheritedInterfaceMembersImpl(this Type type, BindingFlags? bindingAttr = null)
         {
+            if (type == null) throw new ArgumentNullException("type");
+
             var currentMembers = bindingAttr.HasValue ? type.GetMembers(bindingAttr.Value) : type.GetMembers();
             var ghostMembers = type.GetInterfaces()
                 .Select(i => bindingAttr.HasValue ? i.GetInheritedInterfaceMembers(bindingAttr.Value) : i.GetInheritedInterfaceMembers())
