@@ -5,6 +5,8 @@
         <version>0.3</version>
         <title>Tiny Reflective Toolkit</title>
         <authors>Theodoros Chatzigiannakis</authors>
+		<licenseUrl>https://www.mozilla.org/MPL/2.0/</licenseUrl>
+		<projectUrl>http://tchatzigiannakis.github.io/TinyReflectiveToolkit/</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>A small library containing utilities related to reflection under the CLR.</description>
         <copyright>(c) 2014 - Theodoros Chatzigiannakis</copyright>
