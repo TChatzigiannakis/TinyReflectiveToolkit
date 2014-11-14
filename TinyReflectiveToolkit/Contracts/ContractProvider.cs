@@ -151,6 +151,14 @@ namespace TinyReflectiveToolkit.Contracts
                     .WithAttribute<InequalityAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
                 RequiredRightSideInequalityOperators = contractMethods
                     .WithAttribute<InequalityAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList(),
+                RequiredLeftSideGreaterThanOperators = contractMethods
+                    .WithAttribute<GreaterThanAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
+                RequiredRightSideGreaterThanOperators = contractMethods
+                    .WithAttribute<GreaterThanAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList(),
+                RequiredLeftSideLessThanOperators = contractMethods
+                    .WithAttribute<LessThanAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
+                RequiredRightSideLessThanOperators = contractMethods
+                    .WithAttribute<LessThanAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList()
             };
             info.FoundMethods = info.RequiredMethods.Select(x =>
             {
@@ -221,6 +229,10 @@ namespace TinyReflectiveToolkit.Contracts
             act(info.RequiredRightSideEqualityOperators, info.FoundRightSideEqualityOperators, "op_Equality", 1);
             act(info.RequiredLeftSideInequalityOperators, info.FoundLeftSideInequalityOperators, "op_Inequality", 0);
             act(info.RequiredRightSideInequalityOperators, info.FoundRightSideInequalityOperators, "op_Inequality", 1);
+            act(info.RequiredLeftSideGreaterThanOperators, info.FoundLeftSideGreaterThanOperators, "op_GreaterThan", 0);
+            act(info.RequiredRightSideGreaterThanOperators, info.FoundRightSideGreaterThanOperators, "op_GreaterThan", 1);
+            act(info.RequiredLeftSideLessThanOperators, info.FoundLeftSideLessThanOperators, "op_LessThan", 0);
+            act(info.RequiredRightSideLessThanOperators, info.FoundRightSideLessThanOperators, "op_LessThan", 1);
            
             // If this looks like a wrong contract, cache analysis results, then return them.
             if (!info.IsValid)

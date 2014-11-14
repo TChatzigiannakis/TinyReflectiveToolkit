@@ -47,8 +47,10 @@
     <Compile Include="Contracts\EqualityAttribute.cs" />
     <Compile Include="Contracts\ExposeBinaryOperatorAttribute.cs" />
     <Compile Include="Contracts\ExposeOperatorAttribute.cs" />
+    <Compile Include="Contracts\GreaterThanAttribute.cs" />
     <Compile Include="Contracts\ImplicitAttribute.cs" />
     <Compile Include="Contracts\InequalityAttribute.cs" />
+    <Compile Include="Contracts\LessThanAttribute.cs" />
     <Compile Include="Contracts\ModulusAttribute.cs" />
     <Compile Include="Contracts\MultiplicationAttribute.cs" />
     <Compile Include="Contracts\OpSide.cs" />

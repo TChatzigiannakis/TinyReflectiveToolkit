@@ -233,6 +233,20 @@ namespace TinyReflectiveToolkitTests
             Assert.IsTrue(obj.Satisfies<ICastableToInt>());
             Assert.AreEqual((int) obj, obj.ToContract<ICastableToInt>().Cast());
         }
+
+        [Test]
+        public void GreaterThan()
+        {
+            var obj = new UnrelatedType8().ToContract<IComparableTo2<int>>();
+            Assert.IsFalse(obj.GreaterThan(1));
+        }
+
+        [Test]
+        public void LessThan()
+        {
+            var obj = new UnrelatedType8().ToContract<IComparableTo3<int>>();
+            Assert.IsTrue(obj.LessThan(1));
+        }
     }
     public interface IValue
     {
@@ -463,6 +477,16 @@ namespace TinyReflectiveToolkitTests
         {
             return 95;
         }
+
+        public static bool operator <(UnrelatedType8 a, int b)
+        {
+            return true;
+        }
+
+        public static bool operator >(UnrelatedType8 a, int b)
+        {
+            return false;
+        }
     }
 
     public interface IGenericMethod
@@ -478,5 +502,17 @@ namespace TinyReflectiveToolkitTests
 
     public interface ICastableToInt : ICastableTo<int>
     {        
+    }
+
+    public interface IComparableTo2<T>
+    {
+        [GreaterThan(OpSide.ThisLeft)]
+        bool GreaterThan(T op);
+    }
+
+    public interface IComparableTo3<T>
+    {
+        [LessThan(OpSide.ThisLeft)]
+        bool LessThan(T op);
     }
 }

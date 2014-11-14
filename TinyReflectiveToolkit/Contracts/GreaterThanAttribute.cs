@@ -14,16 +14,16 @@ namespace TinyReflectiveToolkit.Contracts
     /// <summary>
     /// Declares that instead of being an actual method implemented by the type of the provided object,
     /// this will be a new, automatically implemented method that returns the result of the
-    /// application of the addition operator on the provided object and another object.
+    /// application of the greater-than operator on the provided object and another object.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
-    public sealed class AdditionAttribute : ExposeBinaryOperatorAttribute
+    public sealed class GreaterThanAttribute : ExposeBinaryOperatorAttribute
     {
         /// <summary>
         /// The default constructor.
         /// </summary>
-        /// <param name="side">The side on which the current instance will be provided to the addition operator (with the argument going to the other side).</param>
-        public AdditionAttribute(OpSide side)
+        /// <param name="side">The side on which the current instance will be provided to the greater-than operator (with the argument going to the other side).</param>
+        public GreaterThanAttribute(OpSide side)
             : base(side)
         {
         }

@@ -46,6 +46,10 @@ namespace TinyReflectiveToolkit.Contracts
         public List<MethodInfo> RequiredRightSideEqualityOperators { get; set; }
         public List<MethodInfo> RequiredLeftSideInequalityOperators { get; set; }
         public List<MethodInfo> RequiredRightSideInequalityOperators { get; set; }
+        public List<MethodInfo> RequiredLeftSideGreaterThanOperators { get; set; }
+        public List<MethodInfo> RequiredRightSideGreaterThanOperators { get; set; }
+        public List<MethodInfo> RequiredLeftSideLessThanOperators { get; set; }
+        public List<MethodInfo> RequiredRightSideLessThanOperators { get; set; }
 
         public List<MethodInfo> FoundMethods { get; set; }
         public List<Tuple<string, MethodInfo, int>> FoundExplicitConversions { get; set; }
@@ -64,6 +68,10 @@ namespace TinyReflectiveToolkit.Contracts
         public List<Tuple<string, MethodInfo, int>> FoundRightSideEqualityOperators { get; set; }
         public List<Tuple<string, MethodInfo, int>> FoundLeftSideInequalityOperators { get; set; }
         public List<Tuple<string, MethodInfo, int>> FoundRightSideInequalityOperators { get; set; }
+        public List<Tuple<string, MethodInfo, int>> FoundLeftSideGreaterThanOperators { get; set; }
+        public List<Tuple<string, MethodInfo, int>> FoundRightSideGreaterThanOperators { get; set; }
+        public List<Tuple<string, MethodInfo, int>> FoundLeftSideLessThanOperators { get; set; }
+        public List<Tuple<string, MethodInfo, int>> FoundRightSideLessThanOperators { get; set; }
 
         public IEnumerable<Tuple<string, MethodInfo, int>> AllFoundOperators
         {
@@ -97,6 +105,10 @@ namespace TinyReflectiveToolkit.Contracts
                 if (RequiredRightSideEqualityOperators.Count != FoundRightSideEqualityOperators.Count) return false;
                 if (RequiredLeftSideInequalityOperators.Count != FoundLeftSideInequalityOperators.Count) return false;
                 if (RequiredRightSideInequalityOperators.Count != FoundRightSideInequalityOperators.Count) return false;
+                if (RequiredLeftSideGreaterThanOperators.Count != FoundLeftSideGreaterThanOperators.Count) return false;
+                if (RequiredRightSideGreaterThanOperators.Count != FoundRightSideGreaterThanOperators.Count) return false;
+                if (RequiredLeftSideLessThanOperators.Count != FoundLeftSideLessThanOperators.Count) return false;
+                if (RequiredRightSideLessThanOperators.Count != FoundRightSideLessThanOperators.Count) return false;
 
                 if (FoundMethods.Any(x => x == null)) return false;
                 if (AllFoundOperators.Any(x => x.Item2 == null)) return false;
