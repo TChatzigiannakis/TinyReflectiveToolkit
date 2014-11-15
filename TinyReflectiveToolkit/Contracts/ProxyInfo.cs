@@ -19,6 +19,7 @@ namespace TinyReflectiveToolkit.Contracts
     {
         public Type ProvidedType = null;
         public Type Contract = null;
+
         public List<MethodInfo> RequiredMethods = null;
         public List<MethodInfo> RequiredExplicitConversions = null;
         public List<MethodInfo> RequiredImplicitConversions = null;
@@ -40,6 +41,10 @@ namespace TinyReflectiveToolkit.Contracts
         public List<MethodInfo> RequiredRightSideGreaterThanOperators = null;
         public List<MethodInfo> RequiredLeftSideLessThanOperators = null;
         public List<MethodInfo> RequiredRightSideLessThanOperators = null;
+        public List<MethodInfo> RequiredLeftSideGreaterThanOrEqualOperators = null;
+        public List<MethodInfo> RequiredRightSideGreaterThanOrEqualOperators = null;
+        public List<MethodInfo> RequiredLeftSideLessThanOrEqualOperators = null;
+        public List<MethodInfo> RequiredRightSideLessThanOrEqualOperators = null;
 
         public List<MethodInfo> FoundMethods = null;
         public List<Tuple<string, MethodInfo, int>> FoundExplicitConversions = null;
@@ -62,6 +67,10 @@ namespace TinyReflectiveToolkit.Contracts
         public List<Tuple<string, MethodInfo, int>> FoundRightSideGreaterThanOperators = null;
         public List<Tuple<string, MethodInfo, int>> FoundLeftSideLessThanOperators = null;
         public List<Tuple<string, MethodInfo, int>> FoundRightSideLessThanOperators = null;
+        public List<Tuple<string, MethodInfo, int>> FoundLeftSideGreaterThanOrEqualOperators = null;
+        public List<Tuple<string, MethodInfo, int>> FoundRightSideGreaterThanOrEqualOperators = null;
+        public List<Tuple<string, MethodInfo, int>> FoundLeftSideLessThanOrEqualOperators = null;
+        public List<Tuple<string, MethodInfo, int>> FoundRightSideLessThanOrEqualOperators = null;
 
         public bool IsValid
         {

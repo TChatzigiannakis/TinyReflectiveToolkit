@@ -133,6 +133,8 @@ namespace TinyReflectiveToolkit.Contracts
             info.ResolveBinaryOperators<InequalityAttribute>(contractMethods);
             info.ResolveBinaryOperators<GreaterThanAttribute>(contractMethods);
             info.ResolveBinaryOperators<LessThanAttribute>(contractMethods);
+            info.ResolveBinaryOperators<GreaterThanOrEqualAttribute>(contractMethods);
+            info.ResolveBinaryOperators<LessThanOrEqualAttribute>(contractMethods);
 
             info.FoundMethods = info.RequiredMethods.Select(x =>
             {
@@ -198,6 +200,8 @@ namespace TinyReflectiveToolkit.Contracts
             AddOperatorsWith<InequalityAttribute>(act, info);
             AddOperatorsWith<GreaterThanAttribute>(act, info);
             AddOperatorsWith<LessThanAttribute>(act, info);
+            AddOperatorsWith<GreaterThanOrEqualAttribute>(act, info);
+            AddOperatorsWith<LessThanOrEqualAttribute>(act, info);
            
             // If this looks like a wrong contract, cache analysis results, then return them.
             if (!info.IsValid)

@@ -247,6 +247,19 @@ namespace TinyReflectiveToolkitTests
             var obj = new UnrelatedType8().ToContract<IComparableTo3<int>>();
             Assert.IsTrue(obj.LessThan(1));
         }
-    }
 
+        [Test]
+        public void GreaterThanOrEqual()
+        {
+            var obj = new UnrelatedType8().ToContract<IComparableTo4<int>>();
+            Assert.IsFalse(obj.GreaterThanOrEqual(1));
+        }
+
+        [Test]
+        public void LessThanOrEqual()
+        {
+            var obj = new UnrelatedType8().ToContract<IComparableTo5<int>>();
+            Assert.IsTrue(obj.LessThanOrEqual(1));
+        }
+    }
 }

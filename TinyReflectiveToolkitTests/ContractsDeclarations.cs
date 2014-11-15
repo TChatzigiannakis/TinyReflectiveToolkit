@@ -194,6 +194,26 @@ namespace TinyReflectiveToolkitTests
     }
 
     /// <summary>
+    /// Generic contract with operator greater-than-or-equal (left side).
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public interface IComparableTo4<T>
+    {
+        [GreaterThanOrEqual(OpSide.ThisLeft)]
+        bool GreaterThanOrEqual(T op);
+    }
+
+    /// <summary>
+    /// Generic contract with operator less-than-or-equal (left side).
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public interface IComparableTo5<T>
+    {
+        [LessThanOrEqual(OpSide.ThisLeft)]
+        bool LessThanOrEqual(T op);
+    }
+    
+    /// <summary>
     /// Contract inheriting other contract.
     /// </summary>
     public interface ICastableToInt : ICastableTo<int>
