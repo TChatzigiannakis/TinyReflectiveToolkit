@@ -123,43 +123,17 @@ namespace TinyReflectiveToolkit.Contracts
                 RequiredMethods = contractMethods.WithoutAttribute<ExposeOperatorAttribute>().ToList(),
                 RequiredExplicitConversions = contractMethods.WithAttribute<CastAttribute>().ToList(),
                 RequiredImplicitConversions = contractMethods.WithAttribute<ImplicitAttribute>().ToList(),
-                RequiredLeftSideAdditionOperators = contractMethods
-                    .WithAttribute<AdditionAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
-                RequiredRightSideAdditionOperators = contractMethods
-                    .WithAttribute<AdditionAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList(),
-                RequiredLeftSideSubtractionOperators = contractMethods
-                    .WithAttribute<SubtractionAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
-                RequiredRightSideSubtractionOperators = contractMethods
-                    .WithAttribute<SubtractionAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList(),
-                RequiredLeftSideMultiplyOperators = contractMethods
-                    .WithAttribute<MultiplicationAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
-                RequiredRightSideMultiplyOperators = contractMethods
-                    .WithAttribute<MultiplicationAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList(),
-                RequiredLeftSideDivisionOperators = contractMethods
-                    .WithAttribute<DivisionAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
-                RequiredRightSideDivisionOperators = contractMethods
-                    .WithAttribute<DivisionAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList(),
-                RequiredLeftSideModulusOperators = contractMethods
-                    .WithAttribute<ModulusAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
-                RequiredRightSideModulusOperators = contractMethods
-                    .WithAttribute<ModulusAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList(),
-                RequiredLeftSideEqualityOperators = contractMethods
-                    .WithAttribute<EqualityAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
-                RequiredRightSideEqualityOperators = contractMethods
-                    .WithAttribute<EqualityAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList(),
-                RequiredLeftSideInequalityOperators = contractMethods
-                    .WithAttribute<InequalityAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
-                RequiredRightSideInequalityOperators = contractMethods
-                    .WithAttribute<InequalityAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList(),
-                RequiredLeftSideGreaterThanOperators = contractMethods
-                    .WithAttribute<GreaterThanAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
-                RequiredRightSideGreaterThanOperators = contractMethods
-                    .WithAttribute<GreaterThanAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList(),
-                RequiredLeftSideLessThanOperators = contractMethods
-                    .WithAttribute<LessThanAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList(),
-                RequiredRightSideLessThanOperators = contractMethods
-                    .WithAttribute<LessThanAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList()
             };
+            info.ResolveBinaryOperators<AdditionAttribute>(contractMethods);
+            info.ResolveBinaryOperators<SubtractionAttribute>(contractMethods);
+            info.ResolveBinaryOperators<MultiplicationAttribute>(contractMethods);
+            info.ResolveBinaryOperators<DivisionAttribute>(contractMethods);
+            info.ResolveBinaryOperators<ModulusAttribute>(contractMethods);
+            info.ResolveBinaryOperators<EqualityAttribute>(contractMethods);
+            info.ResolveBinaryOperators<InequalityAttribute>(contractMethods);
+            info.ResolveBinaryOperators<GreaterThanAttribute>(contractMethods);
+            info.ResolveBinaryOperators<LessThanAttribute>(contractMethods);
+
             info.FoundMethods = info.RequiredMethods.Select(x =>
             {
                 var name = x.Name;
@@ -215,24 +189,15 @@ namespace TinyReflectiveToolkit.Contracts
                     return new Tuple<string, MethodInfo, int>(x.Name, operatorMethods.FirstOrDefault(), index);
                 }).ToList());
 
-            act(info.RequiredLeftSideAdditionOperators, info.FoundLeftSideAdditionOperators, "op_Addition", 0);
-            act(info.RequiredRightSideAdditionOperators, info.FoundRightSideAdditionOperators, "op_Addition", 1);
-            act(info.RequiredLeftSideSubtractionOperators, info.FoundLeftSideSubtractionOperators, "op_Subtraction", 0);
-            act(info.RequiredRightSideSubtractionOperators, info.FoundRightSideSubtractionOperators, "op_Subtraction", 1);
-            act(info.RequiredLeftSideMultiplyOperators, info.FoundLeftSideMultiplyOperators, "op_Multiply", 0);
-            act(info.RequiredRightSideMultiplyOperators, info.FoundRightSideMultiplyOperators, "op_Multiply", 1);
-            act(info.RequiredLeftSideDivisionOperators, info.FoundLeftSideDivisionOperators, "op_Division", 0);
-            act(info.RequiredRightSideDivisionOperators, info.FoundRightSideDivisionOperators, "op_Division", 1);
-            act(info.RequiredLeftSideModulusOperators, info.FoundLeftSideModulusOperators, "op_Modulus", 0);
-            act(info.RequiredRightSideModulusOperators, info.FoundRightSideModulusOperators, "op_Modulus", 1);
-            act(info.RequiredLeftSideEqualityOperators, info.FoundLeftSideEqualityOperators, "op_Equality", 0);
-            act(info.RequiredRightSideEqualityOperators, info.FoundRightSideEqualityOperators, "op_Equality", 1);
-            act(info.RequiredLeftSideInequalityOperators, info.FoundLeftSideInequalityOperators, "op_Inequality", 0);
-            act(info.RequiredRightSideInequalityOperators, info.FoundRightSideInequalityOperators, "op_Inequality", 1);
-            act(info.RequiredLeftSideGreaterThanOperators, info.FoundLeftSideGreaterThanOperators, "op_GreaterThan", 0);
-            act(info.RequiredRightSideGreaterThanOperators, info.FoundRightSideGreaterThanOperators, "op_GreaterThan", 1);
-            act(info.RequiredLeftSideLessThanOperators, info.FoundLeftSideLessThanOperators, "op_LessThan", 0);
-            act(info.RequiredRightSideLessThanOperators, info.FoundRightSideLessThanOperators, "op_LessThan", 1);
+            AddOperatorsWith<AdditionAttribute>(act, info);
+            AddOperatorsWith<SubtractionAttribute>(act, info);
+            AddOperatorsWith<MultiplicationAttribute>(act, info);
+            AddOperatorsWith<DivisionAttribute>(act, info);
+            AddOperatorsWith<ModulusAttribute>(act, info);
+            AddOperatorsWith<EqualityAttribute>(act, info);
+            AddOperatorsWith<InequalityAttribute>(act, info);
+            AddOperatorsWith<GreaterThanAttribute>(act, info);
+            AddOperatorsWith<LessThanAttribute>(act, info);
            
             // If this looks like a wrong contract, cache analysis results, then return them.
             if (!info.IsValid)
@@ -244,6 +209,15 @@ namespace TinyReflectiveToolkit.Contracts
             // If this looks like a matching contract, cache analysis results, then return them.
             _knownSatisfiedContracts.AddOrUpdate(combination, info, (a, b) => b);
             return new Tuple<bool, Type, ProxyInfo>(true, null, info);
+        }
+
+        private void AddOperatorsWith<TAttribute>(Action<List<MethodInfo>, List<Tuple<String, MethodInfo, int>>, string, int> act, ProxyInfo info)
+            where TAttribute : ExposeBinaryOperatorAttribute
+        {
+            var name = "op_" + typeof (TAttribute).Name.Replace("Attribute", "");
+            if (typeof (TAttribute) == typeof (MultiplicationAttribute)) name = "op_Multiply";
+            act(info.GetReqLeft<TAttribute>(), info.GetFoundLeft<TAttribute>(), name, 0);
+            act(info.GetReqRight<TAttribute>(), info.GetFoundRight<TAttribute>(), name, 1);
         }
 
         /// <summary>
