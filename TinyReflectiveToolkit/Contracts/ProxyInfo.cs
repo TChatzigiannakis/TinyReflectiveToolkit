@@ -15,7 +15,7 @@ using EnumerableExtensions;
 
 namespace TinyReflectiveToolkit.Contracts
 {
-    internal sealed class ProxyInfo
+    internal class ProxyInfo
     {
         public Type ProvidedType;
         public Type Contract;
