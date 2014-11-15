@@ -25,15 +25,15 @@ namespace TinyReflectiveToolkitTests
         [Test]
         public void CachedMethodContracts()
         {
-            var thingsWithValue = new IValue[]
+            var thingsWithValue = new IIntMethod[]
             {
-                new UnrelatedType1().ToContract<IValue>(),
-                new UnrelatedType2().ToContract<IValue>(),
-                new UnrelatedType3().ToContract<IValue>(),
-                new UnrelatedType1().ToContract<IValue>(),
-                new Unrelated<int>().ToContract<IValue>(),
-                new Unrelated<bool>().ToContract<IValue>(),
-                new Unrelated<int>().ToContract<IValue>()
+                new UnrelatedType1().ToContract<IIntMethod>(),
+                new UnrelatedType2().ToContract<IIntMethod>(),
+                new UnrelatedType3().ToContract<IIntMethod>(),
+                new UnrelatedType1().ToContract<IIntMethod>(),
+                new Unrelated<int>().ToContract<IIntMethod>(),
+                new Unrelated<bool>().ToContract<IIntMethod>(),
+                new Unrelated<int>().ToContract<IIntMethod>()
             };
 
             var sum = thingsWithValue.Sum(x => x.Value());
@@ -46,7 +46,7 @@ namespace TinyReflectiveToolkitTests
         {
             try
             {
-                var value = new UnrelatedType4().ToContract<IValue>();
+                var value = new UnrelatedType4().ToContract<IIntMethod>();
                 Assert.Fail();
             }
             catch (TypeLoadException)
@@ -57,14 +57,14 @@ namespace TinyReflectiveToolkitTests
         [Test]
         public void VoidContract()
         {
-            var value = new UnrelatedType4().ToContract<IVoid>();
+            var value = new UnrelatedType4().ToContract<IVoidMethod>();
             value.Value();
         }
 
         [Test]
         public void ParameterizedContract()
         {
-            var value = new UnrelatedType5().ToContract<IParam>();
+            var value = new UnrelatedType5().ToContract<IParameterizedMethod>();
             Assert.AreEqual(6, value.Value(1, 2, "", 1, 2, ""));
         }
 
@@ -100,21 +100,21 @@ namespace TinyReflectiveToolkitTests
         [Test]
         public void GetProperties()
         {
-            var obj = new UnrelatedType6().ToContract<IGet>();
+            var obj = new UnrelatedType6().ToContract<IGetter>();
             Assert.AreEqual(1, obj.OnlyGet);
         }
 
         [Test]
         public void SetProperties()
         {
-            var obj = new UnrelatedType6().ToContract<ISet>();
+            var obj = new UnrelatedType6().ToContract<ISetter>();
             obj.OnlySet = 5;
         }
 
         [Test]
         public void GetSetProperties()
         {
-            var obj = new UnrelatedType6().ToContract<IGetSet>();
+            var obj = new UnrelatedType6().ToContract<IGetterAndSetter>();
             obj.GetSet = 10;
             Assert.AreEqual(10, obj.GetSet);
         }
@@ -122,26 +122,26 @@ namespace TinyReflectiveToolkitTests
         [Test]
         public void ContractChecks()
         {
-            Assert.IsTrue(new UnrelatedType1().Satisfies<IValue>());
-            Assert.IsTrue(new UnrelatedType1().Satisfies<IValue>());
-            Assert.IsTrue(new UnrelatedType2().Satisfies<IValue>());
-            Assert.IsFalse(new UnrelatedType1().Satisfies<IGet>());
-            Assert.IsFalse(new UnrelatedType1().Satisfies<IGet>());
-            Assert.IsFalse(new UnrelatedType1().Satisfies<ISet>());
-            Assert.IsFalse(new UnrelatedType1().Satisfies<IGetSet>());
+            Assert.IsTrue(new UnrelatedType1().Satisfies<IIntMethod>());
+            Assert.IsTrue(new UnrelatedType1().Satisfies<IIntMethod>());
+            Assert.IsTrue(new UnrelatedType2().Satisfies<IIntMethod>());
+            Assert.IsFalse(new UnrelatedType1().Satisfies<IGetter>());
+            Assert.IsFalse(new UnrelatedType1().Satisfies<IGetter>());
+            Assert.IsFalse(new UnrelatedType1().Satisfies<ISetter>());
+            Assert.IsFalse(new UnrelatedType1().Satisfies<IGetterAndSetter>());
         }
 
         [Test]
         public void AdditionLeftSide()
         {
-            var five = new UnrelatedType7 {Value = 5}.ToContract<IAdditionLeft>();
+            var five = new UnrelatedType7 {Value = 5}.ToContract<IAddableLeft>();
             var sum = five.Add(3);
             Assert.AreEqual(8, sum);
         }
         [Test]
         public void AdditionRightSide()
         {
-            var nine = new UnrelatedType7 { Value = 9 }.ToContract<IAdditionRight>();
+            var nine = new UnrelatedType7 { Value = 9 }.ToContract<IAddableRight>();
             var sum = nine.Add(4);
             Assert.AreEqual(13, sum);
         }
@@ -157,7 +157,7 @@ namespace TinyReflectiveToolkitTests
         [Test]
         public void MultiplicationGeneric()
         {
-            var nine = new UnrelatedType7 {Value = 9}.ToContract<IMultiply<int>>();
+            var nine = new UnrelatedType7 {Value = 9}.ToContract<IMultipliable<int>>();
             Assert.AreEqual(81, nine.MultiplyBy(9));
         }
 
@@ -190,14 +190,14 @@ namespace TinyReflectiveToolkitTests
         [Test]
         public void Modulus()
         {
-            var ten = new UnrelatedType7 {Value = 10}.ToContract<IHasModulus>();
+            var ten = new UnrelatedType7 {Value = 10}.ToContract<IModulusOperator>();
             Assert.AreEqual(1, ten.Modulus(3));
         }
 
         [Test]
         public void EqualityAndInequality()
         {
-            var eight = new UnrelatedType7 {Value = 8}.ToContract<IComparableTo<int>>();
+            var eight = new UnrelatedType7 {Value = 8}.ToContract<IComparableTo1<int>>();
             Assert.IsTrue(eight.Equals(8));
             Assert.IsFalse(eight.Equals(9));
             Assert.IsTrue(eight.NotEqualTo(9));
@@ -208,8 +208,8 @@ namespace TinyReflectiveToolkitTests
         public void GenericMethods()
         {
             var obj = new UnrelatedType8();
-            Assert.IsTrue(obj.Satisfies<IGenericMethod>());
-            var cObj = obj.ToContract<IGenericMethod>();
+            Assert.IsTrue(obj.Satisfies<IGenericMethod1>());
+            var cObj = obj.ToContract<IGenericMethod1>();
             var cObjStr = cObj.GetGeneric(obj);
             Assert.IsTrue(obj.ToString() == cObjStr);
         }
@@ -248,271 +248,5 @@ namespace TinyReflectiveToolkitTests
             Assert.IsTrue(obj.LessThan(1));
         }
     }
-    public interface IValue
-    {
-        int Value();
-    }
 
-    public class UnrelatedType1
-    {
-        public int Value()
-        {
-            return 1;
-        }
-    }
-
-    public class UnrelatedType2
-    {
-        public int Value()
-        {
-            return 2;
-        }
-    }
-
-    public class UnrelatedType3
-    {
-        public int Value()
-        {
-            return 3;
-        }
-    }
-
-    public class Unrelated<T>
-    {
-        public int Value()
-        {
-            return 9;
-        }
-    }
-
-    public interface IVoid
-    {
-        void Value();
-    }
-
-    public class UnrelatedType4
-    {
-        public void Value()
-        {
-        }
-    }
-
-    public interface IParam
-    {
-        int Value(int a, int b, string c, int d, int e, string f);
-    }
-
-    public class UnrelatedType5
-    {
-        public int Value(int a, int b, string c, int d, int e, string f)
-        {
-            return a + b + d + e + c.Count() + f.Count();
-        }
-
-        public void Value()
-        {            
-        }
-
-        public static explicit operator int(UnrelatedType5 obj)
-        {
-            return 1;
-        }
-
-        public static implicit operator float(UnrelatedType5 obj)
-        {
-            return 2.5f;
-        }
-    }
-
-    public interface ITwoMethods
-    {
-        int Value(int a, int b, string c, int d, int e, string f);
-        void Value();        
-    }
-
-    public interface ICastableToInt32
-    {
-        [Cast]
-        int ToInt32();
-    }
-
-    public interface IConvertibleToFloat
-    {
-        [Implicit]
-        float ToFloat();
-    }
-
-    public class UnrelatedType6
-    {
-        public int OnlyGet { get { return 1; } }
-        public int OnlySet { set { } }
-        public int GetSet { get; set; }
-    }
-
-    public interface IGet
-    {
-        int OnlyGet { get; }
-    }
-
-    public interface ISet
-    {
-        int OnlySet { set; }
-    }
-
-    public interface IGetSet
-    {
-        int GetSet { get; set; }
-    }
-
-    public class UnrelatedType7
-    {
-        public int Value { get; set; }
-        
-        public static int operator +(UnrelatedType7 a, int b)
-        {
-            return a.Value + b;
-        }
-        public static int operator +(int a, UnrelatedType7 b)
-        {
-            return a + b.Value;
-        }
-
-        public static int operator -(UnrelatedType7 a, int b)
-        {
-            return a.Value - b;
-        }
-        public static int operator -(int a, UnrelatedType7 b)
-        {
-            return a - b.Value;
-        }
-
-        public static int operator *(UnrelatedType7 a, int b)
-        {
-            return a.Value*b;
-        }
-
-        public static int operator /(UnrelatedType7 a, int b)
-        {
-            return a.Value / b;
-        }
-
-        public static int operator %(UnrelatedType7 a, int b)
-        {
-            return a.Value % b;
-        }
-
-        public static bool operator ==(UnrelatedType7 a, int b)
-        {
-            return a.Value == b;
-        }
-
-        public static bool operator !=(UnrelatedType7 a, int b)
-        {
-            return !(a == b);
-        }
-    }
-
-    public interface IAdditionLeft
-    {
-        [Addition(OpSide.ThisLeft)]
-        int Add(int p);
-    }
-
-    public interface IAdditionRight
-    {
-        [Addition(OpSide.ThisRight)]
-        int Add(int p);
-    }
-
-    public interface ISubtractable
-    {
-        [Subtraction(OpSide.ThisLeft)]
-        int Subtract(int p);
-
-        [Subtraction(OpSide.ThisRight)]
-        int SubtractFrom(int p);
-    }
-
-    public interface IMultiply<T>
-    {
-        [Multiplication(OpSide.ThisLeft)]
-        T MultiplyBy(T p);
-    }
-
-    public interface IDividable<out T1, in T2>
-    {
-        [Division(OpSide.ThisLeft)]
-        T1 DivideBy(T2 p);
-    }
-
-    public interface IHasModulus
-    {
-        [Modulus(OpSide.ThisLeft)]
-        int Modulus(int p);
-    }
-
-    public interface IComparableTo<T>
-    {
-        [Equality(OpSide.ThisLeft)]
-        bool Equals(T p);
-
-        [Inequality(OpSide.ThisLeft)]
-        bool NotEqualTo(T p);
-    }
-
-    public class UnrelatedType8
-    {
-        public string GetGeneric<T>(T obj)
-            where T : class
-        {
-            return obj.ToString();
-        }
-
-        public string GetGeneric<T1, T2>(T1 obj1, int a, T2 obj2)
-        {
-            return obj1.ToString() + obj2.ToString();
-        }
-
-        public static explicit operator int(UnrelatedType8 a)
-        {
-            return 95;
-        }
-
-        public static bool operator <(UnrelatedType8 a, int b)
-        {
-            return true;
-        }
-
-        public static bool operator >(UnrelatedType8 a, int b)
-        {
-            return false;
-        }
-    }
-
-    public interface IGenericMethod
-    {
-        string GetGeneric<T>(T obj)
-            where T : class;
-    }
-
-    public interface IGenericMethod2
-    {
-        string GetGeneric<T1, T2>(T1 obj1, int a, T2 obj2);
-    }
-
-    public interface ICastableToInt : ICastableTo<int>
-    {        
-    }
-
-    public interface IComparableTo2<T>
-    {
-        [GreaterThan(OpSide.ThisLeft)]
-        bool GreaterThan(T op);
-    }
-
-    public interface IComparableTo3<T>
-    {
-        [LessThan(OpSide.ThisLeft)]
-        bool LessThan(T op);
-    }
 }
