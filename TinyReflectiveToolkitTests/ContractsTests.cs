@@ -304,6 +304,12 @@ namespace TinyReflectiveToolkitTests
             var obj1 = (10).ToContract<IAddable<int, int>>();
             Assert.AreEqual(12, obj1.Add(2));
             Assert.AreEqual(14, obj1.AddFromLeft(4));
+
+            var obj2 = (10).ToContract<IAddable<float, float>>();
+            Assert.AreEqual(12, obj2.Add(2.0f));
+
+            var obj3 = (10.0f).ToContract<IAddable<int, float>>();
+            Assert.AreEqual(12, obj2.Add(2));
         }
     }
 }

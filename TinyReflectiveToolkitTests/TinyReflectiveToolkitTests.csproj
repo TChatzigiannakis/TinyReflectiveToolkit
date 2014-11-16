@@ -58,7 +58,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Contracts.cs" />
+    <Compile Include="ContractsTests.cs" />
     <Compile Include="ContractsDeclarations.cs" />
     <Compile Include="ContractsTypes.cs" />
     <Compile Include="TypeExtensionsTests.cs" />
