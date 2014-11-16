@@ -189,6 +189,54 @@ namespace TinyReflectiveToolkit.Contracts
         {
             return a + b;
         }
+
+        /// <summary>
+        /// Special operator.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        [SpecialOperator(typeof(AdditionAttribute))]
+        public static double Add(double a, int b)
+        {
+            return a + b;
+        }
+
+        /// <summary>
+        /// Special operator.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        [SpecialOperator(typeof(AdditionAttribute))]
+        public static double Add(int a, double b)
+        {
+            return a + b;
+        }
+
+        /// <summary>
+        /// Special operator.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        [SpecialOperator(typeof(AdditionAttribute))]
+        public static int Add(int a, byte b)
+        {
+            return a + b;
+        }
+
+        /// <summary>
+        /// Special operator.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        [SpecialOperator(typeof(AdditionAttribute))]
+        public static int Add(byte a, int b)
+        {
+            return a + b;
+        }
     }
 
     internal static class OtherWhere
