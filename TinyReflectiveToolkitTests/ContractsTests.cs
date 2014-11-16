@@ -20,7 +20,7 @@ using TinyReflectiveToolkit.Contracts.Premade;
 namespace TinyReflectiveToolkitTests
 {
     [TestFixture]
-    public class Contracts
+    public class ContractsTests
     {
         [Test]
         public void CachedMethodContracts()
