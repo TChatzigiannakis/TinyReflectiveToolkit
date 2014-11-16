@@ -325,8 +325,14 @@ namespace TinyReflectiveToolkit.Contracts
                     var proxyMethod = proxyBuilder.DefineMethod(name, ProxyMethodAttributes, retType, parameters);
                     var generator = proxyMethod.GetILGenerator();
                     for (var i = 0; i < parameters.Count() + 1; i++)
-                        if (i < index) generator.Emit(OpCodes.Ldarg, i + 1);
-                        else if (i > index) generator.Emit(OpCodes.Ldarg, i);
+                        if (i < index)
+                        {
+                            generator.Emit(OpCodes.Ldarg, i + 1);
+                        }
+                        else if (i > index)
+                        {
+                            generator.Emit(OpCodes.Ldarg, i);
+                        }
                         else
                         {
                             generator.Emit(OpCodes.Ldarg_0);

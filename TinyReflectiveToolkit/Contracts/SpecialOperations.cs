@@ -49,7 +49,7 @@ namespace TinyReflectiveToolkit.Contracts
                 .Where(x => !reverse && x.GetParameters().Second().ParameterType.IsAssignableFrom(input2)
                     , x => reverse && x.GetParameters().Second().ParameterType == input1
                     )
-                .Where(x => x.ReturnType == output)
+                .Where(x => output == x.ReturnType)
                 .ToList();
             return matches.FirstOrDefault();
         }
@@ -162,6 +162,18 @@ namespace TinyReflectiveToolkit.Contracts
         /// <returns></returns>
         [SpecialOperator(typeof(AdditionAttribute))]
         public static int Add(int a, int b)
+        {
+            return a + b;
+        }
+
+        /// <summary>
+        /// Special operator.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        [SpecialOperator(typeof(AdditionAttribute))]
+        public static object AddObject(int a, int b)
         {
             return a + b;
         }
