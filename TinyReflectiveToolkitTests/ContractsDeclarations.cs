@@ -220,18 +220,30 @@ namespace TinyReflectiveToolkitTests
     {
     }
 
+    /// <summary>
+    /// Generic contract with bitwise-and operator.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public interface IAndOperator<T>
     {
         [BitwiseAnd]
         bool And(T a);
     }
 
+    /// <summary>
+    /// Generic contract with bitwise-or operator.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public interface IOrOperator<T>
     {
         [BitwiseOr]
         bool Or(T a);
     }
 
+    /// <summary>
+    /// Generic contract with bitwise-xor operator.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public interface IXorOperator<T>
     {
         [ExclusiveOr]

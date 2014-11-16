@@ -56,11 +56,14 @@
     <Compile Include="Contracts\ModulusAttribute.cs" />
     <Compile Include="Contracts\MultiplicationAttribute.cs" />
     <Compile Include="Contracts\OpSide.cs" />
+    <Compile Include="Contracts\Premade\IAddable.cs" />
     <Compile Include="Contracts\Premade\ICastableTo.cs" />
+    <Compile Include="Contracts\Premade\IConcatable.cs" />
     <Compile Include="Contracts\ProxyInfo.cs" />
     <Compile Include="Contracts\RuntimeContractExtensions.cs" />
     <Compile Include="Contracts\SpecialConversionAttribute.cs" />
     <Compile Include="Contracts\SpecialOperations.cs" />
+    <Compile Include="Contracts\SpecialOperatorAttribute.cs" />
     <Compile Include="Contracts\SubtractionAttribute.cs" />
     <Compile Include="Contracts\BitwiseOrAttribute.cs" />
     <Compile Include="Contracts\BitwiseAndAttribute.cs" />

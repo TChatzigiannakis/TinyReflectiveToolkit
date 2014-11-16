@@ -283,6 +283,27 @@ namespace TinyReflectiveToolkitTests
             Assert.IsFalse(obj.Xor(1));
         }
 
+        [Test]
+        public void StringPlusString()
+        {
+            var items = new object[]
+            {
+                "Number nine is ", 9, " and it's a number."
+            };
+            var joined = string.Join("", items);
+            var mid = items[1].ToContract<IConcatable>();
+            var result = mid
+                .Concat(items[2].ToString()).ToContract<IConcatable>()
+                .Prepend(items[0].ToString());
+            Assert.AreEqual(joined, result);
+        }
 
+        [Test]
+        public void Addables()
+        {
+            var obj1 = (10).ToContract<IAddable<int, int>>();
+            Assert.AreEqual(12, obj1.Add(2));
+            Assert.AreEqual(14, obj1.AddFromLeft(4));
+        }
     }
 }

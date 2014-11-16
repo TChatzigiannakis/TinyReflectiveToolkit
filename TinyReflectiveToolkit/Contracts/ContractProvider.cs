@@ -182,8 +182,8 @@ namespace TinyReflectiveToolkit.Contracts
                     conversions.Add(SpecialOperations.IdentityMarkerMethodInfo);    
                 return new Tuple<string, MethodInfo, int>(x.Name, conversions.FirstOrDefault(), 0);
             }).ToList();
-            Action<List<MethodInfo>, List<Tuple<String, MethodInfo, int>>, string, int> act =
-                (required, found, op, index) => found.AddRange(required.Select(x =>
+            Action<List<MethodInfo>, List<Tuple<String, MethodInfo, int>>, string, int, Type> act =
+                (required, found, op, index, opMarker) => found.AddRange(required.Select(x =>
                 {
                     var otherParameter = x.GetParameters().Single().ParameterType;
                     var operatorMethods = mimicObjectOperators
@@ -191,6 +191,12 @@ namespace TinyReflectiveToolkit.Contracts
                         .Where(m => m.Name == op)
                         .Where(m => m.GetParameters().ElementAt(1 - index).ParameterType == otherParameter)
                         .ToList();
+                    if (operatorMethods.IsEmpty())
+                    {
+                        var specialOp = SpecialOperations.GetSpecialOperator(opMarker, type, otherParameter, x.ReturnType, index == 1);
+                        if (specialOp != null)
+                            operatorMethods.Add(specialOp);
+                    }
                     return new Tuple<string, MethodInfo, int>(x.Name, operatorMethods.FirstOrDefault(), index);
                 }).ToList());
             AddOperatorsWith<AdditionAttribute>(act, info);
@@ -220,13 +226,13 @@ namespace TinyReflectiveToolkit.Contracts
             return new Tuple<bool, Type, ProxyInfo>(true, null, info);
         }
 
-        private void AddOperatorsWith<TAttribute>(Action<List<MethodInfo>, List<Tuple<String, MethodInfo, int>>, string, int> act, ProxyInfo info)
+        private void AddOperatorsWith<TAttribute>(Action<List<MethodInfo>, List<Tuple<String, MethodInfo, int>>, string, int, Type> act, ProxyInfo info)
             where TAttribute : ExposeBinaryOperatorAttribute
         {
             var name = "op_" + typeof (TAttribute).Name.Replace("Attribute", "");
             if (typeof (TAttribute) == typeof (MultiplicationAttribute)) name = "op_Multiply";
-            act(info.GetReqLeft<TAttribute>(), info.GetFoundLeft<TAttribute>(), name, 0);
-            act(info.GetReqRight<TAttribute>(), info.GetFoundRight<TAttribute>(), name, 1);
+            act(info.GetReqLeft<TAttribute>(), info.GetFoundLeft<TAttribute>(), name, 0, typeof(TAttribute));
+            act(info.GetReqRight<TAttribute>(), info.GetFoundRight<TAttribute>(), name, 1, typeof(TAttribute));
         }
 
         /// <summary>

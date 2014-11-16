@@ -8,9 +8,11 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using EnumerableExtensions;
 
 namespace TinyReflectiveToolkit.Contracts
 {
@@ -35,6 +37,22 @@ namespace TinyReflectiveToolkit.Contracts
                 .ToList();
             return matches.SingleOrDefault();
         }
+
+        internal static MethodInfo GetSpecialOperator(Type operatorMarker, Type input1, Type input2, Type output, bool reverse)
+        {
+            var matches = typeof (SpecialOperations).GetMethods()
+                .WithAttribute<SpecialOperatorAttribute>(x => x.Type == operatorMarker)
+                .Where(x => x.GetParameters().Count() == 2)
+                .Where(x => !reverse && x.GetParameters().First().ParameterType == input1
+                    , x => reverse && x.GetParameters().First().ParameterType.IsAssignableFrom(input2)
+                    )
+                .Where(x => !reverse && x.GetParameters().Second().ParameterType.IsAssignableFrom(input2)
+                    , x => reverse && x.GetParameters().Second().ParameterType == input1
+                    )
+                .Where(x => x.ReturnType == output)
+                .ToList();
+            return matches.FirstOrDefault();
+        }
         
         /// <summary>
         /// Empty method, marking the need for a runtime-generated (non-generic) identity function.
@@ -44,7 +62,7 @@ namespace TinyReflectiveToolkit.Contracts
         }
 
         /// <summary>
-        /// Casts float to int.
+        /// Special cast.
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -55,7 +73,7 @@ namespace TinyReflectiveToolkit.Contracts
         }
 
         /// <summary>
-        /// Casts double to int.
+        /// Special cast.
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -66,7 +84,7 @@ namespace TinyReflectiveToolkit.Contracts
         }
 
         /// <summary>
-        /// Casts byte to int.
+        /// Special cast.
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -75,5 +93,110 @@ namespace TinyReflectiveToolkit.Contracts
         {
             return input;
         }
+
+        /// <summary>
+        /// Special operator.
+        /// </summary>
+        /// <param name="str1"></param>
+        /// <param name="str2"></param>
+        /// <returns></returns>
+        [SpecialOperator(typeof(AdditionAttribute))]
+        public static string Concat(string str1, string str2)
+        {
+            return string.Concat(str1, str2);
+        }
+        
+        /// <summary>
+        /// Special operator.
+        /// </summary>
+        /// <param name="str1"></param>
+        /// <param name="str2"></param>
+        /// <returns></returns>
+        [SpecialOperator(typeof(AdditionAttribute))]
+        public static string Concat(int str1, string str2)
+        {
+            return string.Concat(str1, str2);
+        }
+
+        /// <summary>
+        /// Special operator.
+        /// </summary>
+        /// <param name="str1"></param>
+        /// <param name="str2"></param>
+        /// <returns></returns>
+        [SpecialOperator(typeof(AdditionAttribute))]
+        public static string Concat(string str1, int str2)
+        {
+            return string.Concat(str1, str2);
+        }
+
+        /// <summary>
+        /// Special operator.
+        /// </summary>
+        /// <param name="str1"></param>
+        /// <param name="str2"></param>
+        /// <returns></returns>
+        [SpecialOperator(typeof(AdditionAttribute))]
+        public static string Concat(object str1, string str2)
+        {
+            return string.Concat(str1, str2);
+        }
+
+        /// <summary>
+        /// Special operator.
+        /// </summary>
+        /// <param name="str1"></param>
+        /// <param name="str2"></param>
+        /// <returns></returns>
+        [SpecialOperator(typeof(AdditionAttribute))]
+        public static string Concat(string str1, object str2)
+        {
+            return string.Concat(str1, str2);
+        }
+
+        /// <summary>
+        /// Special operator.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        [SpecialOperator(typeof(AdditionAttribute))]
+        public static int Add(int a, int b)
+        {
+            return a + b;
+        }
+
+        /// <summary>
+        /// Special operator.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        [SpecialOperator(typeof(AdditionAttribute))]
+        public static float Add(int a, float b)
+        {
+            return a + b;
+        }
+
+        /// <summary>
+        /// Special operator.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        [SpecialOperator(typeof(AdditionAttribute))]
+        public static float Add(float a, int b)
+        {
+            return a + b;
+        }
+    }
+
+    internal static class OtherWhere
+    {
+        public static IEnumerable<T> Where<T>(this IEnumerable<T> sequence, Func<T, bool> predicate1,
+            Func<T, bool> predicate2)
+        {
+            return sequence.Where(x => predicate1.Invoke(x) || predicate2.Invoke(x));
+        } 
     }
 }

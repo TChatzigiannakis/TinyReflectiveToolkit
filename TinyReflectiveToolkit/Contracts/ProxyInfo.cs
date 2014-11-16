@@ -143,8 +143,7 @@ namespace TinyReflectiveToolkit.Contracts
             where TAttribute : ExposeBinaryOperatorAttribute
         {
             var attributeName = typeof(TAttribute).Name.Replace("Attribute", "");
-            var field =
-                typeof(ProxyInfo).GetFields().Single(x => x.Name == "Required" + side + "Side" + attributeName + "Operators");
+            var field = typeof(ProxyInfo).GetFields().Single(x => x.Name == "Required" + side + "Side" + attributeName + "Operators");
             return (List<MethodInfo>)field.GetValue(this);
         }
         public List<MethodInfo> GetReqLeft<TAttribute>()
