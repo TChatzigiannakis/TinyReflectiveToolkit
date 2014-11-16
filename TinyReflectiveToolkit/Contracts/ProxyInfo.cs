@@ -45,6 +45,12 @@ namespace TinyReflectiveToolkit.Contracts
         public List<MethodInfo> RequiredRightSideGreaterThanOrEqualOperators = null;
         public List<MethodInfo> RequiredLeftSideLessThanOrEqualOperators = null;
         public List<MethodInfo> RequiredRightSideLessThanOrEqualOperators = null;
+        public List<MethodInfo> RequiredLeftSideExclusiveOrOperators = null;
+        public List<MethodInfo> RequiredRightSideExclusiveOrOperators = null;
+        public List<MethodInfo> RequiredLeftSideBitwiseOrOperators = null;
+        public List<MethodInfo> RequiredRightSideBitwiseOrOperators = null;
+        public List<MethodInfo> RequiredLeftSideBitwiseAndOperators = null;
+        public List<MethodInfo> RequiredRightSideBitwiseAndOperators = null;
 
         public List<MethodInfo> FoundMethods = null;
         public List<Tuple<string, MethodInfo, int>> FoundExplicitConversions = null;
@@ -71,6 +77,12 @@ namespace TinyReflectiveToolkit.Contracts
         public List<Tuple<string, MethodInfo, int>> FoundRightSideGreaterThanOrEqualOperators = null;
         public List<Tuple<string, MethodInfo, int>> FoundLeftSideLessThanOrEqualOperators = null;
         public List<Tuple<string, MethodInfo, int>> FoundRightSideLessThanOrEqualOperators = null;
+        public List<Tuple<string, MethodInfo, int>> FoundLeftSideExclusiveOrOperators = null;
+        public List<Tuple<string, MethodInfo, int>> FoundRightSideExclusiveOrOperators = null;
+        public List<Tuple<string, MethodInfo, int>> FoundLeftSideBitwiseOrOperators = null;
+        public List<Tuple<string, MethodInfo, int>> FoundRightSideBitwiseOrOperators = null;
+        public List<Tuple<string, MethodInfo, int>> FoundLeftSideBitwiseAndOperators = null;
+        public List<Tuple<string, MethodInfo, int>> FoundRightSideBitwiseAndOperators = null;
 
         public bool IsValid
         {
@@ -123,10 +135,8 @@ namespace TinyReflectiveToolkit.Contracts
             var attributeName = typeof (TAttribute).Name.Replace("Attribute", "");
             var leftSideField = typeof (ProxyInfo).GetFields().Single(x => x.Name == "RequiredLeftSide" + attributeName + "Operators");
             var rightSideField = typeof(ProxyInfo).GetFields().Single(x => x.Name == "RequiredRightSide" + attributeName + "Operators");
-            leftSideField.SetValue(this,
-                methodInfoList.WithAttribute<TAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList());
-            rightSideField.SetValue(this,
-                methodInfoList.WithAttribute<TAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList());
+            leftSideField.SetValue(this, methodInfoList.WithAttribute<TAttribute>(x => x.OperatorSide == OpSide.ThisLeft).ToList());
+            rightSideField.SetValue(this, methodInfoList.WithAttribute<TAttribute>(x => x.OperatorSide == OpSide.ThisRight).ToList());
         }
 
         private List<MethodInfo> GetReqList<TAttribute>(string side)

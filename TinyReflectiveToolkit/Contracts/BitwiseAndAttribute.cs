@@ -14,16 +14,16 @@ namespace TinyReflectiveToolkit.Contracts
     /// <summary>
     /// Declares that instead of being an actual method implemented by the type of the provided object,
     /// this will be a new, automatically implemented method that returns the result of the
-    /// application of the subtraction operator on the provided object and another object.
+    /// application of the AND operator on the provided object and another object.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
-    public sealed class SubtractionAttribute : ExposeBinaryOperatorAttribute
+    public sealed class BitwiseAndAttribute : ExposeBinaryOperatorAttribute
     {
         /// <summary>
         /// Declares a proxy method to the operator, with the current object being on the specified side.
         /// </summary>
-        /// <param name="side">The side on which the current instance will be provided to the subtraction operator (with the argument going to the other side).</param>
-        public SubtractionAttribute(OpSide side)
+        /// <param name="side">The side on which the current instance will be provided to the AND operator (with the argument going to the other side).</param>
+        public BitwiseAndAttribute(OpSide side)
             : base(side)
         {
         }
@@ -31,7 +31,7 @@ namespace TinyReflectiveToolkit.Contracts
         /// <summary>
         /// Declares a proxy method to the operator, with the current object being on the left.
         /// </summary>
-        public SubtractionAttribute()
+        public BitwiseAndAttribute()
             : this(OpSide.ThisLeft)
         {            
         }

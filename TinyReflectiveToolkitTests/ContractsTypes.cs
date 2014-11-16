@@ -205,6 +205,21 @@ namespace TinyReflectiveToolkitTests
         {
             return false;
         }
+
+        public static bool operator &(UnrelatedType8 a, int b)
+        {
+            return true;
+        }
+
+        public static bool operator |(UnrelatedType8 a, int b)
+        {
+            return false;
+        }
+
+        public static bool operator ^(UnrelatedType8 a, int b)
+        {
+            return false;
+        }
     }
 
 

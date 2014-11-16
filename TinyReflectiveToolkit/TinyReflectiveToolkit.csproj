@@ -62,6 +62,9 @@
     <Compile Include="Contracts\SpecialConversionAttribute.cs" />
     <Compile Include="Contracts\SpecialOperations.cs" />
     <Compile Include="Contracts\SubtractionAttribute.cs" />
+    <Compile Include="Contracts\BitwiseOrAttribute.cs" />
+    <Compile Include="Contracts\BitwiseAndAttribute.cs" />
+    <Compile Include="Contracts\ExclusiveOrAttribute.cs" />
     <Compile Include="GetAbstractMethods.cs" />
     <Compile Include="GetGenericMethods.cs" />
     <Compile Include="GetInheritedInterfaceMembers.cs" />

@@ -220,4 +220,21 @@ namespace TinyReflectiveToolkitTests
     {
     }
 
+    public interface IAndOperator<T>
+    {
+        [BitwiseAnd]
+        bool And(T a);
+    }
+
+    public interface IOrOperator<T>
+    {
+        [BitwiseOr]
+        bool Or(T a);
+    }
+
+    public interface IXorOperator<T>
+    {
+        [ExclusiveOr]
+        bool Xor(T a);
+    }
 }
