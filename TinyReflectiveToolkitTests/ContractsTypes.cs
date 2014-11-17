@@ -243,4 +243,34 @@ namespace TinyReflectiveToolkitTests
             return a.ToString().Length;
         }
     }
+
+    /// <summary>
+    /// Test type.
+    /// </summary>
+    public class UnrelatedType11
+    {
+        public static string operator +(UnrelatedType11 a1, object a2)
+        {
+            return a2.ToString();
+        }
+        public static string operator +(object a1, UnrelatedType11 a2)
+        {
+            return a1.ToString();
+        }
+    }
+
+    /// <summary>
+    /// Test type.
+    /// </summary>
+    public class UnrelatedType12
+    {
+        public static int operator +(UnrelatedType12 a1, object a2)
+        {
+            return a2.ToString().Length;
+        }
+        public static int operator +(object a1, UnrelatedType12 a2)
+        {
+            return a1.ToString().Length;
+        }
+    }
 }

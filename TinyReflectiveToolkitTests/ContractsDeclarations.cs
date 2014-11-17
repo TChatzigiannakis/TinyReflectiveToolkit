@@ -272,4 +272,13 @@ namespace TinyReflectiveToolkitTests
     {
         TOut VariantMethod(TIn s);
     }
+
+    public interface IOperatorVariance<TIn, TOut>
+    {
+        [Addition(OpSide.ThisLeft)]
+        TOut VariantMethod(TIn s);
+
+        [Addition(OpSide.ThisRight)]
+        TOut VariantMethod2(TIn s);
+    }
 }

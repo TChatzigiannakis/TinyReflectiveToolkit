@@ -408,5 +408,69 @@ namespace TinyReflectiveToolkitTests
             var obj = new UnrelatedType10().ToContract<IVariance<int, object>>();
             Assert.AreEqual(1, obj.VariantMethod(1));
         }
+
+        [Test]
+        public void OperatorInvariance()
+        {
+            var obj = new UnrelatedType11().ToContract<IOperatorVariance<object, string>>();
+            Assert.AreEqual("1", obj.VariantMethod("1"));
+            Assert.AreEqual("1", obj.VariantMethod2("1"));
+        }
+
+        [Test]
+        public void OperatorCovariance()
+        {
+            var obj = new UnrelatedType11().ToContract<IOperatorVariance<object, object>>();
+            Assert.AreEqual("1", obj.VariantMethod("1"));
+            Assert.AreEqual("1", obj.VariantMethod2("1"));
+        }
+
+        [Test]
+        public void OperatorContravariance()
+        {
+            var obj = new UnrelatedType11().ToContract<IOperatorVariance<string, string>>();
+            Assert.AreEqual("1", obj.VariantMethod("1"));
+            Assert.AreEqual("1", obj.VariantMethod2("1"));
+        }
+
+        [Test]
+        public void OperatorCovarianceAndContravariance()
+        {
+            var obj = new UnrelatedType11().ToContract<IOperatorVariance<string, object>>();
+            Assert.AreEqual("1", obj.VariantMethod("1"));
+            Assert.AreEqual("1", obj.VariantMethod2("1"));
+        }
+
+        [Test]
+        public void OperatorInvarianceBoxing()
+        {
+            var obj = new UnrelatedType12().ToContract<IOperatorVariance<object, int>>();
+            Assert.AreEqual(1, obj.VariantMethod(1));
+            Assert.AreEqual(1, obj.VariantMethod2(1));
+        }
+
+        [Test]
+        public void OperatorCovarianceBoxing()
+        {
+            var obj = new UnrelatedType12().ToContract<IOperatorVariance<object, object>>();
+            Assert.AreEqual(1, obj.VariantMethod(1));
+            Assert.AreEqual(1, obj.VariantMethod2(1));
+        }
+
+        [Test]
+        public void OperatorContravarianceBoxing()
+        {
+            var obj = new UnrelatedType12().ToContract<IOperatorVariance<int, int>>();
+            Assert.AreEqual(1, obj.VariantMethod(1));
+            Assert.AreEqual(1, obj.VariantMethod2(1));
+        }
+
+        [Test]
+        public void OperatorCovarianceAndContravarianceBoxing()
+        {
+            var obj = new UnrelatedType12().ToContract<IOperatorVariance<int, object>>();
+            Assert.AreEqual(1, obj.VariantMethod(1));
+            Assert.AreEqual(1, obj.VariantMethod2(1));
+        }
     }
 }

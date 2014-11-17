@@ -179,9 +179,9 @@ namespace TinyReflectiveToolkit.Contracts
                 {
                     var otherParameter = x.GetParameters().Single().ParameterType;
                     var operatorMethods = realObjectOperators
-                        .Where(m => m.ReturnType == x.ReturnType)
+                        .Where(m => x.ReturnType.IsAssignableFrom(m.ReturnType))
                         .Where(m => m.Name == op)
-                        .Where(m => m.GetParameters().ElementAt(1 - index).ParameterType == otherParameter)
+                        .Where(m => m.GetParameters().ElementAt(1 - index).ParameterType.IsAssignableFrom(otherParameter))
                         .ToList();
                     if (operatorMethods.IsEmpty())
                     {
@@ -320,19 +320,24 @@ namespace TinyReflectiveToolkit.Contracts
                     var name = foundOperator.Item1;
                     var index = foundOperator.Item3;
                     var requiredOperator = proxyInfo.AllFoundOperators.Corresponding(foundOperator, proxyInfo.AllRequiredOperators);
-                    var proxyMethodParameters = foundOperator.Item2.GetParameters().Select(p => p.ParameterType).Where((p, i) => i != index).ToArray();
+                    var proxyMethodParameters = requiredOperator.GetParameters().Select(p => p.ParameterType).ToArray();
                     var proxyMethod = proxyTypeBuilder.DefineMethod(name, AttributesForProxyMethods, requiredOperator.ReturnType, proxyMethodParameters);
-
+                    var foundMethodParameters = foundOperator.Item2.GetParameters().Select(p => p.ParameterType).Where((p, i) => i != index).ToArray();
+                    
                     var generator = proxyMethod.GetILGenerator();
                     for (var i = 0; i < proxyMethodParameters.Count() + 1; i++)
                     {
                         if (i < index)
                         {
                             generator.Emit(OpCodes.Ldarg, i + 1);
+                            if (proxyMethodParameters[i].IsValueType && !foundMethodParameters[i].IsValueType)
+                                generator.Emit(OpCodes.Box, proxyMethodParameters[i]);
                         }
                         else if (i > index)
                         {
                             generator.Emit(OpCodes.Ldarg, i);
+                            if (proxyMethodParameters[i - 1].IsValueType && !foundMethodParameters[i - 1].IsValueType)
+                                generator.Emit(OpCodes.Box, proxyMethodParameters[i - 1]);
                         }
                         else
                         {
