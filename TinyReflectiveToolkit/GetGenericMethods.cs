@@ -27,8 +27,9 @@ namespace TinyReflectiveToolkit
         /// <param name="type"></param>
         /// <param name="name"></param>
         /// <param name="parameters"></param>
+        /// <param name="allowSubstitution"></param>
         /// <returns></returns>
-        public static IEnumerable<MethodInfo> GetGenericMethods(this Type type, string name, ParameterInfo[] parameters)
+        public static IEnumerable<MethodInfo> GetGenericMethods(this Type type, string name, ParameterInfo[] parameters, bool allowSubstitution)
         {
             if (type == null) throw new ArgumentNullException("type");
             if (name == null) throw new ArgumentNullException("name");
@@ -41,11 +42,23 @@ namespace TinyReflectiveToolkit
                 .ToList();
             var matchingOverloads = overloads.Where(x => x.GetParameters()
                 .SequenceEqual(parameters, (p1, p2) =>
-                        ParamInfoPredicate.Invoke(p1.ParameterType, p2.ParameterType)))
+                        ParamInfoPredicate.Invoke(p1.ParameterType, p2.ParameterType, allowSubstitution)))
                 .ToList();
             return matchingOverloads;
         }
-        
+
+        /// <summary>
+        /// Returns all methods (including generic methods) that satisfy the specified constraints.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="name"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public static IEnumerable<MethodInfo> GetGenericMethods(this Type type, string name, ParameterInfo[] parameters)
+        {
+            return type.GetGenericMethods(name, parameters, false);
+        }
+
         /// <summary>
         /// Returns a method (including generic methods) that satisfies the specified constraints or null of none is found.
         /// </summary>
@@ -55,15 +68,32 @@ namespace TinyReflectiveToolkit
         /// <returns></returns>
         public static MethodInfo GetGenericMethod(this Type type, string name, ParameterInfo[] parameters)
         {
-            return type.GetGenericMethods(name, parameters).SingleOrDefault();
+            return type.GetGenericMethods(name, parameters, false).SingleOrDefault();
         }
 
-        internal static Func<Type, Type, bool> ParamInfoPredicate = (t1, t2) =>
+        /// <summary>
+        /// Returns a method (including generic methods) that satisfies the specified constraints or null of none is found.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="name"></param>
+        /// <param name="parameters"></param>
+        /// <param name="allowSubstitution"></param>
+        /// <returns></returns>
+        public static MethodInfo GetGenericMethod(this Type type, string name, ParameterInfo[] parameters, bool allowSubstitution)
+        {
+            return type.GetGenericMethods(name, parameters, allowSubstitution).SingleOrDefault();
+        }
+
+        internal static Func<Type, Type, bool, bool> ParamInfoPredicate = (t1, t2, sub) =>
         {
             if (t1.IsGenericParameter != t2.IsGenericParameter) return false;
-            if (!t1.IsGenericParameter) return t1 == t2;
+            if (!t1.IsGenericParameter)
+            {
+                if (sub) return t1.IsAssignableFrom(t2);
+                return t1 == t2;
+            }
             return t1.GetGenericParameterConstraints()
-                .SequenceEqual(t2.GetGenericParameterConstraints(), ParamInfoPredicate);
+                .SequenceEqual(t2.GetGenericParameterConstraints(), (x, y) => ParamInfoPredicate.Invoke(x, y, sub));
         };
     }
 }
