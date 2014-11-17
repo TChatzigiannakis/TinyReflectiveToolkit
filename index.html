@@ -175,9 +175,9 @@ public interface IStringToObject
 
 <p>If you can see why this is so, then you'll be happy to know that <strong>this library supports covariance and contravariance</strong> (for method return types and parameter types respectively). In other words, the class shown above actually satisfies all four interfaces/contracts that were presented, using the <code>.Satisfies()</code> and <code>.ToContract()</code> extension methods.</p>
 
-<p>The careful reader will notice that even where C# does support covariance and contravariance, it's applicable only for reference types. Or, with an example: an <code>IEnumerable&lt;string&gt;</code> is an <code>IEnumerable&lt;object&gt;</code> but an <code>IEnumerable&lt;int&gt;</code> isn't an <code>IEnumerable&lt;object&gt;</code>. This is because unboxed value types aren't proper <a href="http://en.wikipedia.org/wiki/Liskov_substitution_principle">Liskov subtypes</a> of <code>object</code>.</p>
+<p>The careful reader will notice that <strong>even where C# does support covariance and contravariance, it's applicable only for reference types</strong>. Or, with an example: an <code>IEnumerable&lt;string&gt;</code> is an <code>IEnumerable&lt;object&gt;</code> but an <code>IEnumerable&lt;int&gt;</code> isn't an <code>IEnumerable&lt;object&gt;</code>. This is because unboxed value types aren't proper <a href="http://en.wikipedia.org/wiki/Liskov_substitution_principle">Liskov subtypes</a> of <code>object</code>.</p>
 
-<p>This same careful reader will be happy to know that this library supports all the above <em>even for value types</em>. In other words, what we described above between <code>string</code> and <code>object</code> works the same between <code>int</code> and <code>object</code> as well.</p>
+<p>This same careful reader will be happy to know that <strong>this library supports all of the above <em>even for value types</em></strong>. In other words, what we described above between <code>string</code> and <code>object</code> works the same between <code>int</code> and <code>object</code> as well.</p>
 
 <h2>
 <a id="runtime-contracts-part-3-binding-to-operators" class="anchor" href="#runtime-contracts-part-3-binding-to-operators" aria-hidden="true"><span class="octicon octicon-link"></span></a>Runtime Contracts, Part 3: Binding to Operators</h2>
