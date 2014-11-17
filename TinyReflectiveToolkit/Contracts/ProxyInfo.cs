@@ -92,8 +92,14 @@ namespace TinyReflectiveToolkit.Contracts
                 if (RequiredExplicitConversions.Count != FoundExplicitConversions.Count) return false;
                 if (RequiredImplicitConversions.Count != FoundImplicitConversions.Count) return false;
 
-                var reqFields = typeof (ProxyInfo).GetFields().Where(x => x.Name.StartsWith("Required") && x.Name.EndsWith("Operators")).ToList();
-                var foundFields = typeof (ProxyInfo).GetFields().Where(x => x.Name.StartsWith("Found") && x.Name.EndsWith("Operators")).ToList();
+                var reqFields =
+                    typeof (ProxyInfo).GetFields()
+                        .Where(x => x.Name.StartsWith("Required") && x.Name.EndsWith("Operators"))
+                        .ToList();
+                var foundFields =
+                    typeof (ProxyInfo).GetFields()
+                        .Where(x => x.Name.StartsWith("Found") && x.Name.EndsWith("Operators"))
+                        .ToList();
                 for (var i = 0; i < reqFields.Count; i++)
                 {
                     var list1 = (List<MethodInfo>) reqFields[i].GetValue(this);
@@ -184,6 +190,13 @@ namespace TinyReflectiveToolkit.Contracts
             where TAttribute : ExposeBinaryOperatorAttribute
         {
             return GetFoundList<TAttribute>("Right");
+        }
+
+        public IEnumerable<string> Issues { get { return _issues; } }
+        private readonly List<string> _issues = new List<string>();
+        public void AddIssue(string message)
+        {
+            _issues.Add(message);
         }
     }
 }

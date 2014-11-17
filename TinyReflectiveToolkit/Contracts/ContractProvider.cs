@@ -139,8 +139,11 @@ namespace TinyReflectiveToolkit.Contracts
             proxyInfo.FoundRegularMethods = proxyInfo.RequiredRegularMethods.Select(requiredMethod =>
             {
                 var matchingMethod = realType.GetGenericMethod(requiredMethod.Name, requiredMethod.GetParameters(), true);
-                if (matchingMethod == null || !requiredMethod.ReturnType.IsAssignableFrom(matchingMethod.ReturnType)) 
-                    return null;
+                if (matchingMethod == null || !requiredMethod.ReturnType.IsAssignableFrom(matchingMethod.ReturnType))
+                {
+                    proxyInfo.AddIssue("Could not locate a matching implementation for method " + requiredMethod + " in type " + realType + ".");
+                    return null;                    
+                }
                 return matchingMethod;
             }).Except(x => x == null).ToList();
 
@@ -156,8 +159,12 @@ namespace TinyReflectiveToolkit.Contracts
                         matchingOperators.Add(specialOp);
                 }
                 if (matchingOperators.IsEmpty() && realType == requiredOperator.ReturnType)
-                    matchingOperators.Add(SpecialOperations.IdentityMarkerMethodInfo);                                        
-                return new Tuple<string, MethodInfo, int>(requiredOperator.Name, matchingOperators.FirstOrDefault(), 0);
+                    matchingOperators.Add(SpecialOperations.IdentityMarkerMethodInfo);
+                var matchingOperator = matchingOperators.FirstOrDefault();
+                if (matchingOperator == null)
+                    proxyInfo.AddIssue("Could not locate a matching explicit operator for method " + requiredOperator +
+                                       " in type " + realType + ".");
+                return new Tuple<string, MethodInfo, int>(requiredOperator.Name, matchingOperator, 0);
             }).ToList();
             proxyInfo.FoundImplicitConversions = proxyInfo.RequiredImplicitConversions.Select(requiredOperator =>
             {
@@ -169,8 +176,12 @@ namespace TinyReflectiveToolkit.Contracts
                         matchingOperators.Add(specialOp);
                 }
                 if (matchingOperators.IsEmpty() && realType == requiredOperator.ReturnType)
-                    matchingOperators.Add(SpecialOperations.IdentityMarkerMethodInfo);    
-                return new Tuple<string, MethodInfo, int>(requiredOperator.Name, matchingOperators.FirstOrDefault(), 0);
+                    matchingOperators.Add(SpecialOperations.IdentityMarkerMethodInfo);
+                var matchingOperator = matchingOperators.FirstOrDefault();
+                if (matchingOperator == null)
+                    proxyInfo.AddIssue("Could not locate a matching implicit operator for method " + requiredOperator +
+                                       " in type " + realType + ".");
+                return new Tuple<string, MethodInfo, int>(requiredOperator.Name, matchingOperator, 0);
             }).ToList();
 
             // Match the binary operators.
@@ -189,7 +200,11 @@ namespace TinyReflectiveToolkit.Contracts
                         if (specialOp != null)
                             operatorMethods.Add(specialOp);
                     }
-                    return new Tuple<string, MethodInfo, int>(x.Name, operatorMethods.FirstOrDefault(), index);
+                    var matchingOperator = operatorMethods.FirstOrDefault();
+                    if (matchingOperator == null)
+                        proxyInfo.AddIssue("Could not locate a matching " + opMarker.Name.Replace("Attribute", "") +
+                                           " operator for method " + required + " in type " + realType + ".");
+                    return new Tuple<string, MethodInfo, int>(x.Name, matchingOperator, index);
                 }).ToList());
             AddOperatorsWith<AdditionAttribute>(act, proxyInfo);
             AddOperatorsWith<SubtractionAttribute>(act, proxyInfo);
@@ -210,7 +225,7 @@ namespace TinyReflectiveToolkit.Contracts
             if (!proxyInfo.IsValid)
             {
                 _knownFailingContracts.Add(combination);
-                return new Tuple<bool, Type, ProxyInfo>(false, null, null);                
+                return new Tuple<bool, Type, ProxyInfo>(false, null, proxyInfo);                
             }
 
             // If this looks like a matching contract, cache analysis results (for faster reference in the future), then return them.
@@ -251,7 +266,7 @@ namespace TinyReflectiveToolkit.Contracts
             var cachedProxyType = satisfactionCheckResult.Item2;
             var proxyInfo = satisfactionCheckResult.Item3;
             if (!contractIsSatisfied)
-                throw new ContractUnsatisfiedException();
+                throw new ContractUnsatisfiedException(string.Join(" ", proxyInfo.Issues));
             if (cachedProxyType != null)
                 return GenerateProxy<TContract>(realInstance, cachedProxyType);
 
