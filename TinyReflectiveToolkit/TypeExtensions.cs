@@ -13,6 +13,6 @@ namespace TinyReflectiveToolkit
     /// A helper class providing extension methods related to reflection.
     /// </summary>
     public static partial class TypeExtensions
-    { 
+    {
     }
 }
