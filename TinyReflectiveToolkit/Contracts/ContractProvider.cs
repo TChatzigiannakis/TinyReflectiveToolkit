@@ -291,7 +291,12 @@ namespace TinyReflectiveToolkit.Contracts
                 generator.Emit(OpCodes.Ldarg_0);
                 generator.Emit(realType.IsValueType ? OpCodes.Ldflda : OpCodes.Ldfld, realInstanceField);
                 for (var i = 0; i < proxyMethodParameterTypes.Count(); i++)
+                {
                     generator.Emit(OpCodes.Ldarg, i + 1);
+                    if (proxyMethodParameterTypes[i].IsValueType &&
+                        !foundMethod.GetParameters()[i].ParameterType.IsValueType)
+                        generator.Emit(OpCodes.Box, proxyMethodParameterTypes[i]);
+                }
                 generator.EmitCall(OpCodes.Callvirt, foundMethod, null);
                 if (foundMethod.ReturnType.IsValueType && !requiredMethod.ReturnType.IsValueType)
                     generator.Emit(OpCodes.Box, foundMethod.ReturnType);
