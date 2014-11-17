@@ -222,5 +222,14 @@ namespace TinyReflectiveToolkitTests
         }
     }
 
-
+    /// <summary>
+    /// Test type.
+    /// </summary>
+    public class UnrelatedType9
+    {
+        public string VariantMethod(object a)
+        {
+            return a.ToString();
+        }
+    }
 }

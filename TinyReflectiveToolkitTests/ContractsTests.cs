@@ -352,5 +352,33 @@ namespace TinyReflectiveToolkitTests
             var obj = five.ToContract<IToStringableObj>();
             Assert.AreEqual(five.ToString(), obj.ToString());
         }
+
+        [Test]
+        public void Invariance()
+        {
+            var obj = new UnrelatedType9().ToContract<IInvariance>();
+            Assert.AreEqual("A", obj.VariantMethod("A"));
+        }
+
+        [Test]
+        public void Covariance()
+        {
+            var obj = new UnrelatedType9().ToContract<ICovariance>();
+            Assert.AreEqual("A", obj.VariantMethod("A"));
+        }
+
+        [Test]
+        public void Contravariance()
+        {
+            var obj = new UnrelatedType9().ToContract<IContravariance>();
+            Assert.AreEqual("A", obj.VariantMethod("A"));
+        }
+
+        [Test]
+        public void CovarianceAndContravariance()
+        {
+            var obj = new UnrelatedType9().ToContract<ICovarianceAndContravariance>();
+            Assert.AreEqual("A", obj.VariantMethod("A"));
+        }
     }
 }
