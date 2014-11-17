@@ -273,4 +273,15 @@ namespace TinyReflectiveToolkitTests
             return a1.ToString().Length;
         }
     }
+
+    /// <summary>
+    /// Test type.
+    /// </summary>
+    public class MyClass
+    {
+        public string Method(object arg)
+        {
+            return arg.ToString();
+        }
+    }
 }

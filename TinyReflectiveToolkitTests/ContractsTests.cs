@@ -358,6 +358,8 @@ namespace TinyReflectiveToolkitTests
         {
             var obj = new UnrelatedType9().ToContract<IVariance<object, string>>();
             Assert.AreEqual("A", obj.VariantMethod("A"));
+
+            Assert.IsTrue(new MyClass().Satisfies<IObjectToString>());
         }
 
         [Test]
@@ -365,6 +367,8 @@ namespace TinyReflectiveToolkitTests
         {
             var obj = new UnrelatedType9().ToContract<IVariance<object, object>>();
             Assert.AreEqual("A", obj.VariantMethod("A"));
+
+            Assert.IsTrue(new MyClass().Satisfies<IObjectToObject>());
         }
 
         [Test]
@@ -372,6 +376,8 @@ namespace TinyReflectiveToolkitTests
         {
             var obj = new UnrelatedType9().ToContract<IVariance<string, string>>();
             Assert.AreEqual("A", obj.VariantMethod("A"));
+
+            Assert.IsTrue(new MyClass().Satisfies<IStringToString>());
         }
 
         [Test]
@@ -379,6 +385,8 @@ namespace TinyReflectiveToolkitTests
         {
             var obj = new UnrelatedType9().ToContract<IVariance<string, object>>();
             Assert.AreEqual("A", obj.VariantMethod("A"));
+
+            Assert.IsTrue(new MyClass().Satisfies<IStringToObject>());
         }
 
         [Test]

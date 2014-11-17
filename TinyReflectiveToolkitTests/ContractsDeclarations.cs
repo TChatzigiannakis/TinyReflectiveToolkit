@@ -343,4 +343,21 @@ namespace TinyReflectiveToolkitTests
         [Addition(OpSide.ThisRight)]
         TResult AddFromLeft(TInput a);
     }
+
+    public interface IObjectToString
+    {
+        string Method(object arg);
+    }
+    public interface IObjectToObject
+    {
+        object Method(object arg);
+    }
+    public interface IStringToString
+    {
+        string Method(string arg);
+    }
+    public interface IStringToObject
+    {
+        object Method(string arg);
+    }
 }
