@@ -258,17 +258,11 @@ namespace TinyReflectiveToolkitTests
         bool Xor(T a);
     }
 
-    /// <summary>
-    /// Contract binding to ToString().
-    /// </summary>
     public interface IToStringable
     {
         string ToString();
     }
 
-    /// <summary>
-    /// Contract covariantly binding to ToString().
-    /// </summary>
     public interface IToStringableObj
     {
         object ToString();
