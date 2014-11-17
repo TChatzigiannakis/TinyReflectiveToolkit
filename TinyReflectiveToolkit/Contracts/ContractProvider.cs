@@ -143,6 +143,10 @@ namespace TinyReflectiveToolkit.Contracts
             {
                 var name = x.Name;
                 var method = type.GetGenericMethod(name, x.GetParameters());
+                if (method == null) 
+                    return null;
+                if (!x.ReturnType.IsAssignableFrom(method.ReturnType)) 
+                    return null;
                 return method;
             }).Except(x => x == null).ToList();
 
@@ -273,9 +277,12 @@ namespace TinyReflectiveToolkit.Contracts
             // Implement proxy stubs.
             var proxyStubsForMethods = proxyInfo.FoundMethods.Select(x =>
             {
+                var y = proxyInfo.FoundMethods.Corresponding(x, proxyInfo.RequiredMethods);
+
                 var name = x.Name;
                 var parameters = x.GetParameters().Select(p => p.ParameterType).ToArray();
-                var retType = x.ReturnType;
+                var retType = y.ReturnType;
+
                 var proxyMethod = proxyBuilder.DefineMethod(name, ProxyMethodAttributes);
                 proxyMethod.SetReturnType(retType);
 
@@ -291,17 +298,17 @@ namespace TinyReflectiveToolkit.Contracts
                         tp.SetBaseTypeConstraint(constraints[index].SingleOrDefault(d => d.IsClass));
                         tp.SetInterfaceConstraints(constraints[index].Where(d => d.IsInterface).ToArray());
                     });
-                    proxyMethod.SetParameters(parameters);
                 }
-                else
-                    proxyMethod.SetParameters(parameters);                    
+                proxyMethod.SetParameters(parameters);
 
                 var generator = proxyMethod.GetILGenerator();
                 generator.Emit(OpCodes.Ldarg_0);
-                generator.Emit(OpCodes.Ldfld, fieldWithActualObject);
+                generator.Emit(actualObjectType.IsValueType ? OpCodes.Ldflda : OpCodes.Ldfld, fieldWithActualObject);
                 for (var i = 0; i < parameters.Count(); i++)
                     generator.Emit(OpCodes.Ldarg, i + 1);
-                generator.EmitCall(OpCodes.Callvirt, x, null);
+                generator.EmitCall(OpCodes.Callvirt, x, null);               
+                if (x.ReturnType.IsValueType && !retType.IsValueType)
+                    generator.Emit(OpCodes.Box, x.ReturnType);
                 generator.Emit(OpCodes.Ret);
                 return proxyMethod;
             }).ToList();
@@ -318,13 +325,16 @@ namespace TinyReflectiveToolkit.Contracts
                         return px;
                     }
 
+                    var y = proxyInfo.AllFoundOperators.Corresponding(x, proxyInfo.AllRequiredOperators);
+
                     var name = x.Item1;
-                    var retType = x.Item2.ReturnType;
+                    var retType = y.ReturnType;
                     var index = x.Item3;
                     var parameters = x.Item2.GetParameters().Select(p => p.ParameterType).Where((p, i) => i != index).ToArray();
                     var proxyMethod = proxyBuilder.DefineMethod(name, ProxyMethodAttributes, retType, parameters);
                     var generator = proxyMethod.GetILGenerator();
                     for (var i = 0; i < parameters.Count() + 1; i++)
+                    {
                         if (i < index)
                         {
                             generator.Emit(OpCodes.Ldarg, i + 1);
@@ -338,7 +348,10 @@ namespace TinyReflectiveToolkit.Contracts
                             generator.Emit(OpCodes.Ldarg_0);
                             generator.Emit(OpCodes.Ldfld, fieldWithActualObject);
                         }
+                    }
                     generator.EmitCall(OpCodes.Call, x.Item2, null);
+                    if (x.Item2.ReturnType.IsValueType && !retType.IsValueType)
+                        generator.Emit(OpCodes.Box, x.Item2.ReturnType);
                     generator.Emit(OpCodes.Ret);
                     return proxyMethod;
                 }).ToList();

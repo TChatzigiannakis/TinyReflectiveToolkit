@@ -46,11 +46,11 @@ namespace TinyReflectiveToolkitTests
         {
             try
             {
-                var value = new UnrelatedType4().ToContract<IIntMethod>();
+                var value = new UnrelatedType4().ToContract<IStringMethod>();
                 Assert.Fail();
             }
-            catch (TypeLoadException)
-            {
+            catch (NotSupportedException)
+            {                
             }
         }
 
@@ -176,6 +176,12 @@ namespace TinyReflectiveToolkitTests
             Assert.AreEqual(12, (12.0).ToContract<ICastableTo<int>>().Cast());
             Assert.AreEqual(12, (12m).ToContract<ICastableTo<int>>().Cast());
             Assert.AreEqual(12, ((byte)12).ToContract<ICastableTo<int>>().Cast());
+        }
+
+        private int field;
+        public object ToString()
+        {
+            return field.ToString();
         }
 
         [Test]
@@ -313,6 +319,38 @@ namespace TinyReflectiveToolkitTests
             
             var obj4 = (10.0f).ToContract<IAddable<int, float>>();
             Assert.AreEqual(12, obj4.Add(2));
+        }
+
+        [Test]
+        public void AddablesWithObjectAsResult()
+        {
+            var obj1 = (10).ToContract<IAddable<int, object>>();
+            Assert.AreEqual(12, obj1.Add(2));
+
+            var obj2 = (10.0f).ToContract<IAddable<float, object>>();
+            Assert.AreEqual(12, obj2.Add(2));
+        }
+
+        [Test]
+        public void ToStringable()
+        {
+            var obj = "Hello".ToContract<IToStringable>();
+            Assert.AreEqual("Hello", obj.ToString());
+        }
+
+        [Test]
+        public void ToStringableObject()
+        {
+            var obj = "Hello".ToContract<IToStringableObj>();
+            Assert.AreEqual("Hello", obj.ToString());
+        }
+
+        [Test]
+        public void ToStringableFromInt()
+        {
+            object five = 5;
+            var obj = five.ToContract<IToStringableObj>();
+            Assert.AreEqual(five.ToString(), obj.ToString());
         }
     }
 }

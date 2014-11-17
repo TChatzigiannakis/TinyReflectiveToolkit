@@ -117,7 +117,17 @@ namespace TinyReflectiveToolkit.Contracts
                 .Where(x => x.FieldType == typeof(List<Tuple<string, MethodInfo, int>>))
                 .ForEach(x => x.SetValue(this, new List<Tuple<string, MethodInfo, int>>()));
         }
-        
+
+        public IEnumerable<MethodInfo> AllRequiredOperators
+        {
+            get
+            {
+                return typeof (ProxyInfo).GetFields()
+                    .Where(x => x.FieldType == typeof (List<MethodInfo>))
+                    .Select(x => (List<MethodInfo>) x.GetValue(this))
+                    .Flatten();
+            }
+        }
         public IEnumerable<Tuple<string, MethodInfo, int>> AllFoundOperators
         {
             get
@@ -125,7 +135,7 @@ namespace TinyReflectiveToolkit.Contracts
                 return typeof (ProxyInfo).GetFields()
                     .Where(x => x.FieldType == typeof (List<Tuple<string, MethodInfo, int>>))
                     .Select(x => (List<Tuple<string, MethodInfo, int>>) x.GetValue(this))
-                    .SelectMany(x => x);
+                    .Flatten();
             }
         }
 

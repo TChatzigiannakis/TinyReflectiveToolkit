@@ -25,6 +25,14 @@ namespace TinyReflectiveToolkitTests
     }
 
     /// <summary>
+    /// Contract with parameterless method with a reference-type return value.
+    /// </summary>
+    public interface IStringMethod
+    {
+        string Value();
+    }
+
+    /// <summary>
     /// Contract with parameterized method.
     /// </summary>
     public interface IParameterizedMethod
@@ -248,5 +256,15 @@ namespace TinyReflectiveToolkitTests
     {
         [ExclusiveOr]
         bool Xor(T a);
+    }
+
+    public interface IToStringable
+    {
+        string ToString();
+    }
+
+    public interface IToStringableObj
+    {
+        object ToString();
     }
 }
