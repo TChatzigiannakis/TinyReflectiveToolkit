@@ -126,7 +126,63 @@ var sum = values.Sum(x =&gt; x.GetValue());
 </ol>
 
 <h2>
-<a id="runtime-contracts-part-2-binding-to-operators" class="anchor" href="#runtime-contracts-part-2-binding-to-operators" aria-hidden="true"><span class="octicon octicon-link"></span></a>Runtime Contracts, Part 2: Binding to Operators</h2>
+<a id="runtime-contracts-part-2-covariance-and-contravariance-in-return-types-and-parameter-types" class="anchor" href="#runtime-contracts-part-2-covariance-and-contravariance-in-return-types-and-parameter-types" aria-hidden="true"><span class="octicon octicon-link"></span></a>Runtime Contracts, Part 2: Covariance and Contravariance in Return Types and Parameter Types</h2>
+
+<p>This library gives you flexibility over how contract methods are bound to the methods of the requested runtime types.</p>
+
+<p>Consider the following class:</p>
+
+<pre><code>public class MyClass
+{
+    public string Method(object arg)
+    {
+        return arg.ToString();
+    }
+}
+</code></pre>
+
+<p>And consider the following interface:</p>
+
+<pre><code>public interface IObjectToString
+{
+    string Method(object arg);
+}
+</code></pre>
+
+<p>It's easy to see why <code>MyClass</code> matches the constraints set by the <code>IObjectToString</code> interface. So you can legally declare <code>MyClass : IObjectToString</code>.</p>
+
+<p>There are, however, other variations of this interface that the class doesn't seem to match:</p>
+
+<pre><code>public interface IObjectToObject
+{
+    object Method(object arg);
+}
+public interface IStringToString
+{
+    string Method(string arg);
+}
+public interface IStringToObject
+{
+    object Method(string arg);
+}
+</code></pre>
+
+<p>Indeed, any attempt to declare <code>MyClass : IObjectToObject</code> or <code>MyClass : IStringToString</code> or <code>MyClass : IStringToObject</code> is a compile-time error. This is how the C# language is. </p>
+
+<p>But this is just a design decision or a limitation. It doesn't <em>have</em> to be like this. </p>
+
+<p>If the interface requires that the method returns any kind of <code>object</code>, then a method that returns a <code>string</code> (which <em>is</em> a kind of <code>object</code>) actually satisfies the contract of the method. In other words, <strong>return types could be covariant</strong> in inheritance scenarios.</p>
+
+<p>Similarly, if an interface requires that a method takes a <code>string</code>, then a method that can take any <code>object</code> (including a <code>string</code>) actually satisfies the contract of the method as well. In other words, <strong>parameter types could be contravariant</strong> in inheritance scenarios.</p>
+
+<p>If you can see why this is so, then you'll be happy to know that <strong>this library supports covariance and contravariance</strong> (for method return types and parameter types respectively). In other words, the class shown above actually satisfies all four interfaces/contracts that were presented, using the .ToContract() extension method.</p>
+
+<p>The careful reader will notice that even where C# does support covariance and contravariance, it's applicable only for reference types. Or, with an example: an <code>IEnumerable&lt;string&gt;</code> is an <code>IEnumerable&lt;object&gt;</code> but an <code>IEnumerable&lt;int&gt;</code> isn't an <code>IEnumerable&lt;object&gt;</code>. This is because unboxed value types aren't proper <a href="http://en.wikipedia.org/wiki/Liskov_substitution_principle">Liskov subtypes</a> of <code>object</code>.</p>
+
+<p>This same careful reader will be happy to know that this library supports all the above <em>even for value types</em>. In other words, what we described above between <code>string</code> and <code>object</code> works the same between <code>int</code> and <code>object</code> as well.</p>
+
+<h2>
+<a id="runtime-contracts-part-3-binding-to-operators" class="anchor" href="#runtime-contracts-part-3-binding-to-operators" aria-hidden="true"><span class="octicon octicon-link"></span></a>Runtime Contracts, Part 3: Binding to Operators</h2>
 
 <p><strong>Normal .NET interfaces are designed to only declare instanced public properties and methods.</strong> This means that an interface can't describe the existence of static methods, operators, conversions, etc. This usually makes sense from a design viewpoint, but there are times when it limits the expressiveness of the constraints.</p>
 
@@ -144,6 +200,22 @@ var sum = values.Sum(x =&gt; x.GetValue());
 <p>For example, the built-in types <code>int</code>, <code>float</code>, <code>double</code>, <code>decimal</code> satisfy the <code>ICastableTo&lt;int&gt;</code> contract.</p>
 
 <p>With that out of the way, whenever instances of these types are accessed through this contract, a <code>PerformCast()</code> method will be available and it will polymorphically invoke the correct cast operator for that particular runtime type.</p>
+
+<p>For binary operators, you can pick which side you want your current object, like this:</p>
+
+<pre><code>public interface ISubtractable
+{
+    [Subtraction(OpSide.ThisLeft)]
+    int Subtract(int p);
+
+    [Subtraction(OpSide.ThisRight)]
+    int SubtractFrom(int p);
+}
+</code></pre>
+
+<p>In this case, for a type <code>T</code>, <code>Subtract</code> binds to <code>operator- (T, int)</code> (<code>this</code> goes left) while <code>SubtractFrom</code> binds to <code>operator- (int, T)</code> (<code>this</code> goes right).</p>
+
+<p>There is currently no support for binary operators of the form <code>operator- (T, T)</code>.</p>
 
 <h2>
 <a id="assemblyloader-loading-dependencies-eagerly" class="anchor" href="#assemblyloader-loading-dependencies-eagerly" aria-hidden="true"><span class="octicon octicon-link"></span></a>AssemblyLoader: Loading dependencies eagerly</h2>
