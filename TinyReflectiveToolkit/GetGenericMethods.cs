@@ -17,7 +17,10 @@ using EnumerableExtensions;
 namespace TinyReflectiveToolkit
 {
     public static partial class TypeExtensions
-    {        
+    {
+        internal const BindingFlags GetMethodFlags = BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public |
+                                                      BindingFlags.NonPublic;
+
         /// <summary>
         /// Returns all methods (including generic methods) that satisfy the specified constraints.
         /// </summary>
@@ -31,7 +34,7 @@ namespace TinyReflectiveToolkit
             if (name == null) throw new ArgumentNullException("name");
             if (parameters == null) throw new ArgumentNullException("parameters");
 
-            var allMethods = type.GetMethods(BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            var allMethods = type.GetMethods(GetMethodFlags);
             var overloads = allMethods
                 .Where(x => x.Name == name)
                 .Where(x => x.GetParameters().Length == parameters.Length)
@@ -42,7 +45,7 @@ namespace TinyReflectiveToolkit
                 .ToList();
             return matchingOverloads;
         }
-
+        
         /// <summary>
         /// Returns a method (including generic methods) that satisfies the specified constraints or null of none is found.
         /// </summary>
