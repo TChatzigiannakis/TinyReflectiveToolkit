@@ -312,7 +312,7 @@ namespace TinyReflectiveToolkit.Contracts
                     if (proxyMethodParameterTypes[i].IsValueType && !foundMethod.GetParameters()[i].ParameterType.IsValueType)
                         generator.Emit(OpCodes.Box, proxyMethodParameterTypes[i]);
                 }
-                generator.EmitCall(OpCodes.Callvirt, foundMethod, null);
+                generator.EmitCall(realType.IsValueType ? OpCodes.Call : OpCodes.Callvirt, foundMethod, null);
                 if (foundMethod.ReturnType.IsValueType && !requiredMethod.ReturnType.IsValueType)
                     generator.Emit(OpCodes.Box, foundMethod.ReturnType);
                 generator.Emit(OpCodes.Ret);
