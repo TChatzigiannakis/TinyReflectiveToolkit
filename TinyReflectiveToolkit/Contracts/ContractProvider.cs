@@ -138,7 +138,7 @@ namespace TinyReflectiveToolkit.Contracts
             // Match the regular instanced methods.
             proxyInfo.FoundRegularMethods = proxyInfo.RequiredRegularMethods.Select(requiredMethod =>
             {
-                var matchingMethod = realType.GetGenericMethod(requiredMethod.Name, requiredMethod.GetParameters());
+                var matchingMethod = realType.GetGenericMethod(requiredMethod.Name, requiredMethod.GetParameters(), true);
                 if (matchingMethod == null || !requiredMethod.ReturnType.IsAssignableFrom(matchingMethod.ReturnType)) 
                     return null;
                 return matchingMethod;
@@ -267,7 +267,7 @@ namespace TinyReflectiveToolkit.Contracts
                 .Select(foundMethod =>
             {
                 var requiredMethod = proxyInfo.FoundRegularMethods.Corresponding(foundMethod, proxyInfo.RequiredRegularMethods);
-                var proxyMethodParameterTypes = foundMethod.GetParameters().Select(p => p.ParameterType).ToArray();
+                var proxyMethodParameterTypes = requiredMethod.GetParameters().Select(p => p.ParameterType).ToArray();
 
                 var proxyMethod = proxyTypeBuilder.DefineMethod(foundMethod.Name, AttributesForProxyMethods);
                 proxyMethod.SetReturnType(requiredMethod.ReturnType);
