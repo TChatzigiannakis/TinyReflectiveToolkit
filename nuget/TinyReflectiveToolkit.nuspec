@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>TinyReflectiveToolkit</id>
-        <version>0.4.2</version>
+        <version>0.4.4</version>
         <title>Tiny Reflective Toolkit</title>
         <authors>Theodoros Chatzigiannakis</authors>
 		<licenseUrl>https://www.mozilla.org/MPL/2.0/</licenseUrl>
@@ -12,6 +12,9 @@
         <releaseNotes>Structural contracts enforced at runtime, more extension methods.</releaseNotes>
         <copyright>(c) 2014 - Theodoros Chatzigiannakis</copyright>
         <tags>C# Reflection Structural</tags>
+		<dependencies>
+            <dependency id="EnumerableExtensions" version="2.4" />
+        </dependencies>
     </metadata>
 	<files>
 		<file src="..\TinyReflectiveToolkit\bin\Release\TinyReflectiveToolkit.dll" target="lib" />
