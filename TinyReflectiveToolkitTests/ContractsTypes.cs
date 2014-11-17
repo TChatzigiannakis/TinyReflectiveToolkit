@@ -232,4 +232,15 @@ namespace TinyReflectiveToolkitTests
             return a.ToString();
         }
     }
+
+    /// <summary>
+    /// Test type.
+    /// </summary>
+    public class UnrelatedType10
+    {
+        public int VariantMethod(object a)
+        {
+            return a.ToString().Length;
+        }
+    }
 }

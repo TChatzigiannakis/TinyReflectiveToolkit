@@ -356,29 +356,57 @@ namespace TinyReflectiveToolkitTests
         [Test]
         public void Invariance()
         {
-            var obj = new UnrelatedType9().ToContract<IInvariance>();
+            var obj = new UnrelatedType9().ToContract<IVariance<object, string>>();
             Assert.AreEqual("A", obj.VariantMethod("A"));
         }
 
         [Test]
         public void Covariance()
         {
-            var obj = new UnrelatedType9().ToContract<ICovariance>();
+            var obj = new UnrelatedType9().ToContract<IVariance<object, object>>();
             Assert.AreEqual("A", obj.VariantMethod("A"));
         }
 
         [Test]
         public void Contravariance()
         {
-            var obj = new UnrelatedType9().ToContract<IContravariance>();
+            var obj = new UnrelatedType9().ToContract<IVariance<string, string>>();
             Assert.AreEqual("A", obj.VariantMethod("A"));
         }
 
         [Test]
         public void CovarianceAndContravariance()
         {
-            var obj = new UnrelatedType9().ToContract<ICovarianceAndContravariance>();
+            var obj = new UnrelatedType9().ToContract<IVariance<string, object>>();
             Assert.AreEqual("A", obj.VariantMethod("A"));
+        }
+
+        [Test]
+        public void InvarianceBoxing()
+        {
+            var obj = new UnrelatedType10().ToContract<IVariance<object, int>>();
+            Assert.AreEqual(1, obj.VariantMethod("A"));
+        }
+
+        [Test]
+        public void CovarianceBoxing()
+        {
+            var obj = new UnrelatedType10().ToContract<IVariance<object, object>>();
+            Assert.AreEqual(1, obj.VariantMethod("A"));
+        }
+
+        [Test]
+        public void ContravarianceBoxing()
+        {
+            var obj = new UnrelatedType10().ToContract<IVariance<int, int>>();
+            Assert.AreEqual(1, obj.VariantMethod(1));
+        }
+
+        [Test]
+        public void CovarianceAndContravarianceBoxing()
+        {
+            var obj = new UnrelatedType10().ToContract<IVariance<int, object>>();
+            Assert.AreEqual(1, obj.VariantMethod(1));
         }
     }
 }

@@ -268,23 +268,8 @@ namespace TinyReflectiveToolkitTests
         object ToString();
     }
 
-    public interface IInvariance
+    public interface IVariance<TIn, TOut>
     {
-        string VariantMethod(object s);
-    }
-
-    public interface ICovariance
-    {
-        object VariantMethod(object s);
-    }
-
-    public interface IContravariance
-    {
-        string VariantMethod(string s);
-    }
-
-    public interface ICovarianceAndContravariance
-    {
-        object VariantMethod(string s);
+        TOut VariantMethod(TIn s);
     }
 }
