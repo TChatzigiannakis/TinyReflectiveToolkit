@@ -236,7 +236,7 @@ namespace TinyReflectiveToolkitTests
     /// <summary>
     /// Test type.
     /// </summary>
-    public class UnrelatedType10
+    public struct UnrelatedType10
     {
         public int VariantMethod(object a)
         {
@@ -262,7 +262,7 @@ namespace TinyReflectiveToolkitTests
     /// <summary>
     /// Test type.
     /// </summary>
-    public class UnrelatedType12
+    public struct UnrelatedType12
     {
         public static int operator +(UnrelatedType12 a1, object a2)
         {
