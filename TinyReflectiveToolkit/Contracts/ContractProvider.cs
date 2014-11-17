@@ -14,6 +14,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
+using TinyReflectiveToolkit.Contracts.SpecialOps;
 using EnumerableExtensions;
 
 namespace TinyReflectiveToolkit.Contracts

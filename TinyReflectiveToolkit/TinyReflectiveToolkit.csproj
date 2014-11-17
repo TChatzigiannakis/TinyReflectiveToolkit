@@ -62,9 +62,11 @@
     <Compile Include="Contracts\Premade\IConcatable.cs" />
     <Compile Include="Contracts\ProxyInfo.cs" />
     <Compile Include="Contracts\RuntimeContractExtensions.cs" />
-    <Compile Include="Contracts\SpecialConversionAttribute.cs" />
-    <Compile Include="Contracts\SpecialOperations.cs" />
-    <Compile Include="Contracts\SpecialOperatorAttribute.cs" />
+    <Compile Include="Contracts\SpecialOps\SpecialConversionAttribute.cs" />
+    <Compile Include="Contracts\SpecialOps\Conversions.cs" />
+    <Compile Include="Contracts\SpecialOps\SpecialOperations.cs" />
+    <Compile Include="Contracts\SpecialOps\SpecialOperatorAttribute.cs" />
+    <Compile Include="Contracts\SpecialOps\Operators.cs" />
     <Compile Include="Contracts\SubtractionAttribute.cs" />
     <Compile Include="Contracts\BitwiseOrAttribute.cs" />
     <Compile Include="Contracts\BitwiseAndAttribute.cs" />

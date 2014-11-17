@@ -9,10 +9,16 @@
 
 using System;
 
-namespace TinyReflectiveToolkit.Contracts
+namespace TinyReflectiveToolkit.Contracts.SpecialOps
 {
     [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
-    internal sealed class SpecialConversionAttribute : Attribute
+    internal sealed class SpecialOperatorAttribute : Attribute
     {
+        public Type Type { get; set; }
+
+        public SpecialOperatorAttribute(Type type)
+        {
+            Type = type;
+        }
     }
 }

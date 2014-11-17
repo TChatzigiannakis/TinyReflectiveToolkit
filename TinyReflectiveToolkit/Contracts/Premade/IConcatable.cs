@@ -21,7 +21,7 @@ namespace TinyReflectiveToolkit.Contracts.Premade
         /// <returns></returns>
         [Addition(OpSide.ThisLeft)]
         string Concat(string s);
-        
+
         /// <summary>
         /// Returns the result of a string's concatenation with the type.
         /// </summary>
