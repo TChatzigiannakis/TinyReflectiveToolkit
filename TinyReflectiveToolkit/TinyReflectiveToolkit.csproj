@@ -72,6 +72,7 @@
     <Compile Include="GetGenericMethods.cs" />
     <Compile Include="GetInheritedInterfaceMembers.cs" />
     <Compile Include="GetMethods.cs" />
+    <Compile Include="GetOperators.cs" />
     <Compile Include="GetProperties.cs" />
     <Compile Include="IsDelegate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
