@@ -49,7 +49,7 @@ namespace TinyReflectiveToolkitTests
                 var value = new UnrelatedType4().ToContract<IStringMethod>();
                 Assert.Fail();
             }
-            catch (NotSupportedException)
+            catch (ContractUnsatisfiedException)
             {                
             }
         }

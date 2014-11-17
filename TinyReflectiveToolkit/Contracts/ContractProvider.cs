@@ -251,7 +251,7 @@ namespace TinyReflectiveToolkit.Contracts
             var cachedProxyType = satisfactionCheckResult.Item2;
             var proxyInfo = satisfactionCheckResult.Item3;
             if (!contractIsSatisfied)
-                throw new NotSupportedException();
+                throw new ContractUnsatisfiedException();
             if (cachedProxyType != null)
                 return GenerateProxy<TContract>(realInstance, cachedProxyType);
 
