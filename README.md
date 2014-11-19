@@ -16,7 +16,7 @@
 ### Contribution guidelines ###
 
 * If you would like to contribute to this project in any way, you can fork this project, make your changes and create a pull request.
-* Make sure you respect the naming conventions in the code base (especially in the public part). They should be rather easy to figure out.
+* Make sure you respect the naming conventions in the code base (especially in the public part). If you are unsure about something, just ask!
 * Don't make breaking changes to the public API of the library. If you do, you must have a very good reason and even then, your changes will only be included in the next major version.
 * Test! If you're changing an existing feature, make sure your build passes all unit tests before pushing it. If you're adding a feature, write tests for it and make sure you're not breaking other tests.
 
