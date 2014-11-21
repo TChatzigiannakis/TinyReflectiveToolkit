@@ -4,21 +4,22 @@
 
 ### What is this repository for? ###
 
-* Tiny Reflective Toolkit - a small library containing utilities related to reflection under the CLR.
-* This is an extremely early version.
+* Tiny Reflective Toolkit, which is the main project.
+* NUnit tests for the main project.
 
 ### How do I get set up? ###
 
+* Install .NET Framework 4 or an equivalent version of Mono.
 * Open the solution file using Visual Studio or Xamarin Studio.
 * Fetch latest NuGet packages by running `nuget restore` (if your environment doesn't fetch them automatically).
 * Build Solution.
 
 ### Contribution guidelines ###
 
-* If you would like to contribute to this project in any way, you can fork this project, make your changes and create a pull request.
-* Make sure you respect the naming conventions in the code base (especially in the public part). If you are unsure about something, just ask!
-* Don't make breaking changes to the public API of the library. If you do, you must have a very good reason and even then, your changes will only be included in the next major version.
-* Test! If you're changing an existing feature, make sure your build passes all unit tests before pushing it. If you're adding a feature, write tests for it and make sure you're not breaking other tests.
+* If you would like to contribute to this project in any way, you can fork this project, make your changes and then create a pull request. 
+* Every new feature should include one or more tests related to it. These tests should fail to build or run in the absence of the new feature and they should successfully build and run in the presence of the new feature. 
+* Every change to an existing feature should make sure not to introduce new failures in the tests.
+* The public API of the main project should remain backwards compatible. If a breaking change arises, there should be a good reason for it and even then it will only be included in the next major version.
 
 ### Who do I talk to? ###
 
