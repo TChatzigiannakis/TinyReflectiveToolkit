@@ -359,6 +359,8 @@ namespace TinyReflectiveToolkit.Contracts
                         {
                             generator.Emit(OpCodes.Ldarg_0);
                             generator.Emit(OpCodes.Ldfld, realInstanceField);
+                            if (realType.IsValueType && !foundOperator.Item2.GetParameters()[index].ParameterType.IsValueType)
+                                generator.Emit(OpCodes.Box, realType);
                         }
                     }
                     generator.EmitCall(OpCodes.Call, foundOperator.Item2, null);
