@@ -204,7 +204,7 @@ namespace TinyReflectiveToolkit.Contracts
                     var matchingOperator = operatorMethods.FirstOrDefault();
                     if (matchingOperator == null)
                         proxyInfo.AddIssue("Could not locate a matching " + opMarker.Name.Replace("Attribute", "") +
-                                           " operator for method " + required + " in type " + realType + ".");
+                                           " operator for method " + x + " in type " + realType + ".");
                     return new Tuple<string, MethodInfo, int>(x.Name, matchingOperator, index);
                 }).ToList());
             AddOperatorsWith<AdditionAttribute>(act, proxyInfo);
