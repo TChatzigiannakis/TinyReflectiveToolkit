@@ -308,5 +308,10 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
             // ReSharper disable once CompareOfFloatsByEqualityOperator
             return a == b;
         }
+
+        private static bool Equal(int a, int b)
+        {
+            return a == b;
+        }
     }
 }
