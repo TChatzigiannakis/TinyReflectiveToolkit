@@ -12,45 +12,6 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
         /// <returns></returns>
         [SpecialOperator(typeof(AdditionAttribute))]
         [Obsolete(SpecialOperationsUsageErrorMessage, true)]
-        public static string Concat(string str1, string str2)
-        {
-            return string.Concat(str1, str2);
-        }
-
-        /// <summary>
-        /// Special operator.
-        /// </summary>
-        /// <param name="str1"></param>
-        /// <param name="str2"></param>
-        /// <returns></returns>
-        [SpecialOperator(typeof(AdditionAttribute))]
-        [Obsolete(SpecialOperationsUsageErrorMessage, true)]
-        public static string Concat(int str1, string str2)
-        {
-            return string.Concat(str1, str2);
-        }
-
-        /// <summary>
-        /// Special operator.
-        /// </summary>
-        /// <param name="str1"></param>
-        /// <param name="str2"></param>
-        /// <returns></returns>
-        [SpecialOperator(typeof(AdditionAttribute))]
-        [Obsolete(SpecialOperationsUsageErrorMessage, true)]
-        public static string Concat(string str1, int str2)
-        {
-            return string.Concat(str1, str2);
-        }
-
-        /// <summary>
-        /// Special operator.
-        /// </summary>
-        /// <param name="str1"></param>
-        /// <param name="str2"></param>
-        /// <returns></returns>
-        [SpecialOperator(typeof(AdditionAttribute))]
-        [Obsolete(SpecialOperationsUsageErrorMessage, true)]
         public static string Concat(object str1, string str2)
         {
             return string.Concat(str1, str2);
