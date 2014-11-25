@@ -302,5 +302,11 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
         {
             return a + b;
         }
+
+        private static bool Equal(double a, double b)
+        {
+            // ReSharper disable once CompareOfFloatsByEqualityOperator
+            return a == b;
+        }
     }
 }
