@@ -178,12 +178,6 @@ namespace TinyReflectiveToolkitTests
             Assert.AreEqual(12, ((byte)12).ToContract<ICastableTo<int>>().Cast());
         }
 
-        private int field;
-        public object ToString()
-        {
-            return field.ToString();
-        }
-
         [Test]
         public void SelfCastable()
         {
