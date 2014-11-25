@@ -22,6 +22,8 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static partial class SpecialOperations
     {
+        private const string SpecialOperationsUsageErrorMessage = "This method is not intended to be used from statically generated code.";
+
         internal static MethodInfo IdentityMarkerMethodInfo
         {
             get { return typeof (SpecialOperations).GetMethods().Single(m => m.Name == "IdentityMarker"); }
