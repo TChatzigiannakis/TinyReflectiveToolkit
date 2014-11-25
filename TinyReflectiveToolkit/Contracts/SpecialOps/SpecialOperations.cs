@@ -45,11 +45,11 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
             var matches = typeof (SpecialOperations).GetMethods()
                 .WithAttribute<SpecialOperatorAttribute>(x => x.Type == operatorMarker)
                 .Where(x => x.GetParameters().Count() == 2)
-                .Where(x => !reverse && x.GetParameters().First().ParameterType == input1
-                    , x => reverse && x.GetParameters().First().ParameterType.IsAssignableFrom(input2)
+                .Where(x => !reverse && x.GetParameters().First().ParameterType.IsAssignableFrom(input1)
+                     , x => reverse && x.GetParameters().First().ParameterType.IsAssignableFrom(input2)
                     )
                 .Where(x => !reverse && x.GetParameters().Second().ParameterType.IsAssignableFrom(input2)
-                    , x => reverse && x.GetParameters().Second().ParameterType == input1
+                     , x => reverse && x.GetParameters().Second().ParameterType.IsAssignableFrom(input1)
                     )
                 .Where(x => output.IsAssignableFrom(x.ReturnType))
                 .ToList();
