@@ -19,7 +19,7 @@ namespace TinyReflectiveToolkit.Contracts
         private static readonly ContractProvider DefaultContractProvider = new ContractProvider("Default");
 
         /// <summary>
-        /// Returns a runtime-generated proxy that implements a specified interface and forwards method calls to the given object - even if the relationship between the object's type and the interface wasn't declared at build time.
+        /// Returns a runtime-generated proxy that implements the specified interface and forwards method calls to the given object - even if the relationship between the object's type and the interface wasn't declared at build time.
         /// </summary>
         /// <typeparam name="TContract"></typeparam>
         /// <param name="obj"></param>
@@ -31,7 +31,7 @@ namespace TinyReflectiveToolkit.Contracts
         }
         
         /// <summary>
-        /// Checks whether the runtime type of an object structurally satisfies a specified contract.
+        /// Checks whether the runtime type of the provided object structurally satisfies the specified contract.
         /// </summary>
         /// <typeparam name="TContract"></typeparam>
         /// <param name="obj"></param>
