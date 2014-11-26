@@ -58,6 +58,7 @@
     <Compile Include="Contracts\MultiplicationAttribute.cs" />
     <Compile Include="Contracts\OpSide.cs" />
     <Compile Include="Contracts\Premade\ICastableTo.cs" />
+    <Compile Include="Contracts\Premade\IParsable.cs" />
     <Compile Include="Contracts\ProxyInfo.cs" />
     <Compile Include="Contracts\RuntimeContractExtensions.cs" />
     <Compile Include="Contracts\SpecialOps\SpecialConversionAttribute.cs" />
