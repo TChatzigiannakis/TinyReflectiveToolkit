@@ -508,5 +508,14 @@ namespace TinyReflectiveToolkitTests
             var obj1 = new UnrelatedType6().ToContract<IStaticMethodParameterized>();
             Assert.AreEqual(2, obj1.StaticValue(10));
         }
+
+        [Test]
+        public void Parseable()
+        {
+            var obj1 = default(int).ToContract<IParseable>();
+            var obj2 = default(bool).ToContract<IParseable>();
+            Assert.AreEqual(10, obj1.Parse("10"));
+            Assert.AreEqual(true, obj2.Parse("True"));
+        }
     }
 }

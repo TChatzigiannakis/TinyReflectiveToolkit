@@ -85,7 +85,7 @@ namespace TinyReflectiveToolkit.Contracts
         {
             return CheckIfSatisfies<TContract>(obj.GetType()).Item1;
         } 
-        private Tuple<bool, Type, ProxyInfo> CheckIfSatisfies<TContract>(Type realType)
+        internal Tuple<bool, Type, ProxyInfo> CheckIfSatisfies<TContract>(Type realType)
             where TContract : class
         {
             // Check arguments.
@@ -268,7 +268,7 @@ namespace TinyReflectiveToolkit.Contracts
             return CreateContractProxyFromObject<TContract>(obj);
         }
 
-        private TContract CreateContractProxyFromObject<TContract>(object realInstance, bool saveAssemblyForDebuggingPurposes = false)
+        private TContract CreateContractProxyFromObject<TContract>(object realInstance, bool saveAssemblyForDebuggingPurposes = false, bool onlyStatic = false)
             where TContract : class
         {
             var contractType = typeof(TContract);

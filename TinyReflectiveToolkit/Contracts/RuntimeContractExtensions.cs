@@ -7,6 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+using System;
+
 namespace TinyReflectiveToolkit.Contracts
 {
     /// <summary>
@@ -27,7 +29,7 @@ namespace TinyReflectiveToolkit.Contracts
         {
             return DefaultContractProvider.ConvertToContractInstance<TContract>(obj);
         }
-
+        
         /// <summary>
         /// Checks whether the runtime type of an object structurally satisfies a specified contract.
         /// </summary>
@@ -38,6 +40,18 @@ namespace TinyReflectiveToolkit.Contracts
             where TContract : class
         {
             return DefaultContractProvider.CheckIfSatisfies<TContract>(obj);
+        }
+
+        /// <summary>
+        /// Checks whether the provided type satisfies a specified contract.
+        /// </summary>
+        /// <typeparam name="TContract"></typeparam>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static bool AsTypeSaftisfies<TContract>(this Type type)
+            where TContract : class
+        {
+            return DefaultContractProvider.CheckIfSatisfies<TContract>(type).Item1;
         }
     }
 }
