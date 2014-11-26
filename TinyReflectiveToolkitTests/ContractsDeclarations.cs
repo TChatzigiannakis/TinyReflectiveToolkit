@@ -384,4 +384,8 @@ namespace TinyReflectiveToolkitTests
         [Static]
         object Parse(string s);
     }
+
+    public interface IEmpty
+    {        
+    }
 }

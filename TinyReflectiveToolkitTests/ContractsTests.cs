@@ -10,6 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
@@ -516,6 +517,14 @@ namespace TinyReflectiveToolkitTests
             var obj2 = default(bool).ToContract<IParseable>();
             Assert.AreEqual(10, obj1.Parse("10"));
             Assert.AreEqual(true, obj2.Parse("True"));
+        }
+
+        [Test]
+        public void PerformanceTest()
+        {
+            var a = AppDomain.CurrentDomain.GetAssemblies().Select(x => x.GetTypes()).SelectMany(x => x).Where(x => x.IsPublic)
+                .All(x => x.AsTypeSaftisfies<IEmpty>());
+            Assert.IsTrue(a);
         }
     }
 }
