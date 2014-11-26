@@ -180,11 +180,28 @@ public interface IStringToObject
 <p>This same careful reader will be happy to know that <strong>this library supports all of the above <em>even for value types</em></strong>. In other words, what we described above between <code>string</code> and <code>object</code> works the same between <code>int</code> and <code>object</code> as well.</p>
 
 <h2>
-<a id="runtime-contracts-part-3-binding-to-operators" class="anchor" href="#runtime-contracts-part-3-binding-to-operators" aria-hidden="true"><span class="octicon octicon-link"></span></a>Runtime Contracts, Part 3: Binding to Operators</h2>
+<a id="runtime-contracts-part-3-binding-to-static-methods-and-operators" class="anchor" href="#runtime-contracts-part-3-binding-to-static-methods-and-operators" aria-hidden="true"><span class="octicon octicon-link"></span></a>Runtime Contracts, Part 3: Binding to static methods and operators</h2>
 
 <p><strong>Normal .NET interfaces are designed to only declare instanced public properties and methods.</strong> This means that an interface can't describe the existence of static methods, operators, conversions, etc. This usually makes sense from a design viewpoint, but there are times when it limits the expressiveness of the constraints.</p>
 
-<p><strong>The runtime contracts offered in this library</strong> are described as .NET interfaces, but they <strong>can bind to things like operators,</strong> using some attributes. For example, consider the following contract:</p>
+<p><strong>The runtime contracts offered in this library</strong> are described as .NET interfaces, but they <strong>can bind to things like static methods and operators</strong>, using some attributes.</p>
+
+<p>Example <strong>for static methods:</strong></p>
+
+<pre><code>public interface IParsable
+{
+    [Static]
+    object Parse(string s);
+}
+</code></pre>
+
+<p>The [Static] attribute means that the candidate types must have a <code>static</code> method with that signature. If they do, then they satisfy this contract.</p>
+
+<p>Therefore, <strong>instances of <code>bool</code>, <code>int</code>, <code>double</code> satisfy the <code>IParsable</code> contract.</strong></p>
+
+<p>Whenever instances of these types are accessed through this contract, an instanced <code>Parse(string)</code> method will be available and it will polymorphically invoke the correct static method from that particular runtime type. (Because it binds to a static method, the instance is completely irrelevant - only the explicitly provided arguments are passed.)</p>
+
+<p>Example <strong>for operators:</strong></p>
 
 <pre><code>public interface ICastableTo&lt;T&gt;
 {
@@ -193,13 +210,13 @@ public interface IStringToObject
 }
 </code></pre>
 
-<p>The <code>[Cast]</code> attribute means that the candidate types are not required to implement a <code>PerformCast()</code> method. Instead, <strong>they are required to contain an explicit conversion operator</strong> to <code>T</code>. If they do, then they satisfy this contract. (The name of the method is irrelevant.)</p>
+<p>The <code>[Cast]</code> attribute means that the candidate types are <em>not</em> required to implement a <code>PerformCast()</code> method. Instead, <strong>they are required to contain an explicit conversion operator</strong> to <code>T</code>. If they do, then they satisfy this contract. (The name of the decorated method is completely irrelevant.)</p>
 
-<p>For example, the built-in types <code>int</code>, <code>float</code>, <code>double</code>, <code>decimal</code> satisfy the <code>ICastableTo&lt;int&gt;</code> contract.</p>
+<p>For example, <strong>instances of <code>int</code>, <code>float</code>, <code>double</code>, <code>decimal</code> satisfy the <code>ICastableTo&lt;int&gt;</code> contract</strong>.</p>
 
-<p>With that out of the way, whenever instances of these types are accessed through this contract, a <code>PerformCast()</code> method will be available and it will polymorphically invoke the correct cast operator for that particular runtime type.</p>
+<p>With that out of the way, whenever instances of these types are accessed through this contract, a <code>PerformCast()</code> method will be available and it will polymorphically invoke the correct cast operator for the runtime type of the instance it is called on.</p>
 
-<p>For binary operators, you can pick which side you want your current object, like this:</p>
+<p>For binary operators, you can pick which side you want your current object on, like this:</p>
 
 <pre><code>public interface ISubtractable
 {
@@ -211,9 +228,7 @@ public interface IStringToObject
 }
 </code></pre>
 
-<p>In this case, for a type <code>T</code>, <code>Subtract</code> binds to <code>operator- (T, int)</code> (<code>this</code> goes left) while <code>SubtractFrom</code> binds to <code>operator- (int, T)</code> (<code>this</code> goes right).</p>
-
-<p>There is currently no support for binary operators of the form <code>operator- (T, T)</code>.</p>
+<p>In this case, for a type <code>T</code>, <code>Subtract</code> binds to <code>operator- (T, int)</code> (<code>this</code> goes left) while <code>SubtractFrom</code> binds to <code>operator- (int, T)</code> (<code>this</code> goes right). There is currently no support for binary operators of the form <code>operator- (T, T)</code>.</p>
 
 <h2>
 <a id="assemblyloader-loading-dependencies-eagerly" class="anchor" href="#assemblyloader-loading-dependencies-eagerly" aria-hidden="true"><span class="octicon octicon-link"></span></a>AssemblyLoader: Loading dependencies eagerly</h2>
