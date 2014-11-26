@@ -247,7 +247,7 @@ namespace TinyReflectiveToolkit.Contracts
             return new Tuple<bool, Type, ProxyInfo>(true, null, proxyInfo);
         }
 
-        private void AddOperatorsWith<TAttribute>(Action<List<MethodInfo>, List<Tuple<String, MethodInfo, int>>, string, int, Type> act, ProxyInfo info)
+        private static void AddOperatorsWith<TAttribute>(Action<List<MethodInfo>, List<Tuple<String, MethodInfo, int>>, string, int, Type> act, ProxyInfo info)
             where TAttribute : ExposeBinaryOperatorAttribute
         {
             var name = "op_" + typeof (TAttribute).Name.Replace("Attribute", "");
@@ -332,10 +332,8 @@ namespace TinyReflectiveToolkit.Contracts
                         generator.Emit(OpCodes.Box, proxyMethodParameterTypes[i]);
                 }
                 
-                if (instanced)
-                    generator.EmitCall(realType.IsValueType ? OpCodes.Call : OpCodes.Callvirt, foundMethod, null);
-                else
-                    generator.EmitCall(OpCodes.Call, foundMethod, null);
+                if (instanced) generator.EmitCall(realType.IsValueType ? OpCodes.Call : OpCodes.Callvirt, foundMethod, null);
+                else generator.EmitCall(OpCodes.Call, foundMethod, null);
 
                 if (foundMethod.ReturnType.IsValueType && !requiredMethod.ReturnType.IsValueType)
                     generator.Emit(OpCodes.Box, foundMethod.ReturnType);
