@@ -65,6 +65,7 @@
     <Compile Include="Contracts\SpecialOps\SpecialOperations.cs" />
     <Compile Include="Contracts\SpecialOps\SpecialOperatorAttribute.cs" />
     <Compile Include="Contracts\SpecialOps\Operators.cs" />
+    <Compile Include="Contracts\StaticAttribute.cs" />
     <Compile Include="Contracts\SubtractionAttribute.cs" />
     <Compile Include="Contracts\BitwiseOrAttribute.cs" />
     <Compile Include="Contracts\BitwiseAndAttribute.cs" />
