@@ -379,7 +379,7 @@ namespace TinyReflectiveToolkitTests
         object StaticValue(int v);
     }
 
-    public interface IParseable
+    public interface IParsable
     {
         [Static]
         object Parse(string s);

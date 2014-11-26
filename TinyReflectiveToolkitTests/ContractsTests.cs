@@ -513,10 +513,14 @@ namespace TinyReflectiveToolkitTests
         [Test]
         public void Parseable()
         {
-            var obj1 = default(int).ToContract<IParseable>();
-            var obj2 = default(bool).ToContract<IParseable>();
+            var obj1 = default(int).ToContract<IParsable>();
             Assert.AreEqual(10, obj1.Parse("10"));
+
+            var obj2 = default(bool).ToContract<IParsable>();            
             Assert.AreEqual(true, obj2.Parse("True"));
+
+            var obj3 = default(double).ToContract<IParsable>();
+            Assert.AreEqual(1.0, obj3.Parse("1.0"));
         }
 
         [Test]
