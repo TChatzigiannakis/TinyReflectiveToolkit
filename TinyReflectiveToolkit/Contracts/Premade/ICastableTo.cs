@@ -10,7 +10,7 @@
 namespace TinyReflectiveToolkit.Contracts.Premade
 {
     /// <summary>
-    /// A contract for classes that can be cast to a provided type.
+    /// A contract for types that can be cast to a provided type.
     /// </summary>
     public interface ICastableTo<T>
     {
