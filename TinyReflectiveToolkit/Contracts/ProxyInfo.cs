@@ -21,6 +21,7 @@ namespace TinyReflectiveToolkit.Contracts
         public Type Contract = null;
 
         public List<MethodInfo> RequiredRegularMethods = null;
+        public List<MethodInfo> RequiredStaticMethods = null;
         public List<MethodInfo> RequiredExplicitConversions = null;
         public List<MethodInfo> RequiredImplicitConversions = null;
         public List<MethodInfo> RequiredLeftSideAdditionOperators = null;
@@ -53,6 +54,7 @@ namespace TinyReflectiveToolkit.Contracts
         public List<MethodInfo> RequiredRightSideBitwiseAndOperators = null;
 
         public List<MethodInfo> FoundRegularMethods = null;
+        public List<MethodInfo> FoundStaticMethods = null;
         public List<Tuple<string, MethodInfo, int>> FoundExplicitConversions = null;
         public List<Tuple<string, MethodInfo, int>> FoundImplicitConversions = null;
         public List<Tuple<string, MethodInfo, int>> FoundLeftSideAdditionOperators = null;
@@ -89,6 +91,7 @@ namespace TinyReflectiveToolkit.Contracts
             get
             {
                 if (RequiredRegularMethods.Count != FoundRegularMethods.Count) return false;
+                if (RequiredStaticMethods.Count != FoundStaticMethods.Count) return false;
                 if (RequiredExplicitConversions.Count != FoundExplicitConversions.Count) return false;
                 if (RequiredImplicitConversions.Count != FoundImplicitConversions.Count) return false;
 

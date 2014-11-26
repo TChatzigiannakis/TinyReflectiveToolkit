@@ -13,6 +13,16 @@ namespace TinyReflectiveToolkitTests
     /// </summary>
     public class UnrelatedType1
     {
+        public static int StaticValue()
+        {
+            return 1;
+        }
+
+        public static int StaticValue(int v)
+        {
+            return v;
+        }
+
         public int Value()
         {
             return 1;
@@ -24,6 +34,16 @@ namespace TinyReflectiveToolkitTests
     /// </summary>
     public class UnrelatedType2
     {
+        public static int StaticValue()
+        {
+            return 2;
+        }
+
+        public static int StaticValue(int v)
+        {
+            return 2 * v;
+        }
+
         public int Value()
         {
             return 2;
@@ -35,6 +55,11 @@ namespace TinyReflectiveToolkitTests
     /// </summary>
     public class UnrelatedType3
     {
+        public static int StaticValue(int v)
+        {
+            return v;
+        }
+
         public int Value()
         {
             return 3;
@@ -57,6 +82,11 @@ namespace TinyReflectiveToolkitTests
     /// </summary>
     public class UnrelatedType4
     {
+        public static float StaticValue(int v)
+        {
+            return v;
+        }
+
         public void Value()
         {
         }
@@ -67,6 +97,11 @@ namespace TinyReflectiveToolkitTests
     /// </summary>
     public class UnrelatedType5
     {
+        public static string StaticValue(int v)
+        {
+            return v.ToString();
+        }
+
         public int Value(int a, int b, string c, int d, int e, string f)
         {
             return a + b + d + e + c.Count() + f.Count();
@@ -92,6 +127,11 @@ namespace TinyReflectiveToolkitTests
     /// </summary>
     public class UnrelatedType6
     {
+        public static int StaticValue(object v)
+        {
+            return v.ToString().Length;
+        }
+
         public int OnlyGet { get { return 1; } }
         public int OnlySet { set { } }
         public int GetSet { get; set; }

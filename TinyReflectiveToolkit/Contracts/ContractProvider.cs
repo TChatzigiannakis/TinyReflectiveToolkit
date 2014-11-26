@@ -26,7 +26,7 @@ namespace TinyReflectiveToolkit.Contracts
     {
         private const string RealInstanceFieldName = "InternalObject";
         private const string NamespaceForProxyTypes = "TinyReflectiveToolkit.Contracts";
-        private const MethodAttributes AttributesForProxyMethods = MethodAttributes.Public | MethodAttributes.Virtual |
+        private const MethodAttributes AttributesForProxyMethods = MethodAttributes.Virtual | MethodAttributes.Public | 
                                                MethodAttributes.NewSlot | MethodAttributes.Final;
 
         private readonly AssemblyBuilder _assembly;
@@ -117,7 +117,8 @@ namespace TinyReflectiveToolkit.Contracts
             var clrMethodsInContract = contract.GetInheritedInterfaceMembers().OfType<MethodInfo>().ToArray();
             var proxyInfo = new ProxyInfo
             {
-                RequiredRegularMethods = clrMethodsInContract.WithoutAttribute<ExposeOperatorAttribute>().ToList(),
+                RequiredRegularMethods = clrMethodsInContract.WithoutAttribute<ExposeOperatorAttribute>().WithoutAttribute<StaticAttribute>().ToList(),
+                RequiredStaticMethods = clrMethodsInContract.WithAttribute<StaticAttribute>().ToList(),
                 RequiredExplicitConversions = clrMethodsInContract.WithAttribute<CastAttribute>().ToList(),
                 RequiredImplicitConversions = clrMethodsInContract.WithAttribute<ImplicitAttribute>().ToList(),
             };
@@ -139,11 +140,23 @@ namespace TinyReflectiveToolkit.Contracts
             // Match the regular instanced methods.
             proxyInfo.FoundRegularMethods = proxyInfo.RequiredRegularMethods.Select(requiredMethod =>
             {
-                var matchingMethod = realType.GetGenericMethod(requiredMethod.Name, requiredMethod.GetParameters(), true);
+                var matchingMethod = realType.GetGenericMethod(requiredMethod.Name, requiredMethod.GetParameters(), true, BindingFlags.Instance | BindingFlags.Public);
                 if (matchingMethod == null || !requiredMethod.ReturnType.IsAssignableFrom(matchingMethod.ReturnType))
                 {
                     proxyInfo.AddIssue("Could not locate a matching implementation for method " + requiredMethod + " in type " + realType + ".");
                     return null;                    
+                }
+                return matchingMethod;
+            }).Except(x => x == null).ToList();
+
+            // Match the "regular" static methods.
+            proxyInfo.FoundStaticMethods = proxyInfo.RequiredStaticMethods.Select(requiredMethod =>
+            {
+                var matchingMethod = realType.GetGenericMethod(requiredMethod.Name, requiredMethod.GetParameters(), true, BindingFlags.Static | BindingFlags.Public);
+                if (matchingMethod == null || !requiredMethod.ReturnType.IsAssignableFrom(matchingMethod.ReturnType))
+                {
+                    proxyInfo.AddIssue("Could not locate a matching (static) implementation for method " + requiredMethod + " in type " + realType + ".");
+                    return null;
                 }
                 return matchingMethod;
             }).Except(x => x == null).ToList();
@@ -279,10 +292,13 @@ namespace TinyReflectiveToolkit.Contracts
             var realInstanceField = proxyTypeBuilder.DefineField(RealInstanceFieldName, realType, FieldAttributes.Public);
 
             // Implement proxy method stubs.
-            var proxyStubsForMethods = proxyInfo.FoundRegularMethods
+            var proxyStubsForMethods = proxyInfo.FoundRegularMethods.Concat(proxyInfo.FoundStaticMethods)
                 .Select(foundMethod =>
             {
-                var requiredMethod = proxyInfo.FoundRegularMethods.Corresponding(foundMethod, proxyInfo.RequiredRegularMethods);
+                var instanced = !foundMethod.IsStatic;
+                var requiredMethod = instanced
+                    ? proxyInfo.FoundRegularMethods.Corresponding(foundMethod, proxyInfo.RequiredRegularMethods)
+                    : proxyInfo.FoundStaticMethods.Corresponding(foundMethod, proxyInfo.RequiredStaticMethods);
                 var proxyMethodParameterTypes = requiredMethod.GetParameters().Select(p => p.ParameterType).ToArray();
 
                 var proxyMethod = proxyTypeBuilder.DefineMethod(foundMethod.Name, AttributesForProxyMethods);
@@ -304,15 +320,23 @@ namespace TinyReflectiveToolkit.Contracts
                 proxyMethod.SetParameters(proxyMethodParameterTypes);
 
                 var generator = proxyMethod.GetILGenerator();
-                generator.Emit(OpCodes.Ldarg_0);
-                generator.Emit(realType.IsValueType ? OpCodes.Ldflda : OpCodes.Ldfld, realInstanceField);
+                if (instanced)
+                {
+                    generator.Emit(OpCodes.Ldarg_0);
+                    generator.Emit(realType.IsValueType ? OpCodes.Ldflda : OpCodes.Ldfld, realInstanceField);
+                }
                 for (var i = 0; i < proxyMethodParameterTypes.Count(); i++)
                 {
                     generator.Emit(OpCodes.Ldarg, i + 1);
                     if (proxyMethodParameterTypes[i].IsValueType && !foundMethod.GetParameters()[i].ParameterType.IsValueType)
                         generator.Emit(OpCodes.Box, proxyMethodParameterTypes[i]);
                 }
-                generator.EmitCall(realType.IsValueType ? OpCodes.Call : OpCodes.Callvirt, foundMethod, null);
+                
+                if (instanced)
+                    generator.EmitCall(realType.IsValueType ? OpCodes.Call : OpCodes.Callvirt, foundMethod, null);
+                else
+                    generator.EmitCall(OpCodes.Call, foundMethod, null);
+
                 if (foundMethod.ReturnType.IsValueType && !requiredMethod.ReturnType.IsValueType)
                     generator.Emit(OpCodes.Box, foundMethod.ReturnType);
                 generator.Emit(OpCodes.Ret);

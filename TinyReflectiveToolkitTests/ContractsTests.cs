@@ -474,5 +474,39 @@ namespace TinyReflectiveToolkitTests
             Assert.AreEqual(1, obj.VariantMethod(1));
             Assert.AreEqual(1, obj.VariantMethod2(1));
         }
+
+        [Test]
+        public void StaticMethodNormal()
+        {
+            var obj = new UnrelatedType1().ToContract<IStaticMethod>();
+            Assert.AreEqual(1, obj.StaticValue());
+        }
+
+        [Test]
+        public void StaticMethodNormalParameterized()
+        {
+            var obj1 = new UnrelatedType1().ToContract<IStaticMethodParameterized>();
+            Assert.AreEqual(5, obj1.StaticValue(5));
+        }
+
+        [Test]
+        public void StaticMethodCovariant()
+        {
+            var obj1 = new UnrelatedType3().ToContract<IStaticMethodCovariantReturn>();
+            Assert.AreEqual(10, obj1.StaticValue(10));
+
+            var obj2 = new UnrelatedType4().ToContract<IStaticMethodCovariantReturn>();
+            Assert.AreEqual(10.0f, obj2.StaticValue(10));
+
+            var obj3 = new UnrelatedType5().ToContract<IStaticMethodCovariantReturn>();
+            Assert.AreEqual("10", obj3.StaticValue(10));
+        }
+
+        [Test]
+        public void StaticMethodContravariant()
+        {
+            var obj1 = new UnrelatedType6().ToContract<IStaticMethodParameterized>();
+            Assert.AreEqual(2, obj1.StaticValue(10));
+        }
     }
 }

@@ -22,20 +22,21 @@ namespace TinyReflectiveToolkit
                                                       BindingFlags.NonPublic;
 
         /// <summary>
-        /// Returns all methods (including generic methods) that satisfy the specified constraints.
+        /// Returns all methods (including generic methods) that satisfy the specified constraints, using the specified binding constraints.
         /// </summary>
         /// <param name="type"></param>
         /// <param name="name"></param>
         /// <param name="parameters"></param>
         /// <param name="allowSubstitution"></param>
+        /// <param name="flags"></param>
         /// <returns></returns>
-        public static IEnumerable<MethodInfo> GetGenericMethods(this Type type, string name, ParameterInfo[] parameters, bool allowSubstitution)
+        public static IEnumerable<MethodInfo> GetGenericMethods(this Type type, string name, ParameterInfo[] parameters, bool allowSubstitution, BindingFlags flags)
         {
             if (type == null) throw new ArgumentNullException("type");
             if (name == null) throw new ArgumentNullException("name");
             if (parameters == null) throw new ArgumentNullException("parameters");
 
-            var allMethods = type.GetMethods(GetMethodFlags);
+            var allMethods = type.GetMethods(flags);
             var overloads = allMethods
                 .Where(x => x.Name == name)
                 .Where(x => x.GetParameters().Length == parameters.Length)
@@ -45,6 +46,19 @@ namespace TinyReflectiveToolkit
                         ParamInfoPredicate.Invoke(p1.ParameterType, p2.ParameterType, allowSubstitution)))
                 .ToList();
             return matchingOverloads;
+        }
+
+        /// <summary>
+        /// Returns all methods (including generic methods) that satisfy the specified constraints, using the specified binding constraints.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="name"></param>
+        /// <param name="parameters"></param>
+        /// <param name="allowSubstitution"></param>
+        /// <returns></returns>
+        public static IEnumerable<MethodInfo> GetGenericMethods(this Type type, string name, ParameterInfo[] parameters, bool allowSubstitution)
+        {
+            return type.GetGenericMethods(name, parameters, allowSubstitution, GetMethodFlags);
         }
 
         /// <summary>
@@ -60,7 +74,7 @@ namespace TinyReflectiveToolkit
         }
 
         /// <summary>
-        /// Returns a method (including generic methods) that satisfies the specified constraints or null of none is found.
+        /// Returns a method (including generic methods) that satisfies the specified constraints or null if none is found.
         /// </summary>
         /// <param name="type"></param>
         /// <param name="name"></param>
@@ -72,7 +86,7 @@ namespace TinyReflectiveToolkit
         }
 
         /// <summary>
-        /// Returns a method (including generic methods) that satisfies the specified constraints or null of none is found.
+        /// Returns a method (including generic methods) that satisfies the specified constraints or null if none is found.
         /// </summary>
         /// <param name="type"></param>
         /// <param name="name"></param>
@@ -81,7 +95,21 @@ namespace TinyReflectiveToolkit
         /// <returns></returns>
         public static MethodInfo GetGenericMethod(this Type type, string name, ParameterInfo[] parameters, bool allowSubstitution)
         {
-            return type.GetGenericMethods(name, parameters, allowSubstitution).SingleOrDefault();
+            return type.GetGenericMethods(name, parameters, allowSubstitution).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Returns a method (including generic methods) that satisfies the specified constraints or null if none is found.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="name"></param>
+        /// <param name="parameters"></param>
+        /// <param name="allowSubstitution"></param>
+        /// <param name="flags"></param>
+        /// <returns></returns>
+        public static MethodInfo GetGenericMethod(this Type type, string name, ParameterInfo[] parameters, bool allowSubstitution, BindingFlags flags)
+        {
+            return type.GetGenericMethods(name, parameters, allowSubstitution, flags).FirstOrDefault();
         }
 
         internal static Func<Type, Type, bool, bool> ParamInfoPredicate = (t1, t2, sub) =>

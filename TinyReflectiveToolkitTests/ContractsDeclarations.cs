@@ -360,4 +360,22 @@ namespace TinyReflectiveToolkitTests
     {
         object Method(string arg);
     }
+
+    public interface IStaticMethod
+    {
+        [Static]
+        int StaticValue();
+    }
+
+    public interface IStaticMethodParameterized
+    {
+        [Static]
+        int StaticValue(int v);
+    }
+
+    public interface IStaticMethodCovariantReturn
+    {
+        [Static]
+        object StaticValue(int v);
+    }
 }
