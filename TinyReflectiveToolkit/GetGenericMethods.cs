@@ -17,7 +17,7 @@ namespace TinyReflectiveToolkit
 {
     public static partial class TypeExtensions
     {
-        internal const BindingFlags GetMethodFlags = BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public |
+        internal const BindingFlags DefaultGetMethodFlags = BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public |
                                                       BindingFlags.NonPublic;
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace TinyReflectiveToolkit
         /// <returns></returns>
         public static IEnumerable<MethodInfo> GetGenericMethods(this Type type, string name, ParameterInfo[] parameters, bool allowSubstitution)
         {
-            return type.GetGenericMethods(name, parameters, allowSubstitution, GetMethodFlags);
+            return type.GetGenericMethods(name, parameters, allowSubstitution, DefaultGetMethodFlags);
         }
 
         /// <summary>
