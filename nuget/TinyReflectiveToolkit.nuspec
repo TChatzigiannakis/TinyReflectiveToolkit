@@ -2,14 +2,14 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>TinyReflectiveToolkit</id>
-        <version>0.5</version>
+        <version>0.6</version>
         <title>Tiny Reflective Toolkit</title>
         <authors>Theodoros Chatzigiannakis</authors>
 		<licenseUrl>https://www.mozilla.org/MPL/2.0/</licenseUrl>
 		<projectUrl>http://tchatzigiannakis.github.io/TinyReflectiveToolkit/</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Structural contracts, eager assembly loading, easier reflection.</description>
-        <releaseNotes>Bug fixes in structural contracts for value types and operators.</releaseNotes>
+        <releaseNotes>Support for static methods in contracts.</releaseNotes>
         <copyright>(c) 2014 - Theodoros Chatzigiannakis</copyright>
         <tags>C# Reflection Structural</tags>
 		<dependencies>
