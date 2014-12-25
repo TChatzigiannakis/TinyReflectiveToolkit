@@ -197,9 +197,12 @@ public interface IStringToObject
 
 <p>The <code>[Static]</code> attribute means that the candidate types must have a <code>static</code> method with that signature. If they do, then they satisfy this contract.</p>
 
-<p>Therefore, <strong>instances of <code>bool</code>, <code>int</code>, <code>double</code> satisfy the <code>IParsable</code> contract.</strong></p>
+<p>Therefore, <strong>the types <code>bool</code>, <code>int</code>, <code>double</code> satisfy the <code>IParsable</code> contract.</strong></p>
 
-<p>Whenever instances of these types are accessed through this contract, an instanced <code>Parse(string)</code> method will be available and it will polymorphically invoke the correct static method from that particular runtime type. (Because it binds to a static method, the instance is completely irrelevant - only the explicitly provided arguments are passed.)</p>
+<p>Whenever these types are accessed through this contract, a <code>Parse(string)</code> method will be available and it will polymorphically invoke the correct static method from that particular type:</p>
+
+<pre><code>var ten = typeof(int).ToStaticContract&lt;IParsable&gt;.Parse("10");
+</code></pre>
 
 <p>Example <strong>for operators:</strong></p>
 
