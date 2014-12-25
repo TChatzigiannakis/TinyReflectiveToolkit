@@ -201,7 +201,7 @@ public interface IStringToObject
 
 <p>Whenever these types are accessed through this contract, a <code>Parse(string)</code> method will be available and it will polymorphically invoke the correct static method from that particular type:</p>
 
-<pre><code>var ten = typeof(int).ToStaticContract&lt;IParsable&gt;.Parse("10");
+<pre><code>var ten = typeof(int).ToStaticContract&lt;IParsable&gt;().Parse("10");
 </code></pre>
 
 <p>Example <strong>for operators:</strong></p>
