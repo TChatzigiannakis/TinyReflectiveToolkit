@@ -474,54 +474,57 @@ namespace TinyReflectiveToolkitTests
         [Test]
         public void StaticMethodNormal()
         {
-            var obj = new UnrelatedType1().ToContract<IStaticMethod>();
+            var obj = typeof(UnrelatedType1).ToStaticContract<IStaticMethod>();
             Assert.AreEqual(1, obj.StaticValue());
         }
 
         [Test]
         public void StaticMethodNormalParameterized()
         {
-            var obj1 = new UnrelatedType1().ToContract<IStaticMethodParameterized>();
+            var obj1 = typeof(UnrelatedType1).ToStaticContract<IStaticMethodParameterized>();
             Assert.AreEqual(5, obj1.StaticValue(5));
         }
 
         [Test]
         public void StaticMethodCovariant()
         {
-            var obj1 = new UnrelatedType3().ToContract<IStaticMethodCovariantReturn>();
+            var obj1 = typeof(UnrelatedType3).ToStaticContract<IStaticMethodCovariantReturn>();
             Assert.AreEqual(10, obj1.StaticValue(10));
 
-            var obj2 = new UnrelatedType4().ToContract<IStaticMethodCovariantReturn>();
+            var obj2 = typeof(UnrelatedType4).ToStaticContract<IStaticMethodCovariantReturn>();
             Assert.AreEqual(10.0f, obj2.StaticValue(10));
 
-            var obj3 = new UnrelatedType5().ToContract<IStaticMethodCovariantReturn>();
+            var obj3 = typeof(UnrelatedType5).ToStaticContract<IStaticMethodCovariantReturn>();
             Assert.AreEqual("10", obj3.StaticValue(10));
         }
 
         [Test]
         public void StaticMethodContravariant()
         {
-            var obj1 = new UnrelatedType6().ToContract<IStaticMethodParameterized>();
+            var obj1 = typeof(UnrelatedType6).ToStaticContract<IStaticMethodParameterized>();
             Assert.AreEqual(2, obj1.StaticValue(10));
         }
 
         [Test]
         public void Parseable()
         {
-            var obj1 = default(int).ToContract<IParsable>();
-            Assert.AreEqual(10, obj1.Parse("10"));
+            var obj1 = typeof(int).ToStaticContract<IParsable>();
+            Assert.AreEqual(int.Parse("10"), obj1.Parse("10"));
 
-            var obj2 = default(bool).ToContract<IParsable>();            
-            Assert.AreEqual(true, obj2.Parse("True"));
+            var obj2 = typeof(bool).ToStaticContract<IParsable>();            
+            Assert.AreEqual(bool.Parse("True"), obj2.Parse("True"));
 
-            var obj3 = default(double).ToContract<IParsable>();
-            Assert.AreEqual(1.0, obj3.Parse("1.0"));
+            var obj3 = typeof(double).ToStaticContract<IParsable>();
+            Assert.AreEqual(double.Parse("1.0"), obj3.Parse("1.0"));
         }
 
-        [Test]
+        //[Test]
         public void PerformanceTest()
         {
-            var a = AppDomain.CurrentDomain.GetAssemblies().Select(x => x.GetTypes()).SelectMany(x => x).Where(x => x.IsPublic)
+            var a = AppDomain.CurrentDomain.GetAssemblies()
+                .Select(x => x.GetTypes())
+                .SelectMany(x => x)
+                .Where(x => x.IsPublic)
                 .All(x => x.AsTypeSaftisfies<IEmpty>());
             Assert.IsTrue(a);
         }

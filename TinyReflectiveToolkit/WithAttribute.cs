@@ -158,5 +158,30 @@ namespace TinyReflectiveToolkit
             return sequence.WithAttribute<TAttribute, PropertyInfo>(predicate);
         }
 
+        /// <summary>
+        /// Returns all members that are decorated with a specified attribute.
+        /// </summary>
+        /// <typeparam name="TAttribute"></typeparam>
+        /// <param name="sequence"></param>
+        /// <returns></returns>
+        public static IEnumerable<MemberInfo> WithAttribute<TAttribute>(this IEnumerable<MemberInfo> sequence)
+            where TAttribute : Attribute
+        {
+            return sequence.WithAttribute<TAttribute, MemberInfo>();
+        }
+
+        /// <summary>
+        /// Returns all members that are decorated with a specified attribute and that attribute satisfies a specified condition.
+        /// </summary>
+        /// <typeparam name="TAttribute"></typeparam>
+        /// <param name="sequence"></param>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public static IEnumerable<MemberInfo> WithAttribute<TAttribute>(this IEnumerable<MemberInfo> sequence, Func<TAttribute, bool> predicate)
+            where TAttribute : Attribute
+        {
+            return sequence.WithAttribute<TAttribute, MemberInfo>(predicate);
+        }
+
     }
 }

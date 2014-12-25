@@ -31,7 +31,7 @@ namespace TinyReflectiveToolkit.Contracts
         }
         
         /// <summary>
-        /// Checks whether the runtime type of the provided object structurally satisfies the specified contract.
+        /// Checks whether the runtime type of the provided instance satisfies the specified contract, using a default contract provider.
         /// </summary>
         /// <typeparam name="TContract"></typeparam>
         /// <param name="obj"></param>
@@ -43,7 +43,18 @@ namespace TinyReflectiveToolkit.Contracts
         }
 
         /// <summary>
-        /// Checks whether the provided type satisfies a specified contract.
+        /// Checks whether the runtime type of the provided instance satisfies the specified contract, using a default contract provider.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="contract"></param>
+        /// <returns></returns>
+        public static bool Satisfies(this object obj, Type contract)
+        {
+            return DefaultContractProvider.CheckIfSatisfies(obj, contract);
+        }
+
+        /// <summary>
+        /// Checks whether the provided type satisfies the specified contract, using a default contract provider.
         /// </summary>
         /// <typeparam name="TContract"></typeparam>
         /// <param name="type"></param>
@@ -51,7 +62,30 @@ namespace TinyReflectiveToolkit.Contracts
         public static bool AsTypeSaftisfies<TContract>(this Type type)
             where TContract : class
         {
-            return DefaultContractProvider.CheckIfSatisfies<TContract>(type).Item1;
+            return DefaultContractProvider.CheckIfSatisfies<TContract>(type);
+        }
+
+        /// <summary>
+        /// Checks whether the provided type satisfies the specified contract, using a default contract provider.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="contract"></param>
+        /// <returns></returns>
+        public static bool AsTypeSatisfies(this Type type, Type contract)
+        {
+            return DefaultContractProvider.CheckIfSatisfies(type, contract);
+        }
+
+        /// <summary>
+        /// Returns a runtime-generated proxy that implements the specified interface and forwards method calls to the null instance - even if the relationship between the type and the interface wasn't declared at build time.
+        /// </summary>
+        /// <returns>The static contract.</returns>
+        /// <param name="type">Type.</param>
+        /// <typeparam name="TContract">The 1st type parameter.</typeparam>
+        public static TContract ToStaticContract<TContract>(this Type type)
+            where TContract : class
+        {
+            return DefaultContractProvider.GenerateNullContractInstance<TContract>(type);
         }
     }
 }

@@ -46,6 +46,7 @@ namespace TinyReflectiveToolkit.Contracts
             : this(Guid.NewGuid().ToString().Replace("-", ""))
         {
         }
+
         internal ContractProvider(string identifier)
         {
             _assembly =
@@ -57,12 +58,13 @@ namespace TinyReflectiveToolkit.Contracts
             
         }
 
-        private TContract GenerateProxy<TContract>(object realInstance, Type proxyType)
+        private object GenerateProxy(object realInstance, Type proxyType)
         {
             var proxyInstance = _assembly.CreateInstance(proxyType.FullName);
             var runtimeInstanceField = proxyType.GetField(RealInstanceFieldName);
-            runtimeInstanceField.SetValue(proxyInstance, realInstance);
-            return (TContract)proxyInstance;
+            if(realInstance != null)
+                runtimeInstanceField.SetValue(proxyInstance, realInstance);
+            return proxyInstance;
         }
 
         private Type GetProxyTypeOrNull(Type realType, Type contract)
@@ -75,7 +77,7 @@ namespace TinyReflectiveToolkit.Contracts
         }
 
         /// <summary>
-        /// Checks whether the provided object satisfies the specified contract.
+        /// Checks whether the runtime type of the provided instance satisfies the specified contract.
         /// </summary>
         /// <typeparam name="TContract"></typeparam>
         /// <param name="obj"></param>
@@ -83,13 +85,46 @@ namespace TinyReflectiveToolkit.Contracts
         public bool CheckIfSatisfies<TContract>(object obj)
             where TContract : class
         {
-            return CheckIfSatisfies<TContract>(obj.GetType()).Item1;
-        } 
-        internal Tuple<bool, Type, ProxyInfo> CheckIfSatisfies<TContract>(Type realType)
+            return CheckIfSatisfiesInternal(obj.GetType(), typeof(TContract)).Item1;
+        }
+        
+        /// <summary>
+        /// Checks whether the provided type satisfies the specified contract.
+        /// </summary>
+        /// <typeparam name="TContract"></typeparam>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public bool CheckIfSatisfies<TContract>(Type type)
             where TContract : class
         {
+            return CheckIfSatisfiesInternal(type, typeof(TContract)).Item1;
+        }
+
+        /// <summary>
+        /// Checks whether the runtime type of the provided instance satisfies the specified contract.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="contract"></param>
+        /// <returns></returns>
+        public bool CheckIfSatisfies(object obj, Type contract)
+        {
+            return CheckIfSatisfiesInternal(obj.GetType(), contract).Item1;
+        }
+
+        /// <summary>
+        /// Checks whether the provided type satisfies the specified contract.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="contract"></param>
+        /// <returns></returns>
+        public bool CheckIfSatisfies(Type type, Type contract)
+        {
+            return CheckIfSatisfiesInternal(type, contract).Item1;
+        }
+
+        internal Tuple<bool, Type, ProxyInfo> CheckIfSatisfiesInternal(Type realType, Type contract)
+        {
             // Check arguments.
-            var contract = typeof(TContract);
             if (!contract.IsInterface) throw new NotSupportedException("TContract must be an interface type.");
             if (!contract.IsPublic) throw new NotSupportedException(contract.Name + " must be public.");
             if (!realType.IsPublic) throw new NotSupportedException(realType.Name + " must be public.");
@@ -257,7 +292,7 @@ namespace TinyReflectiveToolkit.Contracts
         }
 
         /// <summary>
-        /// Returns an instance of the specified contract that delegates member accesses to the provided object. 
+        /// Returns an instance of the specified contract that delegates member accesses to the provided instance. 
         /// </summary>
         /// <typeparam name="TContract"></typeparam>
         /// <param name="obj"></param>
@@ -265,24 +300,44 @@ namespace TinyReflectiveToolkit.Contracts
         public TContract ConvertToContractInstance<TContract>(object obj)
             where TContract : class
         {
-            return CreateContractProxyFromObject<TContract>(obj);
+            return CreateContractProxyFromObject(obj, null, typeof(TContract)) as TContract;
         }
 
-        private TContract CreateContractProxyFromObject<TContract>(object realInstance, bool saveAssemblyForDebuggingPurposes = false, bool onlyStatic = false)
+        /// <summary>
+        /// Returns an instance of the specified contract that delegates member accesses to the null instance. 
+        /// </summary>
+        /// <returns>The null contract instance.</returns>
+        /// <param name="type">Type.</param>
+        /// <typeparam name="TContract">The 1st type parameter.</typeparam>
+        public TContract GenerateNullContractInstance<TContract>(Type type)
             where TContract : class
         {
-            var contractType = typeof(TContract);
-            var realType = realInstance.GetType();
+            return CreateContractProxyFromObject(null, type, typeof(TContract)) as TContract;
+        }
+           
+        internal object CreateContractProxyFromObject(object realInstance, Type realType, Type contractType, bool saveAssemblyForDebuggingPurposes = false, bool onlyStatic = false)
+        {
+            // If instance is null, this must be a static contract.
+            if (realInstance == null)
+            {
+                if (realType == null) 
+                    throw new ArgumentNullException ("realInstance", "The provided object cannot be null, unless a type is provided instead.");
+                var memberCount = contractType.GetMembers().Count();
+                var staticMemberCount = contractType.GetMembers().WithAttribute<StaticAttribute>().Count();
+                if (memberCount != staticMemberCount)
+                    throw new ArgumentNullException ("realInstance", "The provided object cannot be null, unless the supplied interface (" + contractType.Name + ") contains only [Static] methods.");
+            }
 
             // Check if contract is satisfied and if a proxy type already exists.
-            var satisfactionCheckResult = CheckIfSatisfies<TContract>(realType);
+            if (realType == null) realType = realInstance.GetType ();
+            var satisfactionCheckResult = CheckIfSatisfiesInternal(realType, contractType);
             var contractIsSatisfied = satisfactionCheckResult.Item1;
             var cachedProxyType = satisfactionCheckResult.Item2;
             var proxyInfo = satisfactionCheckResult.Item3;
             if (!contractIsSatisfied)
                 throw new ContractUnsatisfiedException(string.Join(" ", proxyInfo.Issues));
             if (cachedProxyType != null)
-                return GenerateProxy<TContract>(realInstance, cachedProxyType);
+                return GenerateProxy(realInstance, cachedProxyType);
 
             // Start building a new proxy type.
             var guid = Guid.NewGuid().ToString();
@@ -402,7 +457,7 @@ namespace TinyReflectiveToolkit.Contracts
                 _assembly.Save(_assemblyName);
 
             // Return proxy of new type.
-            return GenerateProxy<TContract>(realInstance, proxyType);
+            return GenerateProxy(realInstance, proxyType);
         }
 
     }
