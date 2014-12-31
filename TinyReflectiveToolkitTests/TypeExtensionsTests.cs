@@ -13,6 +13,7 @@ using NUnit.Framework;
 using System;
 using System.Linq;
 using TinyReflectiveToolkit;
+using TinyReflectiveToolkit.Contracts;
 
 namespace TinyReflectiveToolkitTests
 {
@@ -144,6 +145,13 @@ namespace TinyReflectiveToolkitTests
             Assert.IsTrue(typeof (Func<string, object>).IsDelegate());
             Assert.IsFalse(typeof (int).IsDelegate());
             Assert.IsFalse(typeof (Expression<Action<int>>).IsDelegate());
+        }
+
+        [Test]
+        public void IsExtensionMethod()
+        {
+            Assert.IsFalse(typeof(ContractProvider).GetMethods("CheckIfSatisfies").First().IsExtensionMethod());
+            Assert.IsTrue(typeof(TypeExtensions).GetMethods("IsExtensionMethod").First().IsExtensionMethod());
         }
     }
 }

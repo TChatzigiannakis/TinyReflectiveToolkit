@@ -28,5 +28,18 @@ namespace TinyReflectiveToolkit
 
             return sequence.Select(x => x.GetMethods()).Flatten();
         }
+
+        /// <summary>
+        /// Gets all methods in a type that have a specified name (overloads).
+        /// </summary>
+        /// <returns></returns>
+        /// <param name="type"></param>
+        /// <param name="name"></param>
+        public static IEnumerable<MethodInfo> GetMethods(this Type type, string name)
+        {
+            if (type == null) throw new ArgumentNullException("type");
+
+            return type.GetMethods ().Where (x => x.Name == name);
+        }
     }
 }
