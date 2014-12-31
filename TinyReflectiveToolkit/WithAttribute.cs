@@ -17,6 +17,19 @@ namespace TinyReflectiveToolkit
 {
     public static partial class TypeExtensions
     {
+        internal static IEnumerable<TMemberInfo> WithAttributeImpl<TAttribute, TMemberInfo>(this IEnumerable<TMemberInfo> sequence, bool inherited)
+            where TAttribute : Attribute
+            where TMemberInfo : MemberInfo
+        {
+            return sequence.Where(x => HasAttribute<TAttribute, TMemberInfo>(x, inherited));
+        }
+        internal static IEnumerable<TMemberInfo> WithoutAttributeImpl<TAttribute, TMemberInfo>(this IEnumerable<TMemberInfo> sequence, bool inherited)
+            where TAttribute : Attribute
+            where TMemberInfo : MemberInfo
+        {
+            return sequence.Except(x => HasAttribute<TAttribute, TMemberInfo>(x, inherited));
+        }
+
         /// <summary>
         /// Returns all elements that are decorated with a specified attribute.
         /// </summary>
@@ -66,19 +79,6 @@ namespace TinyReflectiveToolkit
             if (sequence == null) throw new ArgumentNullException("sequence");
 
             return sequence.WithoutAttributeImpl<TAttribute, TMemberInfo>(false);
-        }
-
-        private static IEnumerable<TMemberInfo> WithAttributeImpl<TAttribute, TMemberInfo>(this IEnumerable<TMemberInfo> sequence, bool inherited)
-            where TAttribute : Attribute
-            where TMemberInfo : MemberInfo
-        {
-            return sequence.Where(x => x.GetCustomAttributes(typeof (TAttribute), inherited).Any());
-        }
-        private static IEnumerable<TMemberInfo> WithoutAttributeImpl<TAttribute, TMemberInfo>(this IEnumerable<TMemberInfo> sequence, bool inherited)
-            where TAttribute : Attribute
-            where TMemberInfo : MemberInfo
-        {
-            return sequence.Except(x => x.GetCustomAttributes(typeof(TAttribute), inherited).Any());
         }
 
         /// <summary>
