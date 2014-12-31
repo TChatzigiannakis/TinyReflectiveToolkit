@@ -403,13 +403,6 @@ namespace TinyReflectiveToolkit.Contracts
                     if (foundOperator.Item2 == SpecialOperations.IdentityMarkerMethodInfo)
                     {
                         return IL.ILHelper.GenerateMethodStubThatReturnsField(proxyTypeBuilder, foundOperator.Item1, AttributesForProxyMethods, realInstanceField, null, new Type[0]);
-
-                        var px = proxyTypeBuilder.DefineMethod(foundOperator.Item1, AttributesForProxyMethods, realType, new Type[0]);
-                        var gen = px.GetILGenerator();
-                        gen.Emit(OpCodes.Ldarg_0);
-                        gen.Emit(OpCodes.Ldfld, realInstanceField);
-                        gen.Emit(OpCodes.Ret);
-                        return px;
                     }
 
                     var name = foundOperator.Item1;
