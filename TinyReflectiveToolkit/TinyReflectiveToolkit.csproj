@@ -78,6 +78,7 @@
     <Compile Include="GetOperators.cs" />
     <Compile Include="GetProperties.cs" />
     <Compile Include="HasAttribute.cs" />
+    <Compile Include="IL\ILHelper.cs" />
     <Compile Include="IsDelegate.cs" />
     <Compile Include="IsExtensionMethod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
