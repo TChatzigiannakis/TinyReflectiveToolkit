@@ -87,6 +87,7 @@
     <Compile Include="WithAttribute.cs" />
     <Compile Include="WithoutAttribute.cs" />
     <Compile Include="GetExtensionMethods.cs" />
+    <Compile Include="AssemblyExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

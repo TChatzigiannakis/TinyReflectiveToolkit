@@ -14,6 +14,8 @@ using System;
 using System.Linq;
 using TinyReflectiveToolkit;
 using TinyReflectiveToolkit.Contracts;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace TinyReflectiveToolkitTests
 {
@@ -152,6 +154,13 @@ namespace TinyReflectiveToolkitTests
         {
             Assert.IsFalse(typeof(ContractProvider).GetMethods("CheckIfSatisfies").First().IsExtensionMethod());
             Assert.IsTrue(typeof(TypeExtensions).GetMethods("IsExtensionMethod").First().IsExtensionMethod());
+        }
+
+        [Test]
+        public void GetExtensionMethods()
+        {
+            var exts = typeof(IEnumerable<>).GetExtensionMethods().ToList();
+            Assert.AreNotEqual (0, exts.Count);
         }
     }
 }

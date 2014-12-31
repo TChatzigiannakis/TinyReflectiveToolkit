@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Text;
 using EnumerableExtensions;
 using System.Runtime.CompilerServices;
-using EnumerableExtensions;
 
 namespace TinyReflectiveToolkit
 {
@@ -26,7 +25,7 @@ namespace TinyReflectiveToolkit
         /// </summary>
         /// <param name="method"></param>
         /// <returns></returns>
-        public static Type TypeOfExtensionMethod(this MethodInfo method)
+        public static Type GetTypeOfExtensionMethod(this MethodInfo method)
         {
             if (!method.IsExtensionMethod()) throw new ArgumentException(string.Format("The method {0} is not an extension method. This operation can only be performed on extension methods.", method.Name));
             return method.GetParameters().First().ParameterType;
@@ -41,12 +40,13 @@ namespace TinyReflectiveToolkit
         public static IEnumerable<MethodInfo> GetExtensionMethods(this Type type, IEnumerable<Assembly> assemblies)
         {
             return assemblies
-                .Select(x => x.GetTypes())
+                .Select(x => x.GetLoadableTypes())
                 .Flatten()
                 .Where(x => x.IsSealed)
                 .Select(x => x.GetMethods())
                 .Flatten()
-                .Where(IsExtensionMethod);
+                .Where(IsExtensionMethod)
+                .Where(x => x.GetTypeOfExtensionMethod() == type);
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace TinyReflectiveToolkit
         /// <returns></returns>
         public static IEnumerable<MethodInfo> GetExtensionMethods(this Type type)
         {
-            return type.GetExtensionMethods(AppDomain.CurrentDomain.GetAssemblies());
+            return type.GetExtensionMethods (AppDomain.CurrentDomain.GetAssemblies ());
         }
     }
 }
