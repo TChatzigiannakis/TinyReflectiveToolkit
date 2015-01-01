@@ -159,8 +159,9 @@ namespace TinyReflectiveToolkitTests
         [Test]
         public void GetExtensionMethods()
         {
-            var exts = typeof(IEnumerable<>).GetExtensionMethods().ToList();
+            var exts = typeof(Assembly).GetExtensionMethods().ToList();
             Assert.AreNotEqual (0, exts.Count);
+            Assert.IsTrue (exts.Any (x => x.Name == "GetLoadableTypes"));
         }
     }
 }

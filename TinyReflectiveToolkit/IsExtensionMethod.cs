@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using EnumerableExtensions;
 using System.Runtime.CompilerServices;
+using System.IO;
 
 namespace TinyReflectiveToolkit
 {
@@ -17,7 +18,32 @@ namespace TinyReflectiveToolkit
         /// <returns></returns>
         public static bool IsExtensionMethod(this MethodInfo method)
         {
-            return method.IsStatic && method.DeclaringType.IsSealed && method.HasAttribute<ExtensionAttribute>();
+            return IsExtensionMethod(method, null);
+        }
+
+        /// <summary>
+        /// Checks whether a method can be called as an extension method.
+        /// </summary>
+        /// <param name="method"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static bool IsExtensionMethod(this MethodInfo method, Type type)
+        {
+            try
+            {
+                if(!method.IsStatic) return false;
+                if(!method.DeclaringType.IsSealed) return false;
+                if(!method.HasAttribute<ExtensionAttribute>()) return false;
+                if(type == null) return true;
+                if(method.GetParameters() == null) return false;
+                if(!method.GetParameters().Any()) return false;
+                if(method.GetParameters().First().ParameterType == type) return true;
+                return false;
+            } catch(ReflectionTypeLoadException) {
+                return false;
+            } catch(FileNotFoundException ex) {
+                return false;
+            }
         }
 
         /// <summary>
@@ -40,13 +66,12 @@ namespace TinyReflectiveToolkit
         public static IEnumerable<MethodInfo> GetExtensionMethods(this Type type, IEnumerable<Assembly> assemblies)
         {
             return assemblies
-                .Select(x => x.GetLoadableTypes())
-                .Flatten()
-                .Where(x => x.IsSealed)
-                .Select(x => x.GetMethods())
-                .Flatten()
-                .Where(IsExtensionMethod)
-                .Where(x => x.GetTypeOfExtensionMethod() == type);
+                .Select (x => x.GetLoadableTypes ())
+                .Flatten ()
+                .Where (x => x.IsSealed)
+                .Select (x => x.GetMethods ())
+                .Flatten ()
+                .Where (x => IsExtensionMethod (x, type));
         }
 
         /// <summary>
