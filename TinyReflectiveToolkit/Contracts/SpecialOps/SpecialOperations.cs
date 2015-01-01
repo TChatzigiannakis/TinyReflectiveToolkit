@@ -45,11 +45,11 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
             var matches = typeof (SpecialOperations).GetMethods()
                 .WithAttribute<SpecialOperatorAttribute>(x => x.Type == operatorMarker)
                 .Where(x => x.GetParameters().Count() == 2)
-                .Where(x => !reverse && x.GetParameters().First().ParameterType.IsAssignableFrom(input1)
-                     , x => reverse && x.GetParameters().First().ParameterType.IsAssignableFrom(input2)
+                .Where(x => (!reverse && x.GetParameters().First().ParameterType.IsAssignableFrom(input1))
+                    || (reverse && x.GetParameters().First().ParameterType.IsAssignableFrom(input2))
                     )
-                .Where(x => !reverse && x.GetParameters().Second().ParameterType.IsAssignableFrom(input2)
-                     , x => reverse && x.GetParameters().Second().ParameterType.IsAssignableFrom(input1)
+                .Where(x => (!reverse && x.GetParameters().Second().ParameterType.IsAssignableFrom(input2))
+                    || (reverse && x.GetParameters().Second().ParameterType.IsAssignableFrom(input1))
                     )
                 .Where(x => output.IsAssignableFrom(x.ReturnType))
                 .ToList();
@@ -62,14 +62,5 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
         public static void IdentityMarker()
         {            
         }       
-    }
-
-    internal static class OtherWhere
-    {
-        public static IEnumerable<T> Where<T>(this IEnumerable<T> sequence, Func<T, bool> predicate1,
-            Func<T, bool> predicate2)
-        {
-            return sequence.Where(x => predicate1.Invoke(x) || predicate2.Invoke(x));
-        } 
     }
 }
