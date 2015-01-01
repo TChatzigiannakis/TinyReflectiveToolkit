@@ -22,7 +22,7 @@ namespace TinyReflectiveToolkit
         }
 
         /// <summary>
-        /// Checks whether a method can be called as an extension method.
+        /// Checks whether a method can be called as an extension method on the specified System.Type.
         /// </summary>
         /// <param name="method"></param>
         /// <param name="type"></param>
