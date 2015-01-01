@@ -34,9 +34,9 @@ namespace TinyReflectiveToolkit
                 if (!method.IsStatic) return false;
                 if (!method.DeclaringType.IsSealed) return false;
                 if (!method.HasAttribute<ExtensionAttribute>()) return false;
-                if (type == null) return true;
                 if (method.GetParameters() == null) return false;
                 if (!method.GetParameters().Any()) return false;
+                if (type == null) return true;
                 if (method.GetParameters().First().ParameterType == type) return true;
                 return false;
             } catch(ReflectionTypeLoadException) {
