@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
+using EnumerableExtensions;
 
 namespace TinyReflectiveToolkit
 {
@@ -22,8 +23,8 @@ namespace TinyReflectiveToolkit
         /// <summary>
         /// Gets all types in the assembly that can be loaded without errors.
         /// </summary>
-        /// <returns>The loadable types.</returns>
-        /// <param name="assembly">Assembly.</param>
+        /// <returns></returns>
+        /// <param name="assembly"></param>
         public static IEnumerable<Type> GetLoadableTypes(this Assembly assembly)
         {
             if (assembly == null) throw new ArgumentNullException("assembly");
@@ -34,7 +35,7 @@ namespace TinyReflectiveToolkit
             }
             catch (ReflectionTypeLoadException e)
             {
-                return e.Types.Where (t => t != null);
+                return e.Types.RemoveNull ();
             }
         }
     }
