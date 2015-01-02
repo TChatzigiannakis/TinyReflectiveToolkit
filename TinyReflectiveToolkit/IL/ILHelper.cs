@@ -18,22 +18,6 @@ namespace TinyReflectiveToolkit.IL
 {
     internal static class ILHelper
     {
-        /// <summary>
-        /// Generates a method stub that returns the value of a field.
-        /// </summary>
-        /// <param name="containingType"></param>
-        /// <param name="name"></param>
-        /// <param name="attributes"></param>
-        /// <param name="field"></param>
-        /// <param name="parameters"></param>
-        /// <returns></returns>
-        public static MethodBuilder GenerateMethodStubThatReturnsField(TypeBuilder containingType, string name, MethodAttributes attributes, FieldInfo field, Type returnType, Type[] parameters)
-        {
-            var method = containingType.DefineMethod(name, attributes, returnType ?? field.FieldType, parameters);
-            method.EmitReturnField(field);
-            return method;
-        }
-
         public static MethodBuilder EmitReturnField(this MethodBuilder builder, FieldInfo fieldInfo)
         {
             var gen = builder.GetILGenerator();
