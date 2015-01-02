@@ -16,6 +16,7 @@ using System.Reflection.Emit;
 using System.Threading;
 using TinyReflectiveToolkit.Contracts.SpecialOps;
 using EnumerableExtensions;
+using TinyReflectiveToolkit.IL;
 
 namespace TinyReflectiveToolkit.Contracts
 {
@@ -409,7 +410,8 @@ namespace TinyReflectiveToolkit.Contracts
                 {
                     if (foundOperator.Item2 == SpecialOperations.IdentityMarkerMethodInfo)
                     {
-                        return IL.ILHelper.GenerateMethodStubThatReturnsField(proxyTypeBuilder, foundOperator.Item1, AttributesForProxyMethods, realInstanceField, null, new Type[0]);
+                        var px = proxyTypeBuilder.DefineMethod(foundOperator.Item1, AttributesForProxyMethods, realType, new Type[0]);
+                        return px.EmitReturnField(realInstanceField);
                     }
 
                     var name = foundOperator.Item1;

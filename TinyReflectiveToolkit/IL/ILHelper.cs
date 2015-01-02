@@ -30,16 +30,17 @@ namespace TinyReflectiveToolkit.IL
         public static MethodBuilder GenerateMethodStubThatReturnsField(TypeBuilder containingType, string name, MethodAttributes attributes, FieldInfo field, Type returnType, Type[] parameters)
         {
             var method = containingType.DefineMethod(name, attributes, returnType ?? field.FieldType, parameters);
-            var gen = method.GetILGenerator();
-            gen.Emit(OpCodes.Ldarg_0);
-            gen.Emit(OpCodes.Ldfld, field);
-            gen.Emit(OpCodes.Ret);
+            method.EmitReturnField(field);
             return method;
         }
 
-        public static MethodBuilder GenerateCallStubTo(MethodInfo callee, TypeBuilder containingType)
+        public static MethodBuilder EmitReturnField(this MethodBuilder builder, FieldInfo fieldInfo)
         {
-            return null;
+            var gen = builder.GetILGenerator();
+            gen.Emit(OpCodes.Ldarg_0);
+            gen.Emit(OpCodes.Ldfld, fieldInfo);
+            gen.Emit(OpCodes.Ret);
+            return builder;
         }
     }
 }
