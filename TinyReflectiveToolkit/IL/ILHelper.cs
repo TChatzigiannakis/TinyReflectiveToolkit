@@ -13,18 +13,11 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using System.Linq.Expressions;
 
 namespace TinyReflectiveToolkit.IL
 {
     internal static class ILHelper
     {
-        public static MethodBuilder EmitReturnField(this MethodBuilder builder, FieldInfo fieldInfo)
-        {
-            var gen = builder.GetILGenerator();
-            gen.Emit(OpCodes.Ldarg_0);
-            gen.Emit(OpCodes.Ldfld, fieldInfo);
-            gen.Emit(OpCodes.Ret);
-            return builder;
-        }
     }
 }

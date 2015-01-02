@@ -17,6 +17,7 @@ using System.Threading;
 using TinyReflectiveToolkit.Contracts.SpecialOps;
 using EnumerableExtensions;
 using TinyReflectiveToolkit.IL;
+using System.Linq.Expressions;
 
 namespace TinyReflectiveToolkit.Contracts
 {
@@ -411,7 +412,11 @@ namespace TinyReflectiveToolkit.Contracts
                     if (foundOperator.Item2 == SpecialOperations.IdentityMarkerMethodInfo)
                     {
                         var px = proxyTypeBuilder.DefineMethod(foundOperator.Item1, AttributesForProxyMethods, realType, new Type[0]);
-                        return px.EmitReturnField(realInstanceField);
+                        var gen = px.GetILGenerator();
+                        gen.Emit(OpCodes.Ldarg_0);
+                        gen.Emit(OpCodes.Ldfld, realInstanceField);
+                        gen.Emit(OpCodes.Ret);
+                        return px;
                     }
 
                     var name = foundOperator.Item1;
