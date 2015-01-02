@@ -36,6 +36,9 @@ namespace TinyReflectiveToolkit.Contracts
 
         private const string RealInstanceFieldName = "InternalObject";
         private const string NamespaceForProxyTypes = "TinyReflectiveToolkit.Contracts";
+        private const string DynamicAssemblyNameFormat = "TinyReflectiveToolkit-Dynamic-{0}";
+        private const string DynamicAssemblyFilenameFormat = "TinyReflectiveToolkit-RuntimeGeneratedProxies-{0}.dll";
+        private const string DynamicAssemblyProxyModuleName = "Proxies";
         private const MethodAttributes AttributesForProxyMethods = MethodAttributes.Virtual | MethodAttributes.Public | 
                                                MethodAttributes.NewSlot | MethodAttributes.Final;
 
@@ -61,10 +64,11 @@ namespace TinyReflectiveToolkit.Contracts
         {
             _assembly =
                 Thread.GetDomain()
-                    .DefineDynamicAssembly(new AssemblyName("TinyReflectiveToolkit-Dynamic-" + identifier),
+                    .DefineDynamicAssembly(new AssemblyName(
+                        string.Format(DynamicAssemblyNameFormat, identifier)),
                         AssemblyBuilderAccess.RunAndSave);
-            _assemblyName = "Dynamic-" + identifier + ".dll";
-            _moduleBuilder = _assembly.DefineDynamicModule("Contracts", _assemblyName);
+            _assemblyName = string.Format (DynamicAssemblyFilenameFormat, identifier);
+            _moduleBuilder = _assembly.DefineDynamicModule(DynamicAssemblyProxyModuleName, _assemblyName);
             
         }
 
