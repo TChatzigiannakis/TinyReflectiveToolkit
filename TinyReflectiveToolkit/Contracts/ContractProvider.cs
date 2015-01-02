@@ -24,15 +24,15 @@ namespace TinyReflectiveToolkit.Contracts
     /// </summary>
     public sealed class ContractProvider
     {
-        internal const string ErrorMustBeInterface = "The provided type must be an interface, but {0} is not an interface.";
-        internal const string ErrorMustBePublic = "The provided type must be public, but {0} is not public.";
-        internal const string ErrorCouldNotLocateImplementation = "Could not locate a matching implementation for method {0} (required by interface {1}) in type {2}.";
-        internal const string ErrorCouldNotLocateStaticImplementation = "Could not locate a matching implementation for static method {0} (required by interface {1}) in type {2}.";
-        internal const string ErrorNoMatchingExplicitOp = "Could not locate a matching explicit operator for method {0} (required by interface {1}) in type {2}.";
-        internal const string ErrorNoMatchingImplicitOp = "Could not locate a matching implicit operator for method {0} (required by interface {1}) in type {2}.";
-        internal const string ErrorNoMatchingOp = "Could not locate a matching {0} operator for method {1} (required by {2}) in type {3}.";
-        internal const string InstanceNullAndNoType = "A non-null object reference must be provided, or alternatively a type must explicitly specified and the {0} contract must declare only [Static] methods.";
-        internal const string InstanceNullAndNoStatic = InstanceNullAndNoType;
+        private const string ErrorMustBeInterface = "The provided type must be an interface, but {0} is not an interface.";
+        private const string ErrorMustBePublic = "The provided type must be public, but {0} is not public.";
+        private const string ErrorCouldNotLocateImplementation = "Could not locate a matching implementation for method {0} (required by interface {1}) in type {2}.";
+        private const string ErrorCouldNotLocateStaticImplementation = "Could not locate a matching implementation for static method {0} (required by interface {1}) in type {2}.";
+        private const string ErrorNoMatchingExplicitOp = "Could not locate a matching explicit operator for method {0} (required by interface {1}) in type {2}.";
+        private const string ErrorNoMatchingImplicitOp = "Could not locate a matching implicit operator for method {0} (required by interface {1}) in type {2}.";
+        private const string ErrorNoMatchingOp = "Could not locate a matching {0} operator for method {1} (required by {2}) in type {3}.";
+        private const string InstanceNullAndNoType = "A non-null object reference must be provided, or alternatively a type must explicitly specified and the {0} contract must declare only [Static] methods.";
+        private const string InstanceNullAndNoStatic = InstanceNullAndNoType;
 
         private const string RealInstanceFieldName = "InternalObject";
         private const string NamespaceForProxyTypes = "TinyReflectiveToolkit.Contracts";
