@@ -24,6 +24,16 @@ namespace TinyReflectiveToolkit.Contracts
     /// </summary>
     public sealed class ContractProvider
     {
+        internal const string ErrorMustBeInterface = "The provided type must be an interface, but {0} is not an interface.";
+        internal const string ErrorMustBePublic = "The provided type must be public, but {0} is not public.";
+        internal const string ErrorCouldNotLocateImplementation = "Could not locate a matching implementation for method {0} (required by interface {1}) in type {2}.";
+        internal const string ErrorCouldNotLocateStaticImplementation = "Could not locate a matching implementation for static method {0} (required by interface {1}) in type {2}.";
+        internal const string ErrorNoMatchingExplicitOp = "Could not locate a matching explicit operator for method {0} (required by interface {1}) in type {2}.";
+        internal const string ErrorNoMatchingImplicitOp = "Could not locate a matching implicit operator for method {0} (required by interface {1}) in type {2}.";
+        internal const string ErrorNoMatchingOp = "Could not locate a matching {0} operator for method {1} (required by {2}) in type {3}.";
+        internal const string InstanceNullAndNoType = "A non-null object reference must be provided, or alternatively a type must explicitly specified and the {0} contract must declare only [Static] methods.";
+        internal const string InstanceNullAndNoStatic = InstanceNullAndNoType;
+
         private const string RealInstanceFieldName = "InternalObject";
         private const string NamespaceForProxyTypes = "TinyReflectiveToolkit.Contracts";
         private const MethodAttributes AttributesForProxyMethods = MethodAttributes.Virtual | MethodAttributes.Public | 
@@ -125,9 +135,9 @@ namespace TinyReflectiveToolkit.Contracts
         internal Tuple<bool, Type, ProxyInfo> CheckIfSatisfiesInternal(Type realType, Type contract)
         {
             // Check arguments.
-            if (!contract.IsInterface) throw new NotSupportedException("TContract must be an interface type.");
-            if (!contract.IsPublic) throw new NotSupportedException(contract.Name + " must be public.");
-            if (!realType.IsPublic) throw new NotSupportedException(realType.Name + " must be public.");
+            if (!contract.IsInterface) throw new NotSupportedException(string.Format(ErrorMustBeInterface, contract.Name));
+            if (!contract.IsPublic) throw new NotSupportedException(string.Format(ErrorMustBePublic, contract.Name));
+            if (!realType.IsPublic) throw new NotSupportedException(string.Format(ErrorMustBePublic, realType.Name));
 
             // Check if we have an existing proxy type for this combination.
             var combination = new Tuple<Type, Type>(realType, contract);
@@ -173,28 +183,24 @@ namespace TinyReflectiveToolkit.Contracts
             proxyInfo.ResolveBinaryOperators<BitwiseAndAttribute>(clrMethodsInContract);
 
             // Match the regular instanced methods.
-            proxyInfo.FoundRegularMethods = proxyInfo.RequiredRegularMethods.Select(requiredMethod =>
-            {
-                var matchingMethod = realType.GetGenericMethod(requiredMethod.Name, requiredMethod.GetParameters(), true, BindingFlags.Instance | BindingFlags.Public);
-                if (matchingMethod == null || !requiredMethod.ReturnType.IsAssignableFrom(matchingMethod.ReturnType))
-                {
-                    proxyInfo.AddIssue("Could not locate a matching implementation for method " + requiredMethod + " in type " + realType + ".");
+            proxyInfo.FoundRegularMethods = proxyInfo.RequiredRegularMethods.Select (requiredMethod => {
+                var matchingMethod = realType.GetGenericMethod (requiredMethod.Name, requiredMethod.GetParameters (), true, BindingFlags.Instance | BindingFlags.Public);
+                if (matchingMethod == null || !requiredMethod.ReturnType.IsAssignableFrom (matchingMethod.ReturnType)) {
+                    proxyInfo.AddIssue (string.Format(ErrorCouldNotLocateImplementation, requiredMethod, contract, realType));
                     return null;                    
                 }
                 return matchingMethod;
-            }).Except(x => x == null).ToList();
+            }).RemoveNull ().ToList ();
 
             // Match the "regular" static methods.
-            proxyInfo.FoundStaticMethods = proxyInfo.RequiredStaticMethods.Select(requiredMethod =>
-            {
-                var matchingMethod = realType.GetGenericMethod(requiredMethod.Name, requiredMethod.GetParameters(), true, BindingFlags.Static | BindingFlags.Public);
-                if (matchingMethod == null || !requiredMethod.ReturnType.IsAssignableFrom(matchingMethod.ReturnType))
-                {
-                    proxyInfo.AddIssue("Could not locate a matching (static) implementation for method " + requiredMethod + " in type " + realType + ".");
+            proxyInfo.FoundStaticMethods = proxyInfo.RequiredStaticMethods.Select (requiredMethod => {
+                var matchingMethod = realType.GetGenericMethod (requiredMethod.Name, requiredMethod.GetParameters (), true, BindingFlags.Static | BindingFlags.Public);
+                if (matchingMethod == null || !requiredMethod.ReturnType.IsAssignableFrom (matchingMethod.ReturnType)) {
+                    proxyInfo.AddIssue (string.Format(ErrorCouldNotLocateStaticImplementation, requiredMethod, contract, realType));
                     return null;
                 }
                 return matchingMethod;
-            }).Except(x => x == null).ToList();
+            }).RemoveNull ().ToList ();
 
             // Match the conversion operators. 
             var realObjectOperators = realType.GetOperators().ToList();
@@ -211,8 +217,7 @@ namespace TinyReflectiveToolkit.Contracts
                     matchingOperators.Add(SpecialOperations.IdentityMarkerMethodInfo);
                 var matchingOperator = matchingOperators.FirstOrDefault();
                 if (matchingOperator == null)
-                    proxyInfo.AddIssue("Could not locate a matching explicit operator for method " + requiredOperator +
-                                       " in type " + realType + ".");
+                        proxyInfo.AddIssue(string.Format(ErrorNoMatchingExplicitOp, requiredOperator, contract, realType));
                 return new Tuple<string, MethodInfo, int>(requiredOperator.Name, matchingOperator, 0);
             }).ToList();
             proxyInfo.FoundImplicitConversions = proxyInfo.RequiredImplicitConversions.Select(requiredOperator =>
@@ -228,8 +233,7 @@ namespace TinyReflectiveToolkit.Contracts
                     matchingOperators.Add(SpecialOperations.IdentityMarkerMethodInfo);
                 var matchingOperator = matchingOperators.FirstOrDefault();
                 if (matchingOperator == null)
-                    proxyInfo.AddIssue("Could not locate a matching implicit operator for method " + requiredOperator +
-                                       " in type " + realType + ".");
+                        proxyInfo.AddIssue(string.Format(ErrorNoMatchingImplicitOp, requiredOperator, contract, realType));
                 return new Tuple<string, MethodInfo, int>(requiredOperator.Name, matchingOperator, 0);
             }).ToList();
 
@@ -251,8 +255,7 @@ namespace TinyReflectiveToolkit.Contracts
                     }
                     var matchingOperator = operatorMethods.FirstOrDefault();
                     if (matchingOperator == null)
-                        proxyInfo.AddIssue("Could not locate a matching " + opMarker.Name.Replace("Attribute", "") +
-                                           " operator for method " + x + " in type " + realType + ".");
+                            proxyInfo.AddIssue(string.Format(ErrorNoMatchingOp, opMarker.Name.Replace("Attribute", ""), x, contract, realType));
                     return new Tuple<string, MethodInfo, int>(x.Name, matchingOperator, index);
                 }).ToList());
             AddOperatorsWith<AdditionAttribute>(act, proxyInfo);
@@ -321,11 +324,11 @@ namespace TinyReflectiveToolkit.Contracts
             if (realInstance == null)
             {
                 if (realType == null) 
-                    throw new ArgumentNullException ("realInstance", "The provided object cannot be null, unless a type is provided instead.");
+                    throw new ArgumentNullException ("realInstance", string.Format(InstanceNullAndNoType, contractType));
                 var memberCount = contractType.GetMembers().Count();
                 var staticMemberCount = contractType.GetMembers().WithAttribute<StaticAttribute>().Count();
                 if (memberCount != staticMemberCount)
-                    throw new ArgumentNullException ("realInstance", "The provided object cannot be null, unless the supplied interface (" + contractType.Name + ") contains only [Static] methods.");
+                    throw new ArgumentNullException ("realInstance", string.Format(InstanceNullAndNoStatic, contractType));
             }
 
             // Check if contract is satisfied and if a proxy type already exists.
