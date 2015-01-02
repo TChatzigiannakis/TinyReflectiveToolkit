@@ -10,10 +10,10 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Structural contracts, eager assembly loading, easier reflection.</description>
         <releaseNotes>Support for static methods in contracts.</releaseNotes>
-        <copyright>(c) 2014 - Theodoros Chatzigiannakis</copyright>
+        <copyright>(c) 2014-2015  Theodoros Chatzigiannakis</copyright>
         <tags>C# Reflection Structural</tags>
 		<dependencies>
-            <dependency id="EnumerableExtensions" version="2.4" />
+            <dependency id="EnumerableExtensions" version="2.5" />
         </dependencies>
     </metadata>
 	<files>

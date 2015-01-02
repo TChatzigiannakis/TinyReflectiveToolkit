@@ -33,10 +33,11 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="EnumerableExtensions">
-      <HintPath>..\packages\EnumerableExtensions.2.4\lib\portable-net4+sl5+wp8+win8\EnumerableExtensions.dll</HintPath>
+    <Reference Include="EnumerableExtensions, Version=2.5.5480.20529, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EnumerableExtensions.2.5\lib\portable-net4+sl5+wp8+win8\EnumerableExtensions.dll</HintPath>
     </Reference>
+    <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contracts\AdditionAttribute.cs" />
