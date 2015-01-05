@@ -15,7 +15,7 @@ namespace TinyReflectiveToolkit.Contracts.Premade
     public interface IParsable
     {
         /// <summary>
-        /// Returns the result of the parsing method of the runtime type from a string.
+        /// Returns the result of the parsing method of the current type or the current object's runtime type.
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>

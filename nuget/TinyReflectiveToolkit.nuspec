@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>TinyReflectiveToolkit</id>
-        <version>0.7</version>
+        <version>0.8</version>
         <title>Tiny Reflective Toolkit</title>
         <authors>Theodoros Chatzigiannakis</authors>
 		<licenseUrl>https://www.mozilla.org/MPL/2.0/</licenseUrl>

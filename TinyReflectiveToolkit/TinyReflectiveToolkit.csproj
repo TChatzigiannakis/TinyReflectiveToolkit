@@ -88,6 +88,8 @@
     <Compile Include="WithoutAttribute.cs" />
     <Compile Include="GetExtensionMethods.cs" />
     <Compile Include="AssemblyExtensions.cs" />
+    <Compile Include="Contracts\Premade\IFormatParsable.cs" />
+    <Compile Include="Contracts\Premade\IFormatRepresentable.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

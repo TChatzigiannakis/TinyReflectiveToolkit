@@ -15,7 +15,7 @@ namespace TinyReflectiveToolkit.Contracts.Premade
     public interface ICastableTo<T>
     {
         /// <summary>
-        /// Returns the result of a type's explicit cast to the contract's type argument.
+        /// Returns the result of a type's explicit cast to the contract's type argument, performed on the current object.
         /// </summary>
         /// <returns></returns>
         [Cast]
