@@ -525,7 +525,7 @@ namespace TinyReflectiveToolkitTests
                 .Select(x => x.GetTypes())
                 .SelectMany(x => x)
                 .Where(x => x.IsPublic)
-                .All(x => x.AsTypeSaftisfies<IEmpty>());
+                .All(x => x.AsTypeSatisfies<IEmpty>());
             Assert.IsTrue(a);
         }
     }

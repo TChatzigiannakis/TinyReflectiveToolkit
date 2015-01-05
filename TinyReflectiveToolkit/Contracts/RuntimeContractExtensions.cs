@@ -59,7 +59,7 @@ namespace TinyReflectiveToolkit.Contracts
         /// <typeparam name="TContract"></typeparam>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static bool AsTypeSaftisfies<TContract>(this Type type)
+        public static bool AsTypeSatisfies<TContract>(this Type type)
             where TContract : class
         {
             return DefaultContractProvider.CheckIfSatisfies<TContract>(type);
