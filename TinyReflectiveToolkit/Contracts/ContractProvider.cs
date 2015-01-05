@@ -196,7 +196,7 @@ namespace TinyReflectiveToolkit.Contracts
                     return null;                    
                 }
                 return matchingMethod;
-            }).RemoveNull ().ToList ();
+            }).Except(m => m == null).ToList ();
 
             // Match the "regular" static methods.
             proxyInfo.FoundStaticMethods = proxyInfo.RequiredStaticMethods.Select (requiredMethod => {
@@ -206,7 +206,7 @@ namespace TinyReflectiveToolkit.Contracts
                     return null;
                 }
                 return matchingMethod;
-            }).RemoveNull ().ToList ();
+            }).Except(m => m == null).ToList ();
 
             // Match the conversion operators. 
             var realObjectOperators = realType.GetOperators().ToList();
