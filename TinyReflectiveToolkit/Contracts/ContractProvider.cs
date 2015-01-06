@@ -16,8 +16,6 @@ using System.Reflection.Emit;
 using System.Threading;
 using TinyReflectiveToolkit.Contracts.SpecialOps;
 using EnumerableExtensions;
-using TinyReflectiveToolkit.IL;
-using System.Linq.Expressions;
 
 namespace TinyReflectiveToolkit.Contracts
 {
