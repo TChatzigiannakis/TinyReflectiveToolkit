@@ -322,7 +322,8 @@ namespace TinyReflectiveToolkit.Contracts
             return CreateContractProxyFromObject(null, type, typeof(TContract)) as TContract;
         }
            
-        internal object CreateContractProxyFromObject(object realInstance, Type realType, Type contractType, bool saveAssemblyForDebuggingPurposes = false, bool onlyStatic = false)
+        internal object CreateContractProxyFromObject(object realInstance, Type realType, Type contractType, 
+            bool saveAssemblyForDebuggingPurposes = false, bool onlyStatic = false)
         {
             // If instance is null, this must be a static contract.
             if (realInstance == null)
@@ -384,8 +385,10 @@ namespace TinyReflectiveToolkit.Contracts
                 var generator = proxyMethod.GetILGenerator();
                 if (instanced)
                 {
-                    generator.Emit(OpCodes.Ldarg_0);
-                    generator.Emit(realType.IsValueType ? OpCodes.Ldflda : OpCodes.Ldfld, realInstanceField);
+                    generator.Emit(OpCodes.Ldarg, 0);
+                    generator.Emit(realType.IsValueType && !realType.IsEnum ? OpCodes.Ldflda : OpCodes.Ldfld, realInstanceField);
+                    if (realType.IsEnum)
+                        generator.Emit(OpCodes.Box, realType);
                 }
                 for (var i = 0; i < proxyMethodParameterTypes.Count(); i++)
                 {
@@ -393,13 +396,14 @@ namespace TinyReflectiveToolkit.Contracts
                     if (proxyMethodParameterTypes[i].IsValueType && !foundMethod.GetParameters()[i].ParameterType.IsValueType)
                         generator.Emit(OpCodes.Box, proxyMethodParameterTypes[i]);
                 }
-                
-                if (instanced) generator.EmitCall(realType.IsValueType ? OpCodes.Call : OpCodes.Callvirt, foundMethod, null);
-                else generator.EmitCall(OpCodes.Call, foundMethod, null);
+
+                var callType = !instanced || realType.IsValueType ? OpCodes.Call : OpCodes.Callvirt;
+                generator.EmitCall(callType, foundMethod, null);
 
                 if (foundMethod.ReturnType.IsValueType && !requiredMethod.ReturnType.IsValueType)
                     generator.Emit(OpCodes.Box, foundMethod.ReturnType);
                 generator.Emit(OpCodes.Ret);
+
                 return proxyMethod;
             }).ToList();
 

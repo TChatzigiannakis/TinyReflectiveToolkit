@@ -8,6 +8,7 @@
  */
 
 using System;
+using System.Globalization;
 using System.Linq;
 using NUnit.Framework;
 using TinyReflectiveToolkit.Contracts;
@@ -329,6 +330,13 @@ namespace TinyReflectiveToolkitTests
         }
 
         [Test]
+        public void ToStringableInt()
+        {
+            var obj = (5).ToContract<IToStringable>();
+            Assert.AreEqual((5).ToString(), obj.ToString());
+        }
+
+        [Test]
         public void ToStringableObject()
         {
             var obj = "Hello".ToContract<IToStringableObj>();
@@ -336,7 +344,7 @@ namespace TinyReflectiveToolkitTests
         }
 
         [Test]
-        public void ToStringableFromInt()
+        public void ToStringableBoxedInt()
         {
             object five = 5;
             var obj = five.ToContract<IToStringableObj>();
@@ -516,6 +524,20 @@ namespace TinyReflectiveToolkitTests
 
             var obj3 = typeof(double).ToStaticContract<IParsable>();
             Assert.AreEqual(double.Parse("1.0"), obj3.Parse("1.0"));
+        }
+
+        [Test]
+        public void FormatRepresentable()
+        {
+            Assert.IsTrue(typeof (OneEnum).IsValueType);
+            
+            var obj2 = (5.0).ToContract<IFormatRepresentable>();
+            var str2 = obj2.ToString(CultureInfo.InvariantCulture);
+            Assert.AreEqual("5", str2);
+
+            var obj1 = OneEnum.Three.ToContract<IFormatRepresentable>();
+            var str1 = obj1.ToString(CultureInfo.InvariantCulture);
+            Assert.AreEqual("Three", str1);
         }
 
         //[Test]

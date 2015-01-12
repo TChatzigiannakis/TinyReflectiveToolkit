@@ -11,6 +11,11 @@ using System.Linq;
 
 namespace TinyReflectiveToolkitTests
 {
+    public enum OneEnum
+    {
+        One, Two, Three
+    }
+
     /// <summary>
     /// Test type.
     /// </summary>
