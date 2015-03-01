@@ -13,6 +13,7 @@ using System.Linq;
 using NUnit.Framework;
 using TinyReflectiveToolkit.Contracts;
 using TinyReflectiveToolkit.Contracts.Premade;
+using TinyReflectiveToolkit;
 
 namespace TinyReflectiveToolkitTests
 {
@@ -166,13 +167,22 @@ namespace TinyReflectiveToolkitTests
         }
 
         [Test]
-        public void CastableToInt()
+        public void CastableTo()
         {
             Assert.AreEqual(12, (12).ToContract<ICastableTo<int>>().Cast());
             Assert.AreEqual(12, (12.0f).ToContract<ICastableTo<int>>().Cast());
             Assert.AreEqual(12, (12.0).ToContract<ICastableTo<int>>().Cast());
             Assert.AreEqual(12, (12m).ToContract<ICastableTo<int>>().Cast());
             Assert.AreEqual(12, ((byte)12).ToContract<ICastableTo<int>>().Cast());
+
+            Assert.AreEqual(12, (12).ToContract<ICastableTo<long>>().Cast());
+        }
+
+        [Test]
+        public void ConvertTo()
+        {
+            Assert.AreEqual(12L, DynamicConversion.ConvertTo<long>(12));
+            Assert.AreEqual(12.0, DynamicConversion.ConvertTo<double>(12));
         }
 
         [Test]
@@ -182,6 +192,12 @@ namespace TinyReflectiveToolkitTests
             var contract = nn.ToContract<ICastableTo<UnrelatedType7>>();
             var self = contract.Cast();
             Assert.AreSame(nn, self);
+        }
+
+        [Test]
+        public void Implicit()
+        {
+            
         }
 
         [Test]
@@ -538,17 +554,6 @@ namespace TinyReflectiveToolkitTests
             var obj1 = OneEnum.Three.ToContract<IFormatRepresentable>();
             var str1 = obj1.ToString(CultureInfo.InvariantCulture);
             Assert.AreEqual("Three", str1);
-        }
-
-        //[Test]
-        public void PerformanceTest()
-        {
-            var a = AppDomain.CurrentDomain.GetAssemblies()
-                .Select(x => x.GetTypes())
-                .SelectMany(x => x)
-                .Where(x => x.IsPublic)
-                .All(x => x.AsTypeSatisfies<IEmpty>());
-            Assert.IsTrue(a);
         }
     }
 }

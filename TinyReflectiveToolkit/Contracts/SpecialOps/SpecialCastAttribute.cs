@@ -12,7 +12,7 @@ using System;
 namespace TinyReflectiveToolkit.Contracts.SpecialOps
 {
     [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
-    internal sealed class SpecialConversionAttribute : Attribute
+    internal sealed class SpecialCastAttribute : Attribute
     {
     }
 }

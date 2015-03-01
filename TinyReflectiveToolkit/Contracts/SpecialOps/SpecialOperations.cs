@@ -32,7 +32,7 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
         internal static MethodInfo GetSpecialConversion(Type source, Type target)
         {
             var matches = typeof (SpecialOperations).GetMethods()
-                .WithAttribute<SpecialConversionAttribute>()
+                .WithAttribute<SpecialCastAttribute>()
                 .Where(x => x.GetParameters().Count() == 1)
                 .Where(x => x.GetParameters().First().ParameterType == source)
                 .Where(x => x.ReturnType == target)

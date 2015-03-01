@@ -18,7 +18,7 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [SpecialConversion]
+        [SpecialCast]
         [Obsolete(SpecialOperationsUsageErrorMessage, true)]
         public static double ToDouble(float input)
         {
@@ -30,7 +30,7 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [SpecialConversion]
+        [SpecialCast]
         [Obsolete(SpecialOperationsUsageErrorMessage, true)]
         public static double ToDouble(int input)
         {
@@ -42,7 +42,7 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [SpecialConversion]
+        [SpecialCast]
         [Obsolete(SpecialOperationsUsageErrorMessage, true)]
         public static double ToDouble(char input)
         {
@@ -54,7 +54,7 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [SpecialConversion]
+        [SpecialCast]
         [Obsolete(SpecialOperationsUsageErrorMessage, true)]
         public static double ToDouble(byte input)
         {
@@ -66,7 +66,7 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [SpecialConversion]
+        [SpecialCast]
         [Obsolete(SpecialOperationsUsageErrorMessage, true)]
         public static float ToFloat(double input)
         {
@@ -78,7 +78,7 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [SpecialConversion]
+        [SpecialCast]
         [Obsolete(SpecialOperationsUsageErrorMessage, true)]
         public static float ToFloat(int input)
         {
@@ -90,7 +90,7 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [SpecialConversion]
+        [SpecialCast]
         [Obsolete(SpecialOperationsUsageErrorMessage, true)]
         public static float ToFloat(char input)
         {
@@ -102,7 +102,7 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [SpecialConversion]
+        [SpecialCast]
         [Obsolete(SpecialOperationsUsageErrorMessage, true)]
         public static float ToFloat(byte input)
         {
@@ -114,7 +114,7 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [SpecialConversion]
+        [SpecialCast]
         [Obsolete(SpecialOperationsUsageErrorMessage, true)]
         public static int ToInt(double input)
         {
@@ -126,7 +126,7 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [SpecialConversion]
+        [SpecialCast]
         [Obsolete(SpecialOperationsUsageErrorMessage, true)]
         public static int ToInt(float input)
         {
@@ -138,7 +138,7 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [SpecialConversion]
+        [SpecialCast]
         [Obsolete(SpecialOperationsUsageErrorMessage, true)]
         public static int ToInt(char input)
         {
@@ -150,7 +150,7 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [SpecialConversion]
+        [SpecialCast]
         [Obsolete(SpecialOperationsUsageErrorMessage, true)]
         public static int ToInt(byte input)
         {
@@ -162,7 +162,7 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [SpecialConversion]
+        [SpecialCast]
         [Obsolete(SpecialOperationsUsageErrorMessage, true)]
         public static char ToChar(double input)
         {
@@ -174,7 +174,7 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [SpecialConversion]
+        [SpecialCast]
         [Obsolete(SpecialOperationsUsageErrorMessage, true)]
         public static char ToChar(float input)
         {
@@ -186,7 +186,7 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [SpecialConversion]
+        [SpecialCast]
         [Obsolete(SpecialOperationsUsageErrorMessage, true)]
         public static char ToChar(int input)
         {
@@ -198,7 +198,7 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [SpecialConversion]
+        [SpecialCast]
         [Obsolete(SpecialOperationsUsageErrorMessage, true)]
         public static char ToChar(byte input)
         {
@@ -210,7 +210,7 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [SpecialConversion]
+        [SpecialCast]
         [Obsolete(SpecialOperationsUsageErrorMessage, true)]
         public static byte ToByte(double input)
         {
@@ -222,7 +222,7 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [SpecialConversion]
+        [SpecialCast]
         [Obsolete(SpecialOperationsUsageErrorMessage, true)]
         public static byte ToByte(float input)
         {
@@ -234,7 +234,7 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [SpecialConversion]
+        [SpecialCast]
         [Obsolete(SpecialOperationsUsageErrorMessage, true)]
         public static byte ToByte(int input)
         {
@@ -246,11 +246,60 @@ namespace TinyReflectiveToolkit.Contracts.SpecialOps
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [SpecialConversion]
+        [SpecialCast]
         [Obsolete(SpecialOperationsUsageErrorMessage, true)]
         public static byte ToByte(char input)
         {
             return (byte)input;
+        }
+
+        /// <summary>
+        /// Special cast.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [SpecialCast]
+        [Obsolete(SpecialOperationsUsageErrorMessage, true)]
+        public static long ToLong(byte input)
+        {
+            return input;
+        }
+
+        /// <summary>
+        /// Special cast.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [SpecialCast]
+        [Obsolete(SpecialOperationsUsageErrorMessage, true)]
+        public static long ToLong(char input)
+        {
+            return input;
+        }
+
+        /// <summary>
+        /// Special cast.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [SpecialCast]
+        [Obsolete(SpecialOperationsUsageErrorMessage, true)]
+        public static long ToLong(int input)
+        {
+            return input;
+        }
+
+
+        /// <summary>
+        /// Special cast.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [SpecialCast]
+        [Obsolete(SpecialOperationsUsageErrorMessage, true)]
+        public static long ToLong(float input)
+        {            
+            return (long)input;
         }
     }
 }

@@ -39,6 +39,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DynamicConversion.cs" />
     <Compile Include="Contracts\AdditionAttribute.cs" />
     <Compile Include="Contracts\ContractProvider.cs" />
     <Compile Include="Contracts\CastAttribute.cs" />
@@ -57,10 +58,11 @@
     <Compile Include="Contracts\MultiplicationAttribute.cs" />
     <Compile Include="Contracts\OpSide.cs" />
     <Compile Include="Contracts\Premade\ICastableTo.cs" />
+    <Compile Include="Contracts\Premade\IImplicitlyConvertible.cs" />
     <Compile Include="Contracts\Premade\IParsable.cs" />
     <Compile Include="Contracts\ProxyInfo.cs" />
     <Compile Include="Contracts\RuntimeContractExtensions.cs" />
-    <Compile Include="Contracts\SpecialOps\SpecialConversionAttribute.cs" />
+    <Compile Include="Contracts\SpecialOps\SpecialCastAttribute.cs" />
     <Compile Include="Contracts\SpecialOps\Conversions.cs" />
     <Compile Include="Contracts\SpecialOps\SpecialOperations.cs" />
     <Compile Include="Contracts\SpecialOps\SpecialOperatorAttribute.cs" />
@@ -79,6 +81,7 @@
     <Compile Include="HasAttribute.cs" />
     <Compile Include="IsDelegate.cs" />
     <Compile Include="IsExtensionMethod.cs" />
+    <Compile Include="ObjectExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AssemblyLoader.cs" />
     <Compile Include="SelectAttribute.cs" />
